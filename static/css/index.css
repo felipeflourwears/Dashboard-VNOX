@@ -1,0 +1,136 @@
+.main-wrapper {
+    width: 100%; /* Agrega un ancho del 100% al contenedor del main */
+    }
+
+    main {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+   /*  border: 2px solid red;
+    box-sizing: border-box; */
+    padding: 10px;
+    width: 100%; /* Agrega un ancho del 100% al main */
+    }
+
+    .table-container {
+    width: 100%; /* Agrega un ancho del 100% al contenedor de la tabla */
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+    }
+
+    table {
+    font-size: 14px;
+    border-collapse: collapse;
+    margin: 0 auto;
+    border: 2px solid #6a5acd;
+    box-sizing: border-box;
+    width: 100%;
+    }
+
+    th, td {
+    padding: 8px;
+    text-align: center;
+    }
+
+    th {
+    background-color: #f2f2f2;
+    font-weight: bold;
+    }
+    header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background-color: #f2f2f2;
+    padding: 10px;
+    }
+
+    h1 {
+    margin: 0;
+    font-size: 24px;
+    font-weight: bold;
+    }
+
+    .tooltip {
+        background: #121212;
+        width: 40px; /* Ancho del botón */
+        height: 40px; /* Altura del botón */
+      }
+      
+      /* Estilos del ícono en blanco */
+      .icon-white {
+        color: #fff; /* Color blanco para el ícono */
+      }
+
+      .titleh1 {
+        letter-spacing: 0.4px; /* Ajusta el valor según tu preferencia */
+    }
+
+    .btn-lilac-metallic {
+      background-color: #6a5acd; /* Color lila oscuro */
+      color: #fff; /* Color del texto */
+      border: none; /* Quita el borde */
+      padding: 10px 20px; /* Espaciado interno */
+      font-size: 16px; /* Tamaño de fuente */
+      border-radius: 5px; /* Borde redondeado */
+      position: relative; /* Posición relativa */
+      overflow: hidden; /* Oculta elementos que se salgan del botón */
+      transition: all 0.3s ease; /* Transición suave al pasar el ratón */
+      background: linear-gradient(45deg, rgba(150, 7, 163, 1) 0%, #6a5acd 50%, rgba(150, 7, 163, 1) 100%);
+      box-shadow: 0 6px 12px rgba(0, 0, 0, 0.3); /* Sombra al botón */
+    }
+    
+    .btn-lilac-metallic:hover {
+      transform: translateY(-2px); /* Efecto de elevación al pasar el ratón */
+      color:#fff;
+    }
+
+    .btn-magenta-dark {
+      background-color: #990099; /* Color magenta oscuro */
+      color: #fff; /* Color del texto */
+      border: none; /* Quita el borde */
+      padding: 10px 20px; /* Espaciado interno */
+      font-size: 16px; /* Tamaño de fuente */
+      border-radius: 5px; /* Borde redondeado */
+      position: relative; /* Posición relativa */
+      overflow: hidden; /* Oculta elementos que se salgan del botón */
+      transition: all 0.3s ease; /* Transición suave al pasar el ratón */
+      box-shadow: 0 4px 8px rgba(153, 0, 153, 0.2); /* Sombra al botón */
+    }
+    
+    .btn-magenta-dark:hover {
+      transform: translateY(-2px); /* Efecto de elevación al pasar el ratón */
+      color: #fff;
+    }
+    
+
+  /* Estilos para la tabla */
+table.batch-table {
+  border-collapse: collapse;
+  width: 100%;
+  margin-bottom: 20px;
+}
+
+table.batch-table th,
+table.batch-table td {
+  border: 1px solid #6a5acd;
+  padding: 8px;
+  text-align: left;
+}
+
+table.batch-table th {
+  background-color: #6a5acd;
+  color: white;
+  text-align: center; /* Centra el texto del encabezado */
+}
+
+table.batch-table tbody tr:nth-child(even) {
+  background-color: #f2f2f2;
+}
+
+table.batch-table tbody tr:hover {
+  background-color: #ddd;
+}
+
+
+    
+    
