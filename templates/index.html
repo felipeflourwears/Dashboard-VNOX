@@ -1,86 +1,109 @@
 <!DOCTYPE html>
 <html lang="en">
-    <head>
-        <meta charset="utf-8">
-        <meta name="viewport" content="width=device-width, initial-scale=1">
-        <meta name="description" content="">
-        <title>Budget PopAtelier</title>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PopAtelier</title>
     
-        <!-- CSS FILES -->
-        <link rel="preconnect" href="https://fonts.googleapis.com">
-        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-        <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;700&display=swap" rel="stylesheet">
-    
-        <!-- Flask static files -->
-        <link href="{{ url_for('static', filename='css/bootstrap.min.css') }}" rel="stylesheet">
-        <link href="{{ url_for('static', filename='css/bootstrap-icons.css') }}" rel="stylesheet">
-        <link href="{{ url_for('static', filename='css/magnific-popup.css') }}" rel="stylesheet">
-        <link href="{{ url_for('static', filename='css/templatemo-first-portfolio-style.css') }}" rel="stylesheet">
-        <link href="{{ url_for('static', filename='css/index.css') }}" rel="stylesheet">
-        <link href="{{ url_for('static', filename='css/slider.css') }}" rel="stylesheet">
-    
-        <!-- Flask static image -->
-        <link rel="shortcut icon" href="{{ url_for('static', filename='images/popnav.png') }}" type="image/x-icon">
-    </head>
-    
-    <body>
+    <!--Material CDN-->
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons+Sharp" rel="stylesheet">
+    <!--Styles-->
+    <link rel="icon" href="{{ url_for('static', filename='img/logo.png') }}" type="image/png">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/styles.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/home.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/gadgets.css') }}">
 
-        <section class="preloader">
-            <div class="spinner">
-                <span class="spinner-rotate"></span>    
+    <!-- CDN de Sweet Alert -->
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11.0.20/dist/sweetalert2.min.js"></script>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11.0.20/dist/sweetalert2.min.css">
+
+</head>
+<body>
+
+    <div class="container">
+        <!--====================BEGIN ASIDE ====================-->
+        {% include 'sidebar.html' %}
+         <!--====================END ASIDE ====================-->
+        <main>
+            <h1>Dashboard</h1>
+           
+            <div class="date">
+                <!-- <input type="date"> -->
+                Welcome again
             </div>
-        </section>
-
-        <nav class="navbar navbar-expand-lg">
-            <div class="container d-flex justify-content-center"> <!-- Añade estas clases para centrar -->
-                <a href="https://www.popatelier.net/" class="navbar-brand mx-auto mx-lg-0" target="_blank">
-                    <!-- Flask static image -->
-                    <img src="{{ url_for('static', filename='images/poptest.png') }}" alt="Logo" class="logo">
-                </a>
-            </div>
-        </nav>
-        
-                
-    
-
-        <br><br> <br><br> <br><br><br>
-
-       <!--  <header>
-            <h1 class="titleh1">API Simulation&nbsp;</h1>
-        </header -->>
-        
-        <form action="#" method="POST">
-            <div class="main-wrapper">
-                <main>
-                   <!--  <div class="container-slider">
-                        <input type="range" id="my-slider" min="0" max="100" value="50" oninput="slider()">
-                        <div id="slider-value">0</div>
-                    </div> -->
-                </main>
-            </div>
-
             
+            {% include 'insights.html' %}
+
+             <!--==================== END INSIGHTS ====================-->
+             <!--=== BEGIN ORDERS ====-->
+            <div class="recent-orders">
+                <h2>Recent Orders</h2>
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Table</th>
+                            <th>NameFood</th>
+                            <th>Quantity</th>
+                            <th>Description</th>
+                            <th>Date</th>
+                            <th>Total</th>
+                            <th>Served</th>
+                            <th>Options</th>   
+                        </tr>
+                    </thead>
+                    <tbody id="order-table-body">                  
+                    </tbody>
+                </table>    
+            </div>
+            <div class="pagination">
+                <ul id="pagination-list">
+                    <li class="page-item" id="page-previous">
+                        <a href="#" class="page-link">Previous</a>
+                    </li>
+                </ul>
+            </div>
             
-        </form>
+        </main>
+         <!--==================== END MAIN ====================-->
+        <div class="right">
+            <div class="top">
+                <button id="menu-btn">
+                    <span class="material-icons-sharp">menu</span>
+                </button>
+                <div class="theme-toggler">
+                    <span class="material-icons-sharp active">light_mode</span>
+                    <span class="material-icons-sharp">dark_mode</span>
+                </div>
+                <div class="profile">
+                    <div class="info">
+                        <p>Hey, <b>User</b></p>
+                        <p style="display: none;">Mode: <b id="current-user-mode">Administrator</b></p>
+                        <small class="text-muted">
+                                Admin
+                        </small>
+                    </div>
+                    <div class="profile-photo">
+                        <img src="{{ url_for('static', filename='img/profile.png') }}">
+                    </div>
+                    <div class="logout">
+                        <a href="#">
+                            <span class="material-icons-sharp">logout</span>
+                            <h3>Logout</h3>
+                        </a>
+                    </div>
+                </div>
+            </div>
+             <!--====== END TOP ======-->
+             
+            {% include 'recent-updates.html' %}
 
+            <!--==================== END RECENT UPDATES ====================-->
 
-
-        <!-- JAVASCRIPT FILES -->
-        <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-        <script src="{{ url_for('static', filename='js/generate-hs.js') }}"></script>
-        <script src="{{ url_for('static', filename='js/tables-front.js') }}"></script>
-        <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/1.3.4/jspdf.debug.js"></script>
-        <script src="{{ url_for('static', filename='js/jquery.min.js') }}"></script>
-        <script src="{{ url_for('static', filename='js/bootstrap.min.js') }}"></script>
-        <script src="{{ url_for('static', filename='js/jquery.sticky.js') }}"></script>
-        <script src="{{ url_for('static', filename='js/click-scroll.js') }}"></script>
-        <script src="{{ url_for('static', filename='js/jquery.magnific-popup.min.js') }}"></script>
-        <script src="{{ url_for('static', filename='js/magnific-popup-options.js') }}"></script>
-        <script src="{{ url_for('static', filename='js/custom.js') }}"></script>
-        <script src="{{ url_for('static', filename='js/slider.js') }}"></script>
-        <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-        
-
-
-    </body>
+            {% include 'sales-analytics.html' %}
+        </div>   
+    </div>
+    <script src="{{ url_for('static', filename='js/index.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/popups.js') }}"></script>
+ 
+</body>
 </html>

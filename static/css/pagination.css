@@ -1,0 +1,33 @@
+.pagination {
+    display: flex;
+    justify-content: center;
+    margin-top: 20px;
+}
+
+.pagination a {
+    color: white;
+    padding: 10px 14px; /* Ajusta el espacio interno horizontal */
+    text-decoration: none;
+    margin: 0 4px; /* Ajusta el espacio entre botones */
+    border-radius: 4px;
+}
+
+.btn-danger {
+    background-color: var(--color-pagination2);
+}
+
+.btn-primary {
+    background-color: var(--color-pagination2);
+}
+
+.active {
+    background-color: var(--color-pagination3);
+}
+
+.btn-danger:hover {
+    background-color: var(--color-pagination1);
+}
+.btn-primary:hover {
+    background-color: var(--color-pagination1);
+}
+

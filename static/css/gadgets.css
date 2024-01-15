@@ -1,0 +1,56 @@
+.btn-edit{
+    background-color: #4CAF50; 
+    color: white; 
+    padding: 6px 6px; /* Ajusta el tamaño del padding según sea necesario */
+    text-decoration: none; 
+    border-radius: 4px;
+}
+
+.btn-delete{
+    background-color: #f44336; 
+    color: white; 
+    padding: 6px 6px; /* Ajusta el tamaño del padding según sea necesario */
+    text-decoration: none; 
+    border-radius: 4px;
+}
+
+.btn-serve{
+  background-color: var(--color-warning); 
+  color: white !important; 
+  padding: 6px 6px; /* Ajusta el tamaño del padding según sea necesario */
+  text-decoration: none; 
+  border-radius: 4px;
+}
+
+.search {
+    display: flex;
+    align-items: center;
+    width: 250px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    padding: 5px;
+    margin-bottom: 5px;
+  }
+  
+  .search-product {
+    border: none;
+    width: 90%;
+    padding: 5px;
+  }
+
+  .search-category{
+    border: none;
+    width: 90%;
+    padding: 5px;
+  }
+
+  .search-order {
+    border: none;
+    width: 90%;
+    padding: 5px;
+  }
+  
+
+ 
+
+  
