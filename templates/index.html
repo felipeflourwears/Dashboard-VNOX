@@ -25,7 +25,7 @@
         {% include 'sidebar.html' %}
          <!--====================END ASIDE ====================-->
         <main>
-            <h1>Dashboard</h1>
+            <h1>VNOX</h1>
            
             <div class="date">
                 <!-- <input type="date"> -->
@@ -36,32 +36,53 @@
 
              <!--==================== END INSIGHTS ====================-->
              <!--=== BEGIN ORDERS ====-->
-            <div class="recent-orders">
-                <h2>Recent Orders</h2>
+             <div class="recent-orders">
+                <h2>Players</h2>
                 <table>
                     <thead>
                         <tr>
-                            <th>Table</th>
-                            <th>NameFood</th>
-                            <th>Quantity</th>
-                            <th>Description</th>
-                            <th>Date</th>
-                            <th>Total</th>
-                            <th>Served</th>
+                            <th>ID</th>
+                            <th>Name Player</th>
+                            <th>SN</th>
+                            <th>Version</th>
+                            <th>IP</th>
+                            <th>Online Status</th>
+                            <th>Last Online Time</th>
                             <th>Options</th>   
                         </tr>
                     </thead>
-                    <tbody id="order-table-body">                  
+                    <tbody id="order-table-body">
+                        {% for player in players_info %}
+                            <tr>
+                                <td>{{ player['playerId'] }}</td>
+                                <td>{{ player['name'] }}</td>
+                                <td>{{ player['sn'] }}</td>
+                                <td>{{ player['version'] }}</td>
+                                <td>{{ player['ip'] }}</td>
+                                <td>
+                                    {% if player['onlineStatus'] == 1 %}
+                                        <span class="circle-green"></span>
+                                    {% else %}
+                                        <span class="circle-red"></span>
+                                    {% endif %}
+                                </td>
+                                <td>{{ player['lastOnlineTime'] }}</td>
+                                <td>
+                                    <a class="btn-edit" href="#" style="color: white;">Edit</a>
+                                    <a class="btn-delete" href="{{ url_for('reset_player', player_id=player['playerId']) }}" style="color: white;" onclick="confirmDelete(event)">Reset</a>
+                                </td>
+                            </tr>
+                        {% endfor %}
                     </tbody>
                 </table>    
             </div>
-            <div class="pagination">
+            <!-- <div class="pagination">
                 <ul id="pagination-list">
                     <li class="page-item" id="page-previous">
                         <a href="#" class="page-link">Previous</a>
                     </li>
                 </ul>
-            </div>
+            </div> -->
             
         </main>
          <!--==================== END MAIN ====================-->
@@ -70,10 +91,10 @@
                 <button id="menu-btn">
                     <span class="material-icons-sharp">menu</span>
                 </button>
-                <div class="theme-toggler">
+                <!-- <div class="theme-toggler">
                     <span class="material-icons-sharp active">light_mode</span>
                     <span class="material-icons-sharp">dark_mode</span>
-                </div>
+                </div> -->
                 <div class="profile">
                     <div class="info">
                         <p>Hey, <b>User</b></p>
@@ -85,12 +106,12 @@
                     <div class="profile-photo">
                         <img src="{{ url_for('static', filename='img/profile.png') }}">
                     </div>
-                    <div class="logout">
+                   <!--  <div class="logout">
                         <a href="#">
                             <span class="material-icons-sharp">logout</span>
                             <h3>Logout</h3>
                         </a>
-                    </div>
+                    </div> -->
                 </div>
             </div>
              <!--====== END TOP ======-->
@@ -103,7 +124,15 @@
         </div>   
     </div>
     <script src="{{ url_for('static', filename='js/index.js') }}"></script>
-    <script src="{{ url_for('static', filename='js/popups.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/home.js') }}"></script>
+
+    {% if reset_status == 'reset' %}
+    <script>
+        console.log("Hello lf")
+        popupSuccess('Reset correctly');
+        console.log("Hello lf")
+    </script>
+    {% endif %}
  
 </body>
 </html>

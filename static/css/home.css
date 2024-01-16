@@ -66,4 +66,21 @@
     color: #000 !important; /* Agregar color de texto para la página inactiva */
 }
 
+.circle-green {
+    display: inline-block;
+    width: 20px;
+    height: 20px;
+    border-radius: 50%;
+    background-color: green;
+}
+
+.circle-red {
+    display: inline-block;
+    width: 20px;
+    height: 20px;
+    border-radius: 50%;
+    background-color: red;
+}
+
+
 
