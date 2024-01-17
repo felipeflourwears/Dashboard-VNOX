@@ -51,18 +51,32 @@ def reset_player(player_id):
         print(f"Error resetting player: {str(e)}")
         # Aquí puedes agregar un manejo más específico del error si es necesario
         return render_template('404.html', error_message=str(e))
+    
+
+@app.route('/send_report')
+def send_report():
+    try:
+        ModelActions.send_report()
+        # Redirigir al usuario a la ruta principal después de resetear el player
+        print("Dentro del try")
+        return redirect(url_for('index', sendreport='sendreport'))
+    except Exception as e:
+        print(f"Error resetting player: {str(e)}")
+        # Aquí puedes agregar un manejo más específico del error si es necesario
+        return render_template('404.html', error_message=str(e))
 
 
 
 @app.route('/')
 def index():
     token = obtener_token()
-    get_players = ModelToken.use_token_getPlayerList(token)
-    print(get_players)
+    get_players = ModelActions.getPlayerList(token)
+    #print(get_players)
     num_players = len(get_players)
     print(f"El número total de players es: {num_players}")
     reset_status = request.args.get('reset', None)
-    return render_template('index.html', players_info=get_players, reset_status=reset_status)
+    send_report_status = request.args.get('sendreport', None)
+    return render_template('index.html', players_info=get_players, reset_status=reset_status, send_report_status = send_report_status)
 
 if __name__ == '__main__':
     #app.run(host="0.0.0.0", port=puerto)

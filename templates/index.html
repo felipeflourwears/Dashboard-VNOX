@@ -133,6 +133,14 @@
         console.log("Hello lf")
     </script>
     {% endif %}
+
+    {% if send_report_status == 'sendreport' %}
+    <script>
+        console.log("Hello Mail")
+        popupSuccess('Send Report correctly');
+        console.log("Hello Mail")
+    </script>
+    {% endif %}
  
 </body>
 </html>
