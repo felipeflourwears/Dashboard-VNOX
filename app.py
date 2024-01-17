@@ -65,6 +65,18 @@ def send_report():
         # Aquí puedes agregar un manejo más específico del error si es necesario
         return render_template('404.html', error_message=str(e))
 
+@app.route('/edit_player/')
+def edit_player():
+    # Obtener los parámetros de la URL
+    player_id = request.args.get('player_id')
+    ip = request.args.get('ip')
+    name = request.args.get('name')
+
+    # Imprimir los valores (puedes eliminar esto en producción)
+    print(f"Player ID: {player_id}, IP: {ip}, Name: {name}")
+
+    # Renderizar la plantilla con los valores
+    return render_template('edit-player.html', player_id=player_id, ip=ip, name=name)
 
 
 @app.route('/')

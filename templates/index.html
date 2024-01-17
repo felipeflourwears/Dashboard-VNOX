@@ -68,7 +68,7 @@
                                 </td>
                                 <td>{{ player['lastOnlineTime'] }}</td>
                                 <td>
-                                    <a class="btn-edit" href="#" style="color: white;">Edit</a>
+                                    <a class="btn-edit" href="{{ url_for('edit_player', player_id=player['playerId'], ip=player['ip'], name=player['name']) }}" style="color: white;">Edit</a>
                                     <a class="btn-delete" href="{{ url_for('reset_player', player_id=player['playerId']) }}" style="color: white;" onclick="confirmDelete(event)">Reset</a>
                                 </td>
                             </tr>

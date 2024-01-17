@@ -31,7 +31,7 @@ def get_token():
         print(response.text)  # Imprime el contenido de la respuesta en caso de error
         return None  # En caso de error, devuelve None o maneja el error según tus necesidades
 
-def upload_media_player(token, player_id):
+def upload_media_player(token, player_id, link, md5c, typemedia, file_size):
     api_host = 'openapi-us.vnnox.com'
     new_api_endpoint = '/v1/player/program/normal'
 
@@ -48,28 +48,24 @@ def upload_media_player(token, player_id):
     # Parámetros a enviar en el cuerpo de la solicitud
     request_parameters = {
         "playerIds": [
-            "13630ecc0741dd8246483c89bec9be6e"
+            player_id
         ],
         "pages":[
             {
                 "name":"a-page",
                 "widgets":[
-                    {
-                        "zIndex":1,
-                        "type":"PICTURE",
-                        "size":1022978, 
-                        "md5":"0c80b5deb89d607133d445181730ff1d",
-                        "duration":10000,
-                        "url":"https://retailmibeex.net/images/cafe2.png",
+                        {
+                        "zIndex":2,
+                        "type":"VIDEO",
+                        "size": file_size,
+                        "md5": md5c,
+                        "duration":0,
+                        "url": link,
                         "layout":{
                             "x":"0%",
                             "y":"0%",
-                            "width":"100%",
-                            "height":"100%"
-                        },
-                        "inAnimation":{
-                            "type":"NONE",
-                            "duration":1000
+                            "width":"20%",
+                            "height":"20%"
                         }
                     }
                 ]
@@ -94,8 +90,30 @@ def upload_media_player(token, player_id):
 
 
 # Obtener el token llamando a la función
-#token = get_token()
-#print(token)
-token = 'd73741d34d3af228fca07b607bb07fe4'
+token = get_token()
+print(token)
+#token = 'd73741d34d3af228fca07b607bb07fe4'
 id = "13630ecc0741dd8246483c89bec9be6e"
-upload_media_player(token, id)
+#upload_media_player(token, id)
+
+
+
+typemedia = 'VIDEO'
+#typemedia = 'PICTURE'
+
+#cmd5 = "0c80b5deb89d607133d445181730ff1d"
+#url= "https://retailmibeex.net/images/cafe2.png"
+
+url = 'https://mediapopa.s3.amazonaws.com/test.mp4'
+cmd5 = '7e3e87a3b6f72eb302e062f3e11583d0'
+
+#url= "https://retailmibeex.net/images/main.mp4"
+#cmd5 = "cfd10d03d0cf4a85b56ac163b662b6ca"
+
+response = requests.head(url)
+file_size = int(response.headers.get('content-length', 0))
+
+#upload_media_player(token, id, awslink, aws_md5)
+upload_media_player(token, id, url, cmd5, typemedia, file_size)
+
+

@@ -5,7 +5,7 @@ def get_token():
     # URL del endpoint para enviar la solicitud POST
     url = "https://openapi-us.vnnox.com/v1/oauth/token"
     # Token de autorización para la solicitud POST
-    token = "h7vr53"
+    token = "s3l8j5"
     # Datos del cuerpo de la solicitud
     data = {
         'username': 'popatelier',
