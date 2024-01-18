@@ -48,6 +48,7 @@ def upload_media_player(token, player_id, link):
 
     response = requests.head(url)
     file_size = int(response.headers.get('content-length', 0))
+    print("Size: ", file_size)
 
     # Descargar el archivo
     response_url = requests.get(url)
@@ -55,6 +56,7 @@ def upload_media_player(token, player_id, link):
 
     # Calcular el hash MD5
     md5_hash = hashlib.md5(content).hexdigest()
+    print("MD5: ", md5_hash)
 
     # Validar el tipo de medio según la extensión del enlace
     if link.endswith('.mp4'):
@@ -158,7 +160,7 @@ typemedia = 'VIDEO'
 #url = 'https://mediapopa.s3.amazonaws.com/test.mp4'
 
 
-url= "https://retailmibeex.net/images/main.mp4"
+url= "https://mediapopa.s3.amazonaws.com/hot.mp4"
 
 
 

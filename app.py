@@ -81,10 +81,10 @@ def edit_player():
     player_id = request.args.get('player_id')
     ip = request.args.get('ip')
     name = request.args.get('name')
-
+    token = obtener_token()
+    ModelActions.get_screnn_player(token, player_id)
     # Imprimir los valores (puedes eliminar esto en producción)
     print(f"Player ID: {player_id}, IP: {ip}, Name: {name}")
-
     # Renderizar la plantilla con los valores
     return render_template('edit-player.html', player_id=player_id, ip=ip, name=name)
 
@@ -124,6 +124,25 @@ def submit_form_media():
                 print(f"Error al subir el archivo a AWS: {e}")
 
     return redirect(url_for('index', sendreport='sendreport'))
+
+
+@app.route('/simulate_api')
+def simulate_api():
+    token = obtener_token()
+    get_players = ModelActions.getPlayerList(token)
+    print(get_players)
+    return render_template('simulate-api.html', players_info=get_players)
+
+@app.route('/submit_form_simulate_api', methods=['POST'])
+def submit_form_simulate_api():
+    token = obtener_token()
+    if request.method == 'POST':
+        selected_player_id = request.form.get('playerId')
+        temperature_variant = request.form.get('temperature')
+        print(f"Selected Player ID: {selected_player_id}")
+        print(f"Temperature Variant: {temperature_variant}")
+        ModelActions.upload_media_player_simulate(token, selected_player_id, temperature_variant)
+    return redirect(url_for('index'))
 
 
 @app.route('/')

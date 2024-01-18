@@ -11,6 +11,7 @@
     <link rel="icon" href="{{ url_for('static', filename='img/logo.png') }}" type="image/png">
     <link rel="stylesheet" href="{{ url_for('static', filename='css/styles.css') }}">
     <link rel="stylesheet" href="{{ url_for('static', filename='css/form.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/simulate.css') }}">
 </head>
 <body>
 
@@ -19,29 +20,26 @@
         {% include 'sidebar.html' %}
          <!--====================END ASIDE ====================-->
         <main>
-            <h1>Edit Player</h1>
+            <h1>Simulate API</h1>
 
              <!--==================== END INSIGHTS ====================-->
              <!--=== BEGIN ORDERS ====-->
             <div class="recent-orders">
-                <h2>Player</h2>
-                <form action="/submit_form_media" method="post" class="custom-form" enctype="multipart/form-data">
-                    <label for="nameCategory">Name:</label><br>
-                    <input type="text" id="nameCategory" name="nameCategory" value="{{ name }}" readonly><br>
-                    
-                    <label for="playerId">Player ID:</label><br>
-                    <input type="text" id="playerId" name="playerId" value="{{ player_id }}" readonly><br>
+                <h2>Change content</h2>
+                <form action="/submit_form_simulate_api" method="post" class="custom-form" enctype="multipart/form-data">
+                    <label for="playerSelect" id="selectLabel">Select Player:</label>
+                    <select id="playerSelect" name="playerId">
+                        {% for player in players_info %}
+                            <option value="{{ player['playerId'] }}">{{ player['name'] }}</option>
+                        {% endfor %}
+                    </select><br><br>
                 
-                    <label for="ip">IP:</label><br>
-                    <input type="text" id="ip" name="ip" value="{{ ip }}" readonly><br>
-
-                    <div class="file-input">
-                        <label for="imageUpload" class="file-label">Choose Media:</label>
-                        <input type="file" id="imageUpload" name="imageUpload" class="inputfile">
-                    </div><br>
-                    
-                    <input type="submit" value="Update" class="submit-button">
-                </form>                                    
+                    <label for="temperature" id="temperatureLabel">Temperature:</label>
+                    <input type="range" id="temperature" name="temperature" min="-50" max="50" step="1" value="50" oninput="updateTemperatureValue(this.value)">
+                    <output for="temperature" id="temperatureValue">50</output> °C
+                    <br><br>
+                    <input type="submit" value="Send" class="submit-button">
+                </form>                                
             </div>
         </main>
          <!--==================== END MAIN ====================-->
@@ -77,6 +75,7 @@
         </div>   
     </div>
     <script src="{{ url_for('static', filename='js/index.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/simulate.js') }}"></script>
 
 
 

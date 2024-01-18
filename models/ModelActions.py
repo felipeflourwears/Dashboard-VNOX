@@ -72,7 +72,7 @@ class ModelActions:
             # Nueva URL y encabezados para la siguiente solicitud
             start_parameter = 0
             #start_parameter = 287
-            count_parameter = 100  # El valor que deseas enviar como parámetro count
+            count_parameter = 5  # El valor que deseas enviar como parámetro count
             new_url = f"https://{api_host}{new_api_endpoint}?count={count_parameter}&start={start_parameter}"
             new_headers = {
                 'username': username,
@@ -250,7 +250,7 @@ class ModelActions:
         api_host = 'openapi-us.vnnox.com'
         new_api_endpoint = '/v1/player/program/normal'
 
-        username = 'popatelier'
+        username = ModelConfig.username_auth()
             
         new_url = f"https://{api_host}{new_api_endpoint}"
         print("URL:", new_url)
@@ -355,5 +355,125 @@ class ModelActions:
             print(f"Error en la nueva solicitud: {new_http_code}")
 
     @classmethod      
-    def get_screen_player(token, player_id, link):
-        return True
+    def get_screnn_player(self, token, player_id):
+        api_host = 'openapi-us.vnnox.com'
+        new_api_endpoint = '/v1/player/control/screenshot'
+        received = 'https://retailmibeex.net/recibe.php'
+
+        username = ModelConfig.username_auth()
+            
+        new_url = f"https://{api_host}{new_api_endpoint}"
+        print("URL:", new_url)
+        headers = {
+            'username': username,
+            'token': token,
+            'Content-Type': 'application/json'  # Asegúrate de incluir el tipo de contenido JSON en los headers
+        }
+
+        # Parámetros a enviar en el cuerpo de la solicitud
+        request_parameters = {
+            "playerIds": [player_id],
+            "noticeUrl": received
+        }
+
+        # Realizar la nueva solicitud con método POST
+        new_response = requests.post(new_url, headers=headers, json=request_parameters)
+        print(new_response)
+
+        # Obtener información sobre la nueva solicitud
+        new_http_code = new_response.status_code
+
+        # Manejar la respuesta de la nueva solicitud
+        if new_http_code == 200:
+            # La solicitud fue exitosa (código de estado 200)
+            # Decodificar la respuesta JSON de la nueva API
+            new_data = new_response.json()
+            print(new_data)
+        else:
+            print(f"Error en la nueva solicitud: {new_http_code}")
+
+    @classmethod      
+    def upload_media_player_simulate(self, token, player_id, temp):
+        temperature_variant = int(temp)
+        api_host = 'openapi-us.vnnox.com'
+        new_api_endpoint = '/v1/player/program/normal'
+
+        username = ModelConfig.username_auth()
+            
+        new_url = f"https://{api_host}{new_api_endpoint}"
+        print("URL:", new_url)
+        headers = {
+            'username': username,
+            'token': token,
+            'Content-Type': 'application/json'  # Asegúrate de incluir el tipo de contenido JSON en los headers
+        }
+
+        if temperature_variant > 0:
+            request_parameters = {
+                    "playerIds": [
+                        player_id
+                    ],
+                    "pages":[
+                    {
+                        "name":"a-page",
+                        "widgets":[
+                            {
+                            "zIndex":2,
+                            "type":"VIDEO",
+                            "size": 23507832,
+                            "md5": "b353959bad9d2b3decefeeeed60f6546",
+                            "duration":0,
+                            "url": "https://mediapopa.s3.amazonaws.com/hot.mp4",
+                                "layout":{
+                                    "x":"0%",
+                                    "y":"0%",
+                                    "width":"100%",
+                                    "height":"100%"
+                                }
+                            }
+                        ]
+                    }
+                ]
+            }
+        else: 
+            request_parameters = {
+                    "playerIds": [
+                        player_id
+                    ],
+                    "pages":[
+                    {
+                        "name":"a-page",
+                        "widgets":[
+                            {
+                            "zIndex":2,
+                            "type":"VIDEO",
+                            "size": 24440147,
+                            "md5": "c156cf0dac971ae49dd5668b345f7fc0",
+                            "duration":0,
+                            "url": "https://mediapopa.s3.amazonaws.com/frio.mp4",
+                                "layout":{
+                                    "x":"0%",
+                                    "y":"0%",
+                                    "width":"100%",
+                                    "height":"100%"
+                                }
+                            }
+                        ]
+                    }
+                ]
+            }
+        # Realizar la nueva solicitud con método POST
+        new_response = requests.post(new_url, headers=headers, json=request_parameters)
+        print(new_response)
+
+        # Obtener información sobre la nueva solicitud
+        new_http_code = new_response.status_code
+
+        # Manejar la respuesta de la nueva solicitud
+        if new_http_code == 200:
+            # La solicitud fue exitosa (código de estado 200)
+            # Decodificar la respuesta JSON de la nueva API
+            new_data = new_response.json()
+            print("Upload Success Player:", new_data)
+        else:
+            print(f"Error en la nueva solicitud: {new_http_code}")
