@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PopAtelier</title>
+    
+    <!--Material CDN-->
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons+Sharp" rel="stylesheet">
+    <!--Styles-->
+    <link rel="icon" href="{{ url_for('static', filename='img/logo.png') }}" type="image/png">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/styles.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/form.css') }}">
+</head>
+<body>
+
+    <div class="container">
+        <!--====================BEGIN ASIDE ====================-->
+        {% include 'sidebar.html' %}
+         <!--====================END ASIDE ====================-->
+        <main>
+            <h1>Edit Player</h1>
+
+             <!--==================== END INSIGHTS ====================-->
+             <!--=== BEGIN ORDERS ====-->
+            <div class="recent-orders">
+                <h2>Player</h2>
+                <form action="/submit_form_media" method="post" class="custom-form" enctype="multipart/form-data">
+                    <label for="nameCategory">Name:</label><br>
+                    <input type="text" id="nameCategory" name="nameCategory" value="{{ name }}" readonly><br>
+                    
+                    <label for="playerId">Player ID:</label><br>
+                    <input type="text" id="playerId" name="playerId" value="{{ player_id }}" readonly><br>
+                
+                    <label for="ip">IP:</label><br>
+                    <input type="text" id="ip" name="ip" value="{{ ip }}" readonly><br>
+
+                    <div class="file-input">
+                        <label for="imageUpload" class="file-label">Choose Media:</label>
+                        <input type="file" id="imageUpload" name="imageUpload" class="inputfile">
+                    </div><br>
+                    
+                    <input type="submit" value="Update" class="submit-button">
+                </form>                                    
+            </div>
+        </main>
+         <!--==================== END MAIN ====================-->
+        <div class="right">
+            <div class="top">
+                <button id="menu-btn">
+                    <span class="material-icons-sharp">menu</span>
+                </button>
+                <div class="theme-toggler">
+                    <span class="material-icons-sharp active">light_mode</span>
+                    <span class="material-icons-sharp">dark_mode</span>
+                </div>
+                <div class="profile">
+                    <div class="info">
+                        <p>Hey, <b>User</b></p>
+                        <p style="display: none;">Mode: <b id="current-user-mode">Administrator</b></p>
+                        <small class="text-muted">
+                                Admin
+                        </small>
+                    </div>
+                    <div class="profile-photo">
+                        <img src="{{ url_for('static', filename='img/profile.png') }}">
+                    </div>
+                </div>
+            </div>
+             <!--====== END TOP ======-->
+             
+            {% include 'recent-updates.html' %}
+
+            <!--==================== END RECENT UPDATES ====================-->
+
+            
+        </div>   
+    </div>
+    <script src="{{ url_for('static', filename='js/index.js') }}"></script>
+
+
+
+</body>
+</html>

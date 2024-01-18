@@ -134,6 +134,14 @@
     </script>
     {% endif %}
 
+    {% if reset_status == 'change' %}
+    <script>
+        console.log("Hello lf")
+        popupSuccess('Change Content correctly');
+        console.log("Hello lf")
+    </script>
+    {% endif %}
+
     {% if send_report_status == 'sendreport' %}
     <script>
         console.log("Hello Mail")

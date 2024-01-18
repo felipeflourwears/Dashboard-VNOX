@@ -1,7 +1,10 @@
 import json
 import requests
+import boto3
+import os
+import hashlib
 
-
+from werkzeug.utils import secure_filename
 from .ModelConfig import ModelConfig
 
 class ModelActions:
@@ -204,3 +207,153 @@ class ModelActions:
             print("Exitoso")
         else:
             print(f"Error en la nueva solicitud. Código de estado: {response.status_code}")
+
+    @classmethod
+    def upload_media_to_s3(self, file, media_type, id_player):
+        try:
+            s3_client = boto3.client(
+                's3',
+                aws_access_key_id=os.environ.get('ENV_AWS_ACCESS_KEY_ID'),
+                aws_secret_access_key=os.environ.get('ENV_AWS_SECRET_ACCESS_KEY'),
+                region_name=os.environ.get('ENV_AWS_REGION_NAME')
+            )
+
+            # Obtener el nombre de archivo seguro
+            filename = secure_filename(file.filename)
+
+            # Especifica el parámetro 'Key' en la llamada a put_object
+            if media_type == 'image':
+                key = f'{id_player}.png'
+            elif media_type == 'video':
+                key = f'{id_player}.mp4'
+            else:
+                raise ValueError("Tipo de medio no compatible.")
+
+            # Lee los datos del archivo
+            file_data = file.read()
+
+            # Sube el archivo a S3
+            s3_client.put_object(
+                Bucket=os.environ.get('ENV_AWS_S3_BUCKET_NAME'),
+                Key=key,
+                Body=file_data
+            )
+
+            print(f"Archivo {key} subido exitosamente.")
+
+        except Exception as e:
+            # Eleva la excepción para que pueda ser manejada externamente
+            raise ValueError(f"Error al subir el archivo a AWS S3: {e}")
+    
+    @classmethod      
+    def upload_media_player(self, token, player_id, link):
+        api_host = 'openapi-us.vnnox.com'
+        new_api_endpoint = '/v1/player/program/normal'
+
+        username = 'popatelier'
+            
+        new_url = f"https://{api_host}{new_api_endpoint}"
+        print("URL:", new_url)
+        headers = {
+            'username': username,
+            'token': token,
+            'Content-Type': 'application/json'  # Asegúrate de incluir el tipo de contenido JSON en los headers
+        }
+
+        response = requests.head(link)
+        file_size = int(response.headers.get('content-length', 0))
+
+        # Descargar el archivo
+        response_url = requests.get(link)
+        content = response_url.content
+
+        # Calcular el hash MD5
+        md5_hash = hashlib.md5(content).hexdigest()
+
+        # Validar el tipo de medio según la extensión del enlace
+        if link.endswith('.mp4'):
+            typemedia = "VIDEO"
+        elif link.endswith(('.jpg', '.png', '.jpeg')):
+            typemedia = "PICTURE"
+        else:
+            print("Extensión de archivo no compatible")
+            return
+
+        # Parámetros a enviar en el cuerpo de la solicitud
+        if typemedia=="PICTURE":
+            request_parameters = {
+                "playerIds": [
+                    player_id
+                ],
+                "pages":[
+                    {
+                        "name":"a-page",
+                        "widgets":[
+                            {
+                                "zIndex":1,
+                                "type":"PICTURE",
+                                "size": file_size,
+                                "md5": md5_hash,
+                                "duration":10000,
+                                "url": link,
+                                "layout":{
+                                    "x":"0%",
+                                    "y":"0%",
+                                    "width":"100%",
+                                    "height":"100%"
+                                },
+                                "inAnimation":{
+                                    "type":"NONE",
+                                    "duration":1000
+                                }
+                            }
+                        ]
+                    }
+                ]
+            }
+        else:
+            request_parameters = {
+                "playerIds": [
+                    player_id
+                ],
+                "pages":[
+                    {
+                        "name":"a-page",
+                        "widgets":[
+                                {
+                                "zIndex":2,
+                                "type":"VIDEO",
+                                "size": file_size,
+                                "md5": md5_hash,
+                                "duration":0,
+                                "url": link,
+                                "layout":{
+                                    "x":"0%",
+                                    "y":"0%",
+                                    "width":"100%",
+                                    "height":"100%"
+                                }
+                            }
+                        ]
+                    }
+                ]
+            }
+        # Realizar la nueva solicitud con método POST
+        new_response = requests.post(new_url, headers=headers, json=request_parameters)
+        print(new_response)
+
+        # Obtener información sobre la nueva solicitud
+        new_http_code = new_response.status_code
+
+        # Manejar la respuesta de la nueva solicitud
+        if new_http_code == 200:
+            # La solicitud fue exitosa (código de estado 200)
+            # Decodificar la respuesta JSON de la nueva API
+            new_data = new_response.json()
+            print("Upload Success Player:", new_data)
+        else:
+            print(f"Error en la nueva solicitud: {new_http_code}")
+
+    @classmethod      
+    def get_screen_player(token, player_id, link):
+        return True

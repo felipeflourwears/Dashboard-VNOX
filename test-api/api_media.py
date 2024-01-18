@@ -1,5 +1,6 @@
 import requests
 import json
+import hashlib
 
 def get_token():
     # URL del endpoint para enviar la solicitud POST
@@ -31,7 +32,7 @@ def get_token():
         print(response.text)  # Imprime el contenido de la respuesta en caso de error
         return None  # En caso de error, devuelve None o maneja el error según tus necesidades
 
-def upload_media_player(token, player_id, link, md5c, typemedia, file_size):
+def upload_media_player(token, player_id, link):
     api_host = 'openapi-us.vnnox.com'
     new_api_endpoint = '/v1/player/program/normal'
 
@@ -45,33 +46,84 @@ def upload_media_player(token, player_id, link, md5c, typemedia, file_size):
         'Content-Type': 'application/json'  # Asegúrate de incluir el tipo de contenido JSON en los headers
     }
 
+    response = requests.head(url)
+    file_size = int(response.headers.get('content-length', 0))
+
+    # Descargar el archivo
+    response_url = requests.get(url)
+    content = response_url.content
+
+    # Calcular el hash MD5
+    md5_hash = hashlib.md5(content).hexdigest()
+
+    # Validar el tipo de medio según la extensión del enlace
+    if link.endswith('.mp4'):
+        typemedia = "VIDEO"
+    elif link.endswith(('.jpg', '.png', '.jpeg')):
+        typemedia = "PICTURE"
+    else:
+        print("Extensión de archivo no compatible")
+        return
+
     # Parámetros a enviar en el cuerpo de la solicitud
-    request_parameters = {
-        "playerIds": [
-            player_id
-        ],
-        "pages":[
-            {
-                "name":"a-page",
-                "widgets":[
+    if typemedia=="PICTURE":
+        request_parameters = {
+            "playerIds": [
+                player_id
+            ],
+            "pages":[
+                {
+                    "name":"a-page",
+                    "widgets":[
                         {
-                        "zIndex":2,
-                        "type":"VIDEO",
-                        "size": file_size,
-                        "md5": md5c,
-                        "duration":0,
-                        "url": link,
-                        "layout":{
-                            "x":"0%",
-                            "y":"0%",
-                            "width":"20%",
-                            "height":"20%"
+                            "zIndex":1,
+                            "type":"PICTURE",
+                            "size": file_size,
+                            "md5": md5_hash,
+                            "duration":10000,
+                            "url": link,
+                            "layout":{
+                                "x":"0%",
+                                "y":"0%",
+                                "width":"100%",
+                                "height":"100%"
+                            },
+                            "inAnimation":{
+                                "type":"NONE",
+                                "duration":1000
+                            }
                         }
-                    }
-                ]
-            }
-        ]
-    }
+                    ]
+                }
+            ]
+        }
+    else:
+        request_parameters = {
+            "playerIds": [
+                player_id
+            ],
+            "pages":[
+                {
+                    "name":"a-page",
+                    "widgets":[
+                            {
+                            "zIndex":2,
+                            "type":"VIDEO",
+                            "size": file_size,
+                            "md5": md5_hash,
+                            "duration":0,
+                            "url": link,
+                            "layout":{
+                                "x":"0%",
+                                "y":"0%",
+                                "width":"100%",
+                                "height":"100%"
+                            }
+                        }
+                    ]
+                }
+            ]
+        }
     # Realizar la nueva solicitud con método POST
     new_response = requests.post(new_url, headers=headers, json=request_parameters)
     print(new_response)
@@ -93,7 +145,7 @@ def upload_media_player(token, player_id, link, md5c, typemedia, file_size):
 token = get_token()
 print(token)
 #token = 'd73741d34d3af228fca07b607bb07fe4'
-id = "13630ecc0741dd8246483c89bec9be6e"
+id = "e711e1b488714b0cae07ab873ab42f54"
 #upload_media_player(token, id)
 
 
@@ -101,19 +153,17 @@ id = "13630ecc0741dd8246483c89bec9be6e"
 typemedia = 'VIDEO'
 #typemedia = 'PICTURE'
 
-#cmd5 = "0c80b5deb89d607133d445181730ff1d"
 #url= "https://retailmibeex.net/images/cafe2.png"
 
-url = 'https://mediapopa.s3.amazonaws.com/test.mp4'
-cmd5 = '7e3e87a3b6f72eb302e062f3e11583d0'
+#url = 'https://mediapopa.s3.amazonaws.com/test.mp4'
 
-#url= "https://retailmibeex.net/images/main.mp4"
-#cmd5 = "cfd10d03d0cf4a85b56ac163b662b6ca"
 
-response = requests.head(url)
-file_size = int(response.headers.get('content-length', 0))
+url= "https://retailmibeex.net/images/main.mp4"
+
+
+
 
 #upload_media_player(token, id, awslink, aws_md5)
-upload_media_player(token, id, url, cmd5, typemedia, file_size)
+upload_media_player(token, id, url)
 
 

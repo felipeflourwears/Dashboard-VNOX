@@ -1,3 +1,9 @@
+## Packages
+```bash
+pip install boto3
+pip install python-dotenv
+```
+
 ## Access to server
 ```bash
 ssh -i key.pem ubuntu@44.209.162.29

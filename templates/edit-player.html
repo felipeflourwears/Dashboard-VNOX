@@ -25,7 +25,7 @@
              <!--=== BEGIN ORDERS ====-->
             <div class="recent-orders">
                 <h2>Player</h2>
-                <form action="#" method="post" class="custom-form" enctype="multipart/form-data">
+                <form action="/submit_form_media" method="post" class="custom-form" enctype="multipart/form-data">
                     <label for="nameCategory">Name:</label><br>
                     <input type="text" id="nameCategory" name="nameCategory" value="{{ name }}" readonly><br>
                     
@@ -34,6 +34,11 @@
                 
                     <label for="ip">IP:</label><br>
                     <input type="text" id="ip" name="ip" value="{{ ip }}" readonly><br>
+
+                    <div class="file-input">
+                        <label for="imageUpload" class="file-label">Choose Media:</label>
+                        <input type="file" id="imageUpload" name="imageUpload" class="inputfile">
+                    </div><br>
                     
                     <input type="submit" value="Update" class="submit-button">
                 </form>                                    

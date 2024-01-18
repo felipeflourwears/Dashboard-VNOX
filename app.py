@@ -3,8 +3,11 @@ from flask import Flask, render_template, request, redirect, url_for, flash, jso
 #Instances Models
 from models.ModelToken import ModelToken
 from models.ModelActions import ModelActions
+from werkzeug.utils import secure_filename
+from dotenv import load_dotenv
 
 import time
+import os
 
 # Variables globales para almacenar el token y su tiempo de expiración
 token_info = {
@@ -14,7 +17,14 @@ token_info = {
 
 app = Flask(__name__)
 model_token = ModelToken() 
-model_actions = ModelActions() 
+model_actions = ModelActions()
+load_dotenv()
+
+
+ALLOWED_EXTENSIONS = {'png', 'jpg', 'jpeg', 'mp4'}
+
+def allowed_file(filename):
+    return '.' in filename and filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
 
 
 def obtener_token():
@@ -46,7 +56,7 @@ def reset_player(player_id):
         print(f"Player reset successfully: {player_id}")
 
         # Redirigir al usuario a la ruta principal después de resetear el player
-        return redirect(url_for('index', reset='reset'))
+        return redirect(url_for('index', reset='change'))
     except Exception as e:
         print(f"Error resetting player: {str(e)}")
         # Aquí puedes agregar un manejo más específico del error si es necesario
@@ -78,6 +88,43 @@ def edit_player():
     # Renderizar la plantilla con los valores
     return render_template('edit-player.html', player_id=player_id, ip=ip, name=name)
 
+@app.route('/submit_form_media', methods=['POST'])
+def submit_form_media():
+    player_id = request.form.get('playerId')
+    if 'imageUpload' in request.files:
+        file = request.files['imageUpload']
+        print(file)
+        
+        if file and allowed_file(file.filename):
+            try:
+                filename = secure_filename(file.filename)
+                print("Filename: ", filename)
+                media_type = 'image' if filename.lower().endswith(('.png', '.jpg', '.jpeg')) else 'video'
+                print("Type: ", media_type)
+                
+                # Utiliza la función de carga a S3
+                ModelActions.upload_media_to_s3(file, media_type, player_id)
+                
+                if media_type == 'image':
+                    # Obtener la extensión de la imagen
+                    extension = filename.split('.')[-1].lower()
+                    # Crear el enlace dinámico para imágenes
+                    link = f'https://mediapopa.s3.amazonaws.com/{player_id}.{extension}'
+                else:
+                    # Enlace para videos
+                    link = f'https://mediapopa.s3.amazonaws.com/{player_id}.mp4'
+
+                print("URL: ", link)
+                
+                token = obtener_token()  # Asegúrate de tener definida la función obtener_token()
+                ModelActions.upload_media_player(token, player_id, link)
+
+                return redirect(url_for('index'))
+            except Exception as e:
+                print(f"Error al subir el archivo a AWS: {e}")
+
+    return redirect(url_for('index', sendreport='sendreport'))
+
 
 @app.route('/')
 def index():
@@ -85,7 +132,6 @@ def index():
     get_players = ModelActions.getPlayerList(token)
     #print(get_players)
     num_players = len(get_players)
-    print(f"El número total de players es: {num_players}")
     reset_status = request.args.get('reset', None)
     send_report_status = request.args.get('sendreport', None)
     return render_template('index.html', players_info=get_players, reset_status=reset_status, send_report_status = send_report_status)
