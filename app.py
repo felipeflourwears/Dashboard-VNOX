@@ -8,6 +8,8 @@ from dotenv import load_dotenv
 
 import time
 import os
+import string
+import random
 
 # Variables globales para almacenar el token y su tiempo de expiración
 token_info = {
@@ -81,12 +83,18 @@ def edit_player():
     player_id = request.args.get('player_id')
     ip = request.args.get('ip')
     name = request.args.get('name')
+    
+    # Generar una cadena aleatoria para evitar el almacenamiento en caché
+    random_string = ''.join(random.choices(string.ascii_letters + string.digits, k=8))
+
     token = obtener_token()
     ModelActions.get_screnn_player(token, player_id)
+    
     # Imprimir los valores (puedes eliminar esto en producción)
     print(f"Player ID: {player_id}, IP: {ip}, Name: {name}")
-    # Renderizar la plantilla con los valores
-    return render_template('edit-player.html', player_id=player_id, ip=ip, name=name)
+    
+    # Renderizar la plantilla con los valores y la cadena aleatoria
+    return render_template('edit-player.html', player_id=player_id, ip=ip, name=name, random_string=random_string)
 
 @app.route('/submit_form_media', methods=['POST'])
 def submit_form_media():
