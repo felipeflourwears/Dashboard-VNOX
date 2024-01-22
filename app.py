@@ -157,11 +157,13 @@ def submit_form_simulate_api():
 def index():
     token = obtener_token()
     get_players = ModelActions.getPlayerList(token)
-    #print(get_players)
+    print(get_players)
     num_players = len(get_players)
+    num_online = sum(player['onlineStatus'] == 1 for player in get_players)
+    num_offline = sum(player['onlineStatus'] == 0 for player in get_players)
     reset_status = request.args.get('reset', None)
     send_report_status = request.args.get('sendreport', None)
-    return render_template('index.html', players_info=get_players, reset_status=reset_status, send_report_status = send_report_status)
+    return render_template('index.html', players_info=get_players, reset_status=reset_status, send_report_status = send_report_status, num_players=num_players, num_online=num_online, num_offline=num_offline)
 
 if __name__ == '__main__':
     #app.run(host="0.0.0.0", port=puerto)

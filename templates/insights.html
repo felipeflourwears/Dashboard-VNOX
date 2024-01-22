@@ -4,14 +4,16 @@
         <div class="middle">
             <div class="left">
                 <h3>Total Players</h3>
-                <h1>5,024</h1>
+                <h1>{{ num_players }}</h1>
             </div>
             <div class="progress">
                 <svg>
                     <circle cx="38" cy="38" r="36"></circle>
+                    <circle cx="38" cy="38" r="36" class="active-circle" stroke-dasharray="{{ num_online / num_players * 226.195 }}" stroke-dashoffset="0"></circle>
+                    <circle cx="38" cy="38" r="36" class="offline-circle" stroke-dasharray="{{ num_offline / num_players * 226.195 }}" stroke-dashoffset="{{ num_online / num_players * 226.195 }}"></circle>
                 </svg>
                 <div class="number">
-                    <p>81 online</p>
+                    <p>{{ num_online }} online</p>
                 </div>
             </div>
         </div>
@@ -22,15 +24,17 @@
         <span class="material-icons-sharp">bar_chart</span>
         <div class="middle">
             <div class="left">
-                <h3>Change content</h3>
-                <h1>160</h1>
+                <h3>Online</h3>
+                <h1>{{ num_online }}</h1>
             </div>
             <div class="progress">
                 <svg>
                     <circle cx="38" cy="38" r="36"></circle>
+                    <circle cx="38" cy="38" r="36" class="active-circle" stroke-dasharray="{{ num_online / num_players * 226.195 }}" stroke-dashoffset="0"></circle>
+                    <circle cx="38" cy="38" r="36" class="offline-circle" stroke-dasharray="{{ num_offline / num_players * 226.195 }}" stroke-dashoffset="{{ num_online / num_players * 226.195 }}"></circle>
                 </svg>
                 <div class="number">
-                    <p>62%</p>
+                    <p>{{ num_online / num_players * 100 }}%</p>
                 </div>
             </div>
         </div>
@@ -42,14 +46,16 @@
         <div class="middle">
             <div class="left">
                 <h3>Offline</h3>
-                <h1>4993</h1>
+                <h1>{{ num_offline }}</h1>
             </div>
             <div class="progress">
                 <svg>
                     <circle cx="38" cy="38" r="36"></circle>
+                    <circle cx="38" cy="38" r="36" class="active-circle" stroke-dasharray="{{ num_online / num_players * 226.195 }}" stroke-dashoffset="0"></circle>
+                    <circle cx="38" cy="38" r="36" class="offline-circle" stroke-dasharray="{{ num_offline / num_players * 226.195 }}" stroke-dashoffset="{{ num_online / num_players * 226.195 }}"></circle>
                 </svg>
                 <div class="number">
-                    <p>44%</p>
+                    <p>{{ num_offline / num_players * 100 }}%</p>
                 </div>
             </div>
         </div>
