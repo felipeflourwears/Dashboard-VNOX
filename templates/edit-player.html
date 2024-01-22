@@ -26,17 +26,41 @@
             <div class="recent-orders">
                 <h2>Player</h2>
                 <form action="/submit_form_media" method="post" class="custom-form" enctype="multipart/form-data">
-                    <label for="nameCategory">Name:</label><br>
-                    <input type="text" id="nameCategory" name="nameCategory" value="{{ name }}" readonly><br>
+                    <div style="display: flex; justify-content: space-between; align-items: flex-start;">
+                        <div style="flex: 1;">
+                            <label for="nameCategory">Name:</label><br>
+                            <input type="text" id="nameCategory" name="nameCategory" value="{{ name }}" readonly><br>
+                            
+                            <label for="playerId">Player ID:</label><br>
+                            <input type="text" id="playerId" name="playerId" value="{{ player_id }}" readonly><br>
+                            
+                            <label for="ip">IP:</label><br>
+                            <input type="text" id="ip" name="ip" value="{{ ip }}" readonly><br>
+                        </div>
+                        
+                        <div style="flex: 1; display: flex; flex-direction: column; align-items: center;">
+                            <h2>Store Location</h2>
+                            <div style="display: flex; justify-content: center;">
+                                {% if player_id == 'e711e1b488714b0cae07ab873ab42f54' %}
+                                    <img src="https://retailmibeex.net/images/backlight.jpeg" style="max-width: 60%; max-height: 190px; margin-right: 10px;" height="auto">
+                                    <img src="https://retailmibeex.net/images/showroompop.png" style="max-width: 60%; max-height: 190px;" height="auto">
+                                {% elif player_id == '26cd00f9ecc94f4987ae6e7ae6726684' %}
+                                    <img src="https://retailmibeex.net/images/inline.jpeg" style="max-width: 60%; max-height: 190px; margin-right: 10px;" height="auto">
+                                    <img src="https://retailmibeex.net/images/showroompop.png" style="max-width: 60%; max-height: 190px;" height="auto">
+                                {% elif player_id == '7e82caf5bbe43db71af49a95d79bbd6c' %}
+                                    <img src="https://retailmibeex.net/images/cooler.jpeg" style="max-width: 60%; max-height: 190px; margin-right: 10px;" height="auto">
+                                    <img src="https://retailmibeex.net/images/walmart.png" style="max-width: 60%; max-height: 190px;" height="auto">
+                                {% else %}
+                                    <img src="https://retailmibeex.net/images/notfound.png" style="max-width: 60%; max-height: 190px; margin-right: 10px;" height="auto">
+                                    <img src="https://retailmibeex.net/images/notfound.png" style="max-width: 60%; max-height: 190px;" height="auto">
+                                {% endif %}
+                            </div>
+                        </div>
+                    </div>
                     
-                    <label for="playerId">Player ID:</label><br>
-                    <input type="text" id="playerId" name="playerId" value="{{ player_id }}" readonly><br>
-                
-                    <label for="ip">IP:</label><br>
-                    <input type="text" id="ip" name="ip" value="{{ ip }}" readonly><br>
-                    <h2>Actual Content</h2>
-                    <img src="https://retailmibeex.net/screenPlayers/{{ player_id }}.jpg?random={{ random_string }}" width="600" height="500">
 
+                    <h2>Actual Content</h2>
+                    <img id="imagenJugador" width="600" height="500">
                     <br>
                     <h1>Change Content</h1>
                     <div class="file-input">
@@ -81,8 +105,36 @@
         </div>   
     </div>
     <script src="{{ url_for('static', filename='js/index.js') }}"></script>
-
-
+    <script>
+        function verificarImagen() {
+            // Obtener el valor del campo de entrada con ID "playerId"
+            var playerId = document.getElementById("playerId").value;
+    
+            // Si no hay valor en el campo de entrada, establecer uno predeterminado
+            if (!playerId) {
+                // Puedes generar un ID único aquí o establecer uno predeterminado
+                playerId = '7e82caf5bbe43db71af49a95d79bbd6c';
+            }
+    
+            var img = new Image();
+            img.src = "https://retailmibeex.net/screenPlayers/" + playerId + ".jpg?random=" + Math.random();
+    
+            img.onload = function() {
+                // La imagen original está disponible
+                document.getElementById("imagenJugador").src = img.src;
+            };
+    
+            img.onerror = function() {
+                // La imagen original no está disponible, cambiar a otra imagen
+                document.getElementById("imagenJugador").src = "https://retailmibeex.net/images/notfound.png";
+            };
+        }
+    
+        // Llamada a la función después de que la página se haya cargado
+        window.onload = function() {
+            verificarImagen();
+        }
+    </script>
 
 </body>
 </html>

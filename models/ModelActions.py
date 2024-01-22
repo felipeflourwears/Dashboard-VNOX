@@ -72,7 +72,7 @@ class ModelActions:
             # Nueva URL y encabezados para la siguiente solicitud
             start_parameter = 0
             #start_parameter = 287
-            count_parameter = 5  # El valor que deseas enviar como parámetro count
+            count_parameter = 20  # El valor que deseas enviar como parámetro count
             new_url = f"https://{api_host}{new_api_endpoint}?count={count_parameter}&start={start_parameter}"
             new_headers = {
                 'username': username,
