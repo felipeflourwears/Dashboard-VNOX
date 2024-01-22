@@ -11,8 +11,13 @@
     <link rel="icon" href="{{ url_for('static', filename='img/logo.png') }}" type="image/png">
     <link rel="stylesheet" href="{{ url_for('static', filename='css/styles.css') }}">
     <link rel="stylesheet" href="{{ url_for('static', filename='css/form.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/loader.css') }}">
+    
 </head>
 <body>
+    <div class="loader-container" id="loaderContainer">
+        <div class="loader"></div>
+    </div>
 
     <div class="container">
         <!--====================BEGIN ASIDE ====================-->
@@ -134,6 +139,17 @@
         window.onload = function() {
             verificarImagen();
         }
+    </script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            var loaderContainer = document.getElementById('loaderContainer');
+            var form = document.querySelector('.custom-form');
+    
+            form.addEventListener('submit', function () {
+                // Muestra el loader al enviar el formulario
+                loaderContainer.style.display = 'flex';
+            });
+        });
     </script>
 
 </body>

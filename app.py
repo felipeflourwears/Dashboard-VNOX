@@ -58,7 +58,7 @@ def reset_player(player_id):
         print(f"Player reset successfully: {player_id}")
 
         # Redirigir al usuario a la ruta principal después de resetear el player
-        return redirect(url_for('index', reset='change'))
+        return redirect(url_for('index', reset='reset'))
     except Exception as e:
         print(f"Error resetting player: {str(e)}")
         # Aquí puedes agregar un manejo más específico del error si es necesario
@@ -127,11 +127,11 @@ def submit_form_media():
                 token = obtener_token()  # Asegúrate de tener definida la función obtener_token()
                 ModelActions.upload_media_player(token, player_id, link)
 
-                return redirect(url_for('index'))
+                return redirect(url_for('index'), reset='change')
             except Exception as e:
                 print(f"Error al subir el archivo a AWS: {e}")
 
-    return redirect(url_for('index', sendreport='sendreport'))
+    return redirect(url_for('index', reset='change'))
 
 
 @app.route('/simulate_api')
