@@ -34,31 +34,38 @@
                     <div style="display: flex; justify-content: space-between; align-items: flex-start;">
                         <div style="flex: 1;">
                             <input type="hidden" id="numRand" name="numRand" value="{{ random_string }}" readonly><br>
+                            
                             <label for="nameCategory">Name:</label><br>
-                            <input type="text" id="nameCategory" name="nameCategory" value="{{ name }}" readonly><br>
+                            <input type="text" id="nameCategory" name="nameCategory" value="{{ name }}" readonly style="width: 400px;"><br>
                             
                             <label for="playerId">Player ID:</label><br>
-                            <input type="text" id="playerId" name="playerId" value="{{ player_id }}" readonly><br>
+                            <input type="text" id="playerId" name="playerId" value="{{ player_id }}" readonly style="width: 400px;"><br>
                             
                             <label for="ip">IP:</label><br>
-                            <input type="text" id="ip" name="ip" value="{{ ip }}" readonly><br>
+                            <input type="text" id="ip" name="ip" value="{{ ip }}" readonly style="width: 400px;"><br>
                         </div>
                         
                         <div style="flex: 1; display: flex; flex-direction: column; align-items: center;">
                             <h2>Store Location</h2>
                             <div style="display: flex; justify-content: center;">
                                 {% if player_id == 'e711e1b488714b0cae07ab873ab42f54' %}
-                                    <img src="https://retailmibeex.net/images/backlight.jpeg" style="max-width: 60%; max-height: 190px; margin-right: 10px;" height="auto">
-                                    <img src="https://retailmibeex.net/images/showroompop.png" style="max-width: 60%; max-height: 190px;" height="auto">
-                                {% elif player_id == '26cd00f9ecc94f4987ae6e7ae6726684' %}
-                                    <img src="https://retailmibeex.net/images/inline.jpeg" style="max-width: 60%; max-height: 190px; margin-right: 10px;" height="auto">
-                                    <img src="https://retailmibeex.net/images/showroompop.png" style="max-width: 60%; max-height: 190px;" height="auto">
+                                    <img src="https://retailmibeex.net/images/backlight.jpeg" style="width: 100%; max-width: 200px; margin-right: 10px; height: auto;">
+                                    <img src="https://retailmibeex.net/images/showroompop.png" style="width: 100%; max-width: 200px; height: auto;">
+                                {% elif player_id == 'c20c6634f9c54b3a8fdeade75719af90' %}
+                                    <img src="https://retailmibeex.net/images/inline.jpeg" style="width: 100%; max-width: 200px; margin-right: 10px; height: auto;">
+                                    <img src="https://retailmibeex.net/images/showroompop.png" style="width: 100%; max-width: 200px; height: auto;">
                                 {% elif player_id == '7e82caf5bbe43db71af49a95d79bbd6c' %}
-                                    <img src="https://retailmibeex.net/images/cooler.jpeg" style="max-width: 60%; max-height: 190px; margin-right: 10px;" height="auto">
-                                    <img src="https://retailmibeex.net/images/walmart.png" style="max-width: 60%; max-height: 190px;" height="auto">
+                                    <img src="https://retailmibeex.net/images/cooler.jpeg" style="width: 100%; max-width: 200px; margin-right: 10px; height: auto;">
+                                    <img src="https://retailmibeex.net/images/walmart.png" style="width: 100%; max-width: 200px; height: auto;">
+                                {% elif player_id == 'cba03d3e4372481cbbdf177ffbb213b6' %}
+                                    <img src="https://retailmibeex.net/images/oficinajuntas.jpeg" style="width: 100%; max-width: 200px; margin-right: 10px; height: auto;">
+                                    <img src="https://retailmibeex.net/images/showroompop.png" style="width: 100%; max-width: 200px; height: auto;">
+                                {% elif player_id == '0775ca6d060791dab9bf8b6803b5d001' %}
+                                    <img src="https://retailmibeex.net/images/rack.jpeg" style="width: 100%; max-width: 200px; margin-right: 10px; height: auto;">
+                                    <img src="https://retailmibeex.net/images/showroompop.png" style="width: 100%; max-width: 200px; height: 180px;">                                   
                                 {% else %}
-                                    <img src="https://retailmibeex.net/images/notfound.png" style="max-width: 60%; max-height: 190px; margin-right: 10px;" height="auto">
-                                    <img src="https://retailmibeex.net/images/notfound.png" style="max-width: 60%; max-height: 190px;" height="auto">
+                                    <img src="https://retailmibeex.net/images/notfound.png" style="width: 100%; max-width: 200px; margin-right: 10px; height: auto;">
+                                    <img src="https://retailmibeex.net/images/notfound.png" style="width: 100%; max-width: 200px; height: auto;">
                                 {% endif %}
                             </div>
                         </div>

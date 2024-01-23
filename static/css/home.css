@@ -82,5 +82,11 @@
     background-color: red;
 }
 
-
-
+#popAtelierHeader {
+    font-family: 'Arial', sans-serif;
+    font-size: 2.5em;
+    background: linear-gradient(60deg, #3498db, #8e44ad, #f39c12, #3498db);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent; /* Para Safari */
+    color: transparent;
+  }
