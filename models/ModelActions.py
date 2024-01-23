@@ -72,7 +72,7 @@ class ModelActions:
             # Nueva URL y encabezados para la siguiente solicitud
             start_parameter = 0
             #start_parameter = 287
-            count_parameter = 5  # El valor que deseas enviar como parámetro count
+            count_parameter = 10  # El valor que deseas enviar como parámetro count
             new_url = f"https://{api_host}{new_api_endpoint}?count={count_parameter}&start={start_parameter}"
             new_headers = {
                 'username': username,
@@ -359,6 +359,7 @@ class ModelActions:
         api_host = 'openapi-us.vnnox.com'
         new_api_endpoint = '/v1/player/control/screenshot'
         received = 'https://retailmibeex.net/recibe.php'
+        print("Entrando a funcion get_screen_shot")
 
         username = ModelConfig.username_auth()
             
@@ -378,7 +379,7 @@ class ModelActions:
 
         # Realizar la nueva solicitud con método POST
         new_response = requests.post(new_url, headers=headers, json=request_parameters)
-        print(new_response)
+        print("Response Screen: ",new_response)
 
         # Obtener información sobre la nueva solicitud
         new_http_code = new_response.status_code
@@ -388,7 +389,7 @@ class ModelActions:
             # La solicitud fue exitosa (código de estado 200)
             # Decodificar la respuesta JSON de la nueva API
             new_data = new_response.json()
-            print(new_data)
+            print("Response Screen: ",new_data)
         else:
             print(f"Error en la nueva solicitud: {new_http_code}")
 

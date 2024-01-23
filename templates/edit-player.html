@@ -33,6 +33,7 @@
                 <form action="/submit_form_media" method="post" class="custom-form" enctype="multipart/form-data">
                     <div style="display: flex; justify-content: space-between; align-items: flex-start;">
                         <div style="flex: 1;">
+                            <input type="hidden" id="numRand" name="numRand" value="{{ random_string }}" readonly><br>
                             <label for="nameCategory">Name:</label><br>
                             <input type="text" id="nameCategory" name="nameCategory" value="{{ name }}" readonly><br>
                             
@@ -114,27 +115,30 @@
         function verificarImagen() {
             // Obtener el valor del campo de entrada con ID "playerId"
             var playerId = document.getElementById("playerId").value;
-    
+            var numRand = document.getElementById("numRand").value;
+        
             // Si no hay valor en el campo de entrada, establecer uno predeterminado
             if (!playerId) {
                 // Puedes generar un ID único aquí o establecer uno predeterminado
                 playerId = '7e82caf5bbe43db71af49a95d79bbd6c';
             }
     
+            // Agregar la marca de tiempo como parámetro de consulta
+            var timestamp = new Date().getTime();
             var img = new Image();
-            img.src = "https://retailmibeex.net/screenPlayers/" + playerId + ".jpg?random=" + Math.random();
-    
+            img.src = "https://retailmibeex.net/screenPlayers/" + playerId + ".jpg?random=" + numRand + "&timestamp=" + timestamp;
+        
             img.onload = function() {
                 // La imagen original está disponible
                 document.getElementById("imagenJugador").src = img.src;
             };
-    
+        
             img.onerror = function() {
                 // La imagen original no está disponible, cambiar a otra imagen
                 document.getElementById("imagenJugador").src = "https://retailmibeex.net/images/notfound.png";
             };
         }
-    
+        
         // Llamada a la función después de que la página se haya cargado
         window.onload = function() {
             verificarImagen();

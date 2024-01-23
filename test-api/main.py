@@ -19,6 +19,7 @@ def get_token():
     }
 
     response = requests.post(url, data=json.dumps(data), headers=headers)
+    print(response.text)
 
     # Comprobar el resultado de la solicitud
     if response.status_code == 200:
@@ -66,7 +67,7 @@ def use_token(token):
 
         # Realizar la nueva solicitud con método GET
         new_response = requests.get(new_url, headers=new_headers)
-        #print(new_response.text)
+        print(new_response.text)
 
 
         # Obtener información sobre la nueva solicitud
@@ -81,6 +82,8 @@ def use_token(token):
 
             # Decodificar la respuesta JSON de la nueva API
             new_data = new_response.json()
+            print("200 statusldf")
+            print(new_data.text)
 
             # Obtener la lista de jugadores
             players_list = new_data['data']['rows']
@@ -111,5 +114,5 @@ if token:
     # Realiza las operaciones que requieran el token aquí
 else:
     print("No se pudo obtener el token.")
-use_token(token)
+#use_token(token)
 

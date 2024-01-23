@@ -1,6 +1,6 @@
 import requests
 
-token = 'd1aeb85c5c2f78dbf2c09fc9922fce77'
+token = '0ce1973ddb9a293cf177e3626135078a'
 def use_token(token):
     api_host = 'openapi-us.vnnox.com'
     new_api_endpoint = '/v1/player/getPlayerList'

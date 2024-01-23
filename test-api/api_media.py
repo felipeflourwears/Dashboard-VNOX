@@ -143,9 +143,6 @@ def upload_media_player(token, player_id, link):
         print(f"Error en la nueva solicitud: {new_http_code}")
 
 
-# Obtener el token llamando a la función
-token = get_token()
-print(token)
 #token = 'd73741d34d3af228fca07b607bb07fe4'
 id = "e711e1b488714b0cae07ab873ab42f54"
 #upload_media_player(token, id)
@@ -159,7 +156,7 @@ typemedia = 'VIDEO'
 
 #url = 'https://mediapopa.s3.amazonaws.com/test.mp4'
 
-
+token = '0ce1973ddb9a293cf177e3626135078a'
 url= "https://mediapopa.s3.amazonaws.com/hot.mp4"
 
 

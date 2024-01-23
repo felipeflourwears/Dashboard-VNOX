@@ -25,6 +25,8 @@ load_dotenv()
 
 ALLOWED_EXTENSIONS = {'png', 'jpg', 'jpeg', 'mp4'}
 
+token = '60bb5b612f4f912207dcae25c4ded973'
+
 def allowed_file(filename):
     return '.' in filename and filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
 
@@ -51,7 +53,7 @@ def obtener_token():
 @app.route('/reset_player/<string:player_id>', methods=['GET'])
 def reset_player(player_id):
     try:
-        token = obtener_token()
+        #token = obtener_token()
         print(f"Token: {token}")
         
         ModelActions.reset_player(token, player_id)
@@ -87,7 +89,8 @@ def edit_player():
     # Generar una cadena aleatoria para evitar el almacenamiento en caché
     random_string = ''.join(random.choices(string.ascii_letters + string.digits, k=8))
 
-    token = obtener_token()
+    #token = obtener_token()
+    #token = '0ce1973ddb9a293cf177e3626135078a'
     ModelActions.get_screnn_player(token, player_id)
     
     # Imprimir los valores (puedes eliminar esto en producción)
@@ -124,7 +127,8 @@ def submit_form_media():
 
                 print("URL: ", link)
                 
-                token = obtener_token()  # Asegúrate de tener definida la función obtener_token()
+                #token = obtener_token()  # Asegúrate de tener definida la función obtener_token()
+                #token = '0ce1973ddb9a293cf177e3626135078a'
                 ModelActions.upload_media_player(token, player_id, link)
 
                 return redirect(url_for('index'), reset='change')
@@ -136,14 +140,15 @@ def submit_form_media():
 
 @app.route('/simulate_api')
 def simulate_api():
-    token = obtener_token()
+    #token = obtener_token()
     get_players = ModelActions.getPlayerList(token)
     print(get_players)
     return render_template('simulate-api.html', players_info=get_players)
 
 @app.route('/submit_form_simulate_api', methods=['POST'])
 def submit_form_simulate_api():
-    token = obtener_token()
+    #token = '0ce1973ddb9a293cf177e3626135078a'
+    #token = obtener_token()
     if request.method == 'POST':
         selected_player_id = request.form.get('playerId')
         temperature_variant = request.form.get('temperature')
@@ -155,9 +160,10 @@ def submit_form_simulate_api():
 
 @app.route('/')
 def index():
-    token = obtener_token()
+    #token = '0ce1973ddb9a293cf177e3626135078a'
+    #token = obtener_token()
     get_players = ModelActions.getPlayerList(token)
-    print(get_players)
+    #print(get_players)
     num_players = len(get_players)
     num_online = sum(player['onlineStatus'] == 1 for player in get_players)
     num_offline = sum(player['onlineStatus'] == 0 for player in get_players)
