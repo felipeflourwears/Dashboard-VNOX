@@ -28,7 +28,7 @@ load_dotenv()
 
 ALLOWED_EXTENSIONS = {'png', 'jpg', 'jpeg', 'mp4'}
 
-token = 'bf022becb3153f7e400ded1995ab071f'
+token = 'dbc7a6f8710ee6ef2abf0595045f7261'
 
 def allowed_file(filename):
     return '.' in filename and filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
@@ -182,7 +182,7 @@ def download_report():
     get_players = ModelActions.getPlayerList(token)
     #print(get_players)
     # Ruta al ejecutable wkhtmltopdf en tu sistema
-    ruta_wkhtmltopdf = r'C:\Program Files\wkhtmltopdf\bin\wkhtmltopdf.exe'
+    ruta_wkhtmltopdf = r'/usr/local/bin/wkhtmltopdf'
     config = pdfkit.configuration(wkhtmltopdf=ruta_wkhtmltopdf)
     try:
         contenido_pdf = f"""

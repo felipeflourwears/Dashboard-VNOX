@@ -6,9 +6,17 @@ import hashlib
 
 from werkzeug.utils import secure_filename
 from .ModelConfig import ModelConfig
+from io import BytesIO
 
 class ModelActions:
-    
+
+    def credenciales(self):
+        keyS3 = 'AKIAYGSKCJWOE4LDGH3G'
+        secretkeyS3 = '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'
+        regionS3 = 'us-east-1'
+        nameS3 = 'mediapopa'
+        return keyS3, secretkeyS3, regionS3, nameS3
+
     @classmethod  
     def reset_player(self,token, player_id):
         api_host = 'openapi-us.vnnox.com'
@@ -195,7 +203,7 @@ class ModelActions:
     @classmethod 
     def send_report(self):
         # Solicitud de autenticación para obtener el token
-        auth_url = "https://retailmibeex.net/email.php"
+        auth_url = "https://retailmibeex.net/apiVnnox/emailF.php"
         auth_payload = {}
 
         # Realizar la solicitud
@@ -208,18 +216,26 @@ class ModelActions:
         else:
             print(f"Error en la nueva solicitud. Código de estado: {response.status_code}")
 
+    
+
     @classmethod
-    def upload_media_to_s3(self, file, media_type, id_player):
+    def upload_media_to_s3(cls, file, media_type, id_player):
         try:
+            keyS3, secretkeyS3, regionS3, nameS3 = cls().credenciales()
+            # Check if the file is not empty
+            if file and not file.filename:
+                raise ValueError("File is empty or not provided.")
+            else:
+                print("Archivo con contenido LF")
+
+            print("Content Type: ", file.content_type)
+
             s3_client = boto3.client(
                 's3',
-                aws_access_key_id=os.environ.get('ENV_AWS_ACCESS_KEY_ID'),
-                aws_secret_access_key=os.environ.get('ENV_AWS_SECRET_ACCESS_KEY'),
-                region_name=os.environ.get('ENV_AWS_REGION_NAME')
+                aws_access_key_id=keyS3,
+                aws_secret_access_key=secretkeyS3,
+                region_name=regionS3
             )
-
-            # Obtener el nombre de archivo seguro
-            filename = secure_filename(file.filename)
 
             # Especifica el parámetro 'Key' en la llamada a put_object
             if media_type == 'image':
@@ -229,14 +245,17 @@ class ModelActions:
             else:
                 raise ValueError("Tipo de medio no compatible.")
 
-            # Lee los datos del archivo
-            file_data = file.read()
+           
+            file_data = file.stream.read()
 
-            # Sube el archivo a S3
+            # Usar BytesIO para garantizar que se trate de datos binarios
+            file_stream = BytesIO(file_data)
+
+           # Sube el archivo a S3
             s3_client.put_object(
-                Bucket=os.environ.get('ENV_AWS_S3_BUCKET_NAME'),
+                Bucket=nameS3,
                 Key=key,
-                Body=file_data
+                Body=file_stream
             )
 
             print(f"Archivo {key} subido exitosamente.")
@@ -244,7 +263,8 @@ class ModelActions:
         except Exception as e:
             # Eleva la excepción para que pueda ser manejada externamente
             raise ValueError(f"Error al subir el archivo a AWS S3: {e}")
-    
+
+        
     @classmethod      
     def upload_media_player(self, token, player_id, link):
         api_host = 'openapi-us.vnnox.com'
@@ -358,7 +378,7 @@ class ModelActions:
     def get_screnn_player(self, token, player_id):
         api_host = 'openapi-us.vnnox.com'
         new_api_endpoint = '/v1/player/control/screenshot'
-        received = 'https://retailmibeex.net/recibe.php'
+        received = 'https://retailmibeex.net/apiVnnox/recibe.php'
         print("Entrando a funcion get_screen_shot")
 
         username = ModelConfig.username_auth()

@@ -1,9 +1,3 @@
-## Packages
-```bash
-pip install boto3
-pip install python-dotenv
-```
-
 ## Access to server
 ```bash
 ssh -i key.pem ubuntu@44.209.162.29
@@ -46,6 +40,10 @@ export PATH="$HOME/.local/bin:$PATH"
 source ~/.bashrc
 ```
 
+
+
+
+
 ```bash
 import sys
 import os
@@ -73,64 +71,3 @@ from app import app as application
 
 
 ```
-
-
-### Configure AWS Lambda Function
-
-![ProyectFunctionLambda](StartStopWebApp)
-
-To start and stop an EC2 instance, create a function using Python 3.8 with x86 architecture. Adjust permissions in the "Permissions" tab under "Roles" to modify the EC2 instance's status
-
-### Permisiones
-![permisions.json](StartStopWebApp/permisions.json)
-
-
-#### Example basic to init EC2 instance
-
-```bash
-import boto3
-
-import json
-
-region = 'us-east-1'
-
-instances = ['i-0a00f85d3a5988589']
-
-def lambda_handler(event, context):
-    ec2 = boto3.client('ec2', region_name=region)
-    #Change status code ON/OFF
-    cont = 0
-    if(cont == 0):
-        ec2.stop_instances(InstanceIds=instances)
-        return {
-            'statusCode': 200,
-            'body': json.dumps('stopped your instances: ' + str(instances))
-        }
-    else:
-        ec2.start_instances(InstanceIds=instances)
-        return {
-            'statusCode': 200,
-            'body': json.dumps('started your instances: ' + str(instances))
-        }
-
-```
-
-### Example to interact with Schedule Server
-
-![Ruta a lambda_function.py](StartStopWebApp/lambda_function.py)
-
-### Expresion Cron
-The cron expression that describes the execution of a task from Monday to Friday at 8:35 a.m. and 9:05 p.m. would be as follows:
-```bash
-cron(35 8,21 ? * MON-FRI *)
-
-```
-This expression breaks down as follows:
-
-35 represents the minute (8:35 a.m. and 9:05 p.m.).
-8,21 represents the hour (8 a.m. and 9 p.m.).
-? is used instead of specifying the day of the month.
-
-for the month (all months).
-MON-FRI for the days of the week (Monday to Friday).
-Therefore, with this cron expression, the task will run on Mondays to Fridays at 8:35 a.m. and 9:05 p.m.
