@@ -1,9 +1,11 @@
 <aside>
     <div class="top">
-        <div class="logo">
-            <img src="{{ url_for('static', filename='img/logo.png') }}">
-            <!-- <h2>Kios<span class="danger">Ko</span></h2> -->
-        </div>
+        <a href="{{ url_for('index') }}">
+            <div class="logo">
+                <img src="{{ url_for('static', filename='img/logo.png') }}">
+                <!-- <h2>Kios<span class="danger">Ko</span></h2> -->
+            </div>
+        </a>
         <div class="close" id="close-btn">
             <span class="material-icons-sharp">close</span>
         </div>
@@ -13,10 +15,10 @@
             <span class="material-icons-sharp">grid_view</span>
             <h3>Dashboard</h3>
         </a>    
-        <a href="{{ url_for('simulate_api') }}">
+        <!-- <a href="{{ url_for('simulate_api') }}">
             <span class="material-icons-sharp">sync</span>
             <h3>Simulate API</h3>
-        </a>      
+        </a>   -->    
         <!-- <a href="#">
             <span class="material-icons-sharp">person_outline</span>
             <h3>Customers</h3>
@@ -50,10 +52,10 @@
         </a> -->
 
      
-            <a href="#">
+           <!--  <a href="#">
                 <span class="material-icons-sharp">settings</span>
                 <h3>Settings</h3>
-            </a>
+            </a> -->
            <!--  <a href="#">
                 <span class="material-icons-sharp">add</span>
                 <h3>Add Category</h3>

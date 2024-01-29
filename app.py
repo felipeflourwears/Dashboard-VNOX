@@ -28,7 +28,7 @@ load_dotenv()
 
 ALLOWED_EXTENSIONS = {'png', 'jpg', 'jpeg', 'mp4'}
 
-token = 'dbc7a6f8710ee6ef2abf0595045f7261'
+token = 'cc426757f2e3d57e9f91fb12acd92748'
 
 def allowed_file(filename):
     return '.' in filename and filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
@@ -182,7 +182,8 @@ def download_report():
     get_players = ModelActions.getPlayerList(token)
     #print(get_players)
     # Ruta al ejecutable wkhtmltopdf en tu sistema
-    ruta_wkhtmltopdf = r'/usr/local/bin/wkhtmltopdf'
+    #ruta_wkhtmltopdf = r'/usr/local/bin/wkhtmltopdf'
+    ruta_wkhtmltopdf = r'C:\Program Files\wkhtmltopdf\bin\wkhtmltopdf.exe'
     config = pdfkit.configuration(wkhtmltopdf=ruta_wkhtmltopdf)
     try:
         contenido_pdf = f"""
@@ -302,13 +303,14 @@ def index():
     #token = '0ce1973ddb9a293cf177e3626135078a'
     #token = obtener_token()
     get_players = ModelActions.getPlayerList(token)
+    get_logs = ModelActions.get_logs(token)
     #print(get_players)
     num_players = len(get_players)
     num_online = sum(player['onlineStatus'] == 1 for player in get_players)
     num_offline = sum(player['onlineStatus'] == 0 for player in get_players)
     reset_status = request.args.get('reset', None)
     send_report_status = request.args.get('sendreport', None)
-    return render_template('index.html', players_info=get_players, reset_status=reset_status, send_report_status = send_report_status, num_players=num_players, num_online=num_online, num_offline=num_offline)
+    return render_template('index.html', players_info=get_players, reset_status=reset_status, send_report_status = send_report_status, num_players=num_players, num_online=num_online, num_offline=num_offline, get_logs=get_logs)
 
 if __name__ == '__main__':
     #app.run(host="0.0.0.0", port=puerto)

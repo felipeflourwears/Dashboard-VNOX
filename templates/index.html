@@ -41,12 +41,12 @@
                 <table>
                     <thead>
                         <tr>
-                            <th>ID</th>
+                            <!--<th>ID</th> -->
                             <th>Name Player</th>
                             <th>SN</th>
                             <th>Location</th>
                             <!-- <th>Version</th> -->
-                            <th>IP</th>
+                            <!-- <th>IP</th> -->
                             <th>Online Status</th>
                             <th>Last Online Time</th>
                             <th>Options</th>   
@@ -55,12 +55,12 @@
                     <tbody id="order-table-body">
                         {% for player in players_info %}
                             <tr>
-                                <td>{{ player['playerId'] }}</td>
+                                <!-- <td>{{ player['playerId'] }}</td> -->
                                 <td>{{ player['name'] }}</td>
                                 <td>{{ player['sn'] }}</td>
                                 <th style="font-weight: normal;">Show Room Santa Fe</th>
                                <!--  <td>{{ player['version'] }}</td> -->
-                                <td>{{ player['ip'] }}</td>
+                                <!-- <td>{{ player['ip'] }}</td> -->
                                 <td>
                                     {% if player['onlineStatus'] == 1 %}
                                         <span class="circle-green"></span>

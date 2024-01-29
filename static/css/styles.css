@@ -286,11 +286,11 @@ main .insights > div span{
 }
 
 main .insights > div.expenses span{
-    background: var(--color-danger);
+    background: var(--color-success);
 }
 
 main .insights > div.income span{
-    background: var(--color-success);
+    background: var(--color-danger);
 }
 
 main .insights > div .middle{

@@ -12,6 +12,7 @@
     <link rel="stylesheet" href="{{ url_for('static', filename='css/styles.css') }}">
     <link rel="stylesheet" href="{{ url_for('static', filename='css/form.css') }}">
     <link rel="stylesheet" href="{{ url_for('static', filename='css/loader.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/edit-player.css') }}">
     
 </head>
 <body>
@@ -31,26 +32,26 @@
             <div class="recent-orders">
                 <h2>Player</h2>
                 <form action="/submit_form_media" method="post" class="custom-form" enctype="multipart/form-data">
-                    <div style="display: flex; justify-content: space-between; align-items: flex-start;">
-                        <div style="flex: 1;">
+                    <div class="first-edit">
+                        <div class="second-edit">
                             <input type="hidden" id="numRand" name="numRand" value="{{ random_string }}" readonly><br>
                             
                             <label for="nameCategory">Name:</label><br>
-                            <input type="text" id="nameCategory" name="nameCategory" value="{{ name }}" readonly style="width: 400px;"><br>
+                            <input type="text" id="nameCategory" name="nameCategory" value="{{ name }}" readonly><br>
                             
                             <label for="playerId">Player ID:</label><br>
-                            <input type="text" id="playerId" name="playerId" value="{{ player_id }}" readonly style="width: 400px;"><br>
+                            <input type="text" id="playerId" name="playerId" value="{{ player_id }}" readonly><br>
                             
                             <label for="ip">IP:</label><br>
-                            <input type="text" id="ip" name="ip" value="{{ ip }}" readonly style="width: 400px;"><br>
+                            <input type="text" id="ip" name="ip" value="{{ ip }}" readonly><br>
                         </div>
                         
-                        <div style="flex: 1; display: flex; flex-direction: column; align-items: center;">
+                        <div class="third-edit">
                             <h2>Store Location</h2>
-                            <div style="display: flex; justify-content: center;">
+                            <div class="store-location">
                                 {% if player_id == 'e711e1b488714b0cae07ab873ab42f54' %}
-                                    <img src="https://retailmibeex.net/images/backlight.jpeg" style="width: 100%; max-width: 200px; margin-right: 10px; height: auto;">
-                                    <img src="https://retailmibeex.net/images/showroompop.png" style="width: 100%; max-width: 200px; height: auto;">
+                                    <img src="https://retailmibeex.net/images/backlight.jpeg" class="responsive-image">
+                                    <img src="https://retailmibeex.net/images/showroompop.png" class="responsive-image">
                                 {% elif player_id == 'c20c6634f9c54b3a8fdeade75719af90' %}
                                     <img src="https://retailmibeex.net/images/inline.jpeg" style="width: 100%; max-width: 200px; margin-right: 10px; height: auto;">
                                     <img src="https://retailmibeex.net/images/showroompop.png" style="width: 100%; max-width: 200px; height: auto;">
@@ -70,6 +71,7 @@
                             </div>
                         </div>
                     </div>
+                    
                     
 
                     <h2>Actual Content</h2>

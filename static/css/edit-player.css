@@ -1,0 +1,84 @@
+.first-edit {
+    display: flex; 
+    flex-wrap: wrap; /* Permite que los elementos se muevan a la siguiente fila si no hay suficiente espacio */
+    justify-content: space-between; 
+    align-items: flex-start;
+}
+
+.second-edit {
+    flex-basis: calc(50% - 0.4rem); /* El 50% del ancho menos el espacio entre los elementos */
+    width: 500px;
+}
+
+.third-edit {
+    text-align: center;
+    flex-basis: calc(50% - 0.4rem); /* El 50% del ancho menos el espacio entre los elementos */
+    margin-top: 0.4rem; /* Espacio entre el segundo y tercer elemento */
+}
+
+.custom-form {
+    overflow-x: auto;
+}
+#nameCategory,
+    #playerId,
+    #ip {
+        width: 300px; /* Cambia el ancho al 100% del contenedor para que ocupe todo el ancho disponible */
+    }
+
+.store-location{
+    display: flex; 
+    flex-wrap: wrap; 
+    justify-content: center; 
+    gap: 10px;
+}
+
+.responsive-image {
+    width: 100%;
+    max-width: 280px;
+    height: 170px;
+}
+
+@media (max-width: 1200px) {
+        /* Estilos específicos para pantallas de 250 píxeles o menos */
+    .recent-updates{
+        display: none;
+    }   
+}
+
+@media (max-width: 690px) {
+    /* Estilos específicos para pantallas de 250 píxeles o menos */
+.recent-updates{
+    display: block;
+}   
+}
+
+@media (max-width: 672px) {
+    /* Estilos específicos para pantallas de 250 píxeles o menos */
+    #nameCategory,
+    #playerId,
+    #ip {
+        width: 500px; /* Cambia el ancho al 100% del contenedor para que ocupe todo el ancho disponible */
+        /* background-color: rgb(128, 0, 117); */ /* Cambia el color de fondo a rojo */
+    }
+    .third-edit {
+        text-align: center;
+        flex-basis: 100%; /* El 50% del ancho menos el espacio entre los elementos */
+        /* border: .2rem solid rgb(14, 216, 216); */
+        margin-top: 0.4rem; /* Espacio entre el segundo y tercer elemento */
+        width: 500px;
+    }
+    .responsive-image {
+        width: 100%;
+        max-width: 240px;
+        height: 170px;
+    }
+}
+
+@media (max-width: 480px) {
+    /* Estilos específicos para pantallas de 250 píxeles o menos */
+    #nameCategory,
+    #playerId,
+    #ip {
+        width: 240px; /* Cambia el ancho al 100% del contenedor para que ocupe todo el ancho disponible */    background-color: red; Cambia el color de fondo a rojo
+    }
+}

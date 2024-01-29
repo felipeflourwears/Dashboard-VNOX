@@ -1,32 +1,22 @@
 <div class="recent-updates">
     <h2>Recent Updates</h2>
     <div class="updates">
-        <div class="update">
-            <div class="profile-photo">
-                <img src="{{ url_for('static', filename='img/router.png') }}">
-            </div>
-            <div class="message">
-                <p><b>Taurus-10049078</b> received new content</p>
-                <small class="text-muted">2 Minutes Ago</small>
-            </div>
-        </div>
-        <div class="update">
-            <div class="profile-photo">
-                <img src="{{ url_for('static', filename='img/router.png') }}">
-            </div>
-            <div class="message">
-                <p><b>OFICINA 5 CENEFAS 120</b> turns on remotely</p>
-                <small class="text-muted">2 Minutes Ago</small>
-            </div>
-        </div>
-        <div class="update">
-            <div class="profile-photo">
-                <img src="{{ url_for('static', filename='img/router.png') }}">
-            </div>
-            <div class="message">
-                <p><b>T1-4G</b> has been off for a month</p>
-                <small class="text-muted">2 Minutes Ago</small>
-            </div>
-        </div>
+        {% if get_logs %}
+            {% for log in get_logs %}
+                <div class="update">
+                    <div class="profile-photo">
+                        <img src="{{ url_for('static', filename='img/router.png') }}">
+                    </div>
+                    <div class="message">
+                        <p><b>IP:</b> {{ log.get('headers', {}).get('client_ip', 'N/A') }}<br>
+                           <b>Time:</b> {{ log.get('requestTime', 'N/A') }}<br>
+                           <b>Method:</b> {{ log.get('request', {}).get('uri', 'N/A') }}</p>
+                        <small class="text-muted">2 Minutes Ago</small>
+                    </div>
+                </div>
+            {% endfor %}
+        {% else %}
+            <p>No hay actualizaciones recientes.</p>
+        {% endif %}
     </div>
 </div>
