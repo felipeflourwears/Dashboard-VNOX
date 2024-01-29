@@ -85,6 +85,7 @@ def send_report():
 @app.route('/edit_player/')
 def edit_player():
     # Obtener los parámetros de la URL
+    get_logs = ModelActions.get_logs(token)
     player_id = request.args.get('player_id')
     ip = request.args.get('ip')
     name = request.args.get('name')
@@ -100,7 +101,7 @@ def edit_player():
     print(f"Player ID: {player_id}, IP: {ip}, Name: {name}")
     
     # Renderizar la plantilla con los valores y la cadena aleatoria
-    return render_template('edit-player.html', player_id=player_id, ip=ip, name=name, random_string=random_string)
+    return render_template('edit-player.html', player_id=player_id, ip=ip, name=name, random_string=random_string, get_logs=get_logs)
 
 @app.route('/submit_form_media', methods=['POST'])
 def submit_form_media():
@@ -182,8 +183,8 @@ def download_report():
     get_players = ModelActions.getPlayerList(token)
     #print(get_players)
     # Ruta al ejecutable wkhtmltopdf en tu sistema
-    #ruta_wkhtmltopdf = r'/usr/local/bin/wkhtmltopdf'
-    ruta_wkhtmltopdf = r'C:\Program Files\wkhtmltopdf\bin\wkhtmltopdf.exe'
+    ruta_wkhtmltopdf = r'/usr/local/bin/wkhtmltopdf'
+    #ruta_wkhtmltopdf = r'C:\Program Files\wkhtmltopdf\bin\wkhtmltopdf.exe'
     config = pdfkit.configuration(wkhtmltopdf=ruta_wkhtmltopdf)
     try:
         contenido_pdf = f"""

@@ -11,7 +11,7 @@
                         <p><b>IP:</b> {{ log.get('headers', {}).get('client_ip', 'N/A') }}<br>
                            <b>Time:</b> {{ log.get('requestTime', 'N/A') }}<br>
                            <b>Method:</b> {{ log.get('request', {}).get('uri', 'N/A') }}</p>
-                        <small class="text-muted">2 Minutes Ago</small>
+                        <!-- <small class="text-muted">2 Minutes Ago</small> -->
                     </div>
                 </div>
             {% endfor %}
