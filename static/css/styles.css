@@ -156,13 +156,15 @@ aside .top{
 }
 
 aside .logo{
+    /* border: .2rem solid red; */
     display: flex;
     gap: 0.8rem;
 }
 
 aside .logo img{
-    width: 5rem;
-    height: 5rem;
+    /* border: .2rem solid blue; */
+    width: 10rem;
+    height: 2.5rem;
 }
 
 aside .close{

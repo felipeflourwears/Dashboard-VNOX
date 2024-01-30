@@ -28,7 +28,7 @@ load_dotenv()
 
 ALLOWED_EXTENSIONS = {'png', 'jpg', 'jpeg', 'mp4'}
 
-token = 'cc426757f2e3d57e9f91fb12acd92748'
+token = 'c496d057e92312f83ddca988dc6eb3fe'
 
 def allowed_file(filename):
     return '.' in filename and filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
