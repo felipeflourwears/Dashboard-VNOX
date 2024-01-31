@@ -3,8 +3,13 @@ from flask import Flask, render_template, request, redirect, url_for, flash, jso
 #Instances Models
 from models.ModelToken import ModelToken
 from models.ModelActions import ModelActions
+from models.ModelUser import ModelUser
 from werkzeug.utils import secure_filename
 from dotenv import load_dotenv
+from config import config
+
+#Entities
+from models.entities.User import User
 
 import time
 import os
@@ -13,6 +18,13 @@ import random
 import pdfkit
 import base64
 import datetime
+
+#Import to manage tokens to authenticate
+from flask_wtf.csrf import CSRFProtect
+from flask_mysqldb import MySQL
+
+#Import to manage control with LOGIN
+from flask_login import LoginManager, login_user, logout_user, login_required, current_user
 
 # Variables globales para almacenar el token y su tiempo de expiración
 token_info = {
@@ -23,8 +35,11 @@ token_info = {
 app = Flask(__name__)
 model_token = ModelToken() 
 model_actions = ModelActions()
-load_dotenv()
+db = MySQL(app)
 
+load_dotenv()
+login_manager_app = LoginManager(app)
+csrf = CSRFProtect(app)
 
 ALLOWED_EXTENSIONS = {'png', 'jpg', 'jpeg', 'mp4'}
 
@@ -298,9 +313,23 @@ def download_report():
     except Exception as e:
         print("Error:", e)  # Imprime el error en la consola del servidor
         return "Error al generar el PDF", 500
+    
+@app.route('/logout')
+def logout():
+    logout_user()
+    return redirect(url_for('login'))
+
+@login_manager_app.user_loader
+def load_user(id):
+    return ModelUser.get_by_id(db,id)
 
 @app.route('/')
 def index():
+    return redirect(url_for('login'))  
+
+@app.route('/home')
+@login_required
+def home():
     #token = '0ce1973ddb9a293cf177e3626135078a'
     #token = obtener_token()
     get_players = ModelActions.getPlayerList(token)
@@ -311,8 +340,35 @@ def index():
     num_offline = sum(player['onlineStatus'] == 0 for player in get_players)
     reset_status = request.args.get('reset', None)
     send_report_status = request.args.get('sendreport', None)
-    return render_template('index.html', players_info=get_players, reset_status=reset_status, send_report_status = send_report_status, num_players=num_players, num_online=num_online, num_offline=num_offline, get_logs=get_logs)
+    return render_template('home.html', players_info=get_players, reset_status=reset_status, send_report_status = send_report_status, num_players=num_players, num_online=num_online, num_offline=num_offline, get_logs=get_logs)
+
+@app.route('/login', methods=['GET', 'POST'])
+def login():
+    if current_user.is_authenticated:
+        return redirect(url_for('home'))
+
+    current_user_mode = 0  # Establecer el modo predeterminado en 0 si no se encuentra ningún usuario
+
+    if request.method == 'POST':
+        print(request.form['username'])
+        print(request.form['password'])
+        user = User(0, request.form['username'], request.form['password'], 0, 0)
+        logged_user = ModelUser.login(db, user)
+        if logged_user:
+            current_user_mode = logged_user.mode  # Actualizar el valor de current_user_mode si se encuentra un usuario
+            print("MODE: ", current_user_mode)
+            print("IDROL: ", logged_user.idRol)
+            if logged_user.password:
+                login_user(logged_user)
+                return redirect(url_for('home'))
+            else:
+                flash("Invalid Password...")
+        else:
+            flash("User not found...")
+    return render_template('auth/login.html', current_user_mode=current_user_mode)
 
 if __name__ == '__main__':
     #app.run(host="0.0.0.0", port=puerto)
+    app.config.from_object(config['development'])
+    csrf.init_app(app)
     app.run()
