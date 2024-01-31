@@ -116,6 +116,7 @@ def send_report():
 
 @app.route('/edit_player/')
 def edit_player():
+    token = obtener_token()
     # Obtener los parámetros de la URL
     get_logs = ModelActions.get_logs(token)
     player_id = request.args.get('player_id')
@@ -125,7 +126,7 @@ def edit_player():
     # Generar una cadena aleatoria para evitar el almacenamiento en caché
     random_string = ''.join(random.choices(string.ascii_letters + string.digits, k=8))
 
-    token = obtener_token()
+   
     #token = '0ce1973ddb9a293cf177e3626135078a'
     ModelActions.get_screnn_player(token, player_id)
     
