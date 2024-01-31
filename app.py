@@ -7,6 +7,7 @@ from models.ModelUser import ModelUser
 from werkzeug.utils import secure_filename
 from dotenv import load_dotenv
 from config import config
+from config import Config
 
 #Entities
 from models.entities.User import User
@@ -33,6 +34,10 @@ token_info = {
 }
 
 app = Flask(__name__)
+app.config.from_object(Config)  # Configura la aplicación con la clase de configuración
+
+config_instance = Config()  # Crea una instancia de la clase Config
+config_instance.print_secret_key()  #
 model_token = ModelToken() 
 model_actions = ModelActions()
 db = MySQL(app)
@@ -372,3 +377,4 @@ if __name__ == '__main__':
     app.config.from_object(config['development'])
     csrf.init_app(app)
     app.run()
+

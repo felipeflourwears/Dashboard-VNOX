@@ -1,5 +1,7 @@
 class Config():
     SECRET_KEY = 'b97a6d5e52eb344c598e743'
+    def print_secret_key(self):
+        print(f"SECRET_KEY: {self.SECRET_KEY}")
 
 class DevelopmentConfig(Config):
     DEBUG = True
