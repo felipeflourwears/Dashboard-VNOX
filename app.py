@@ -7,7 +7,7 @@ from models.ModelUser import ModelUser
 from werkzeug.utils import secure_filename
 from dotenv import load_dotenv
 from config import config
-from config import Config
+from config import Config, DevelopmentConfig
 
 #Entities
 from models.entities.User import User
@@ -33,18 +33,30 @@ token_info = {
     'expiration_time': 0
 }
 
+# Configuración de la aplicación
 app = Flask(__name__)
-app.config.from_object(Config)  # Configura la aplicación con la clase de configuración
 
-config_instance = Config()  # Crea una instancia de la clase Config
-config_instance.print_secret_key()  #
+# Configuración de la base de datos
+app.config.from_object(DevelopmentConfig)
+db = MySQL(app)
+
+# Configuración de Flask-WTF CSRF y Flask-Login
+csrf = CSRFProtect(app)
+login_manager = LoginManager(app)
+
+# Instancias de modelos
 model_token = ModelToken() 
 model_actions = ModelActions()
-db = MySQL(app)
+
+# Imprimir la configuración de la base de datos directamente desde DevelopmentConfig
+config_instance = DevelopmentConfig()
+config_instance.print_secret_key()
+config_instance.print_database_config()
+
+
 
 load_dotenv()
 login_manager_app = LoginManager(app)
-csrf = CSRFProtect(app)
 
 ALLOWED_EXTENSIONS = {'png', 'jpg', 'jpeg', 'mp4'}
 
@@ -375,6 +387,8 @@ def login():
 if __name__ == '__main__':
     #app.run(host="0.0.0.0", port=puerto)
     app.config.from_object(config['development'])
+    # Imprimir las credenciales de la base de datos
+    print(f"Database Config LF: {app.config['MYSQL_HOST']}, {app.config['MYSQL_USER']}, {app.config['MYSQL_PASSWORD']}, {app.config['MYSQL_DB']}")
     csrf.init_app(app)
     app.run()
 
