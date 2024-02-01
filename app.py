@@ -60,7 +60,7 @@ login_manager_app = LoginManager(app)
 
 ALLOWED_EXTENSIONS = {'png', 'jpg', 'jpeg', 'mp4'}
 
-#token = 'c496d057e92312f83ddca988dc6eb3fe'
+#token = '6576f47e2b077b6878ddb381706f46cc'
 
 def allowed_file(filename):
     return '.' in filename and filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
@@ -195,7 +195,8 @@ def submit_form_simulate_api():
 
 @app.route('/download_report')
 def download_report():
-     # Obtener la fecha y hora actual
+    token = obtener_token()
+    # Obtener la fecha y hora actual
     now = datetime.datetime.now()
     date = now.strftime("%d/%m/%Y")
 
@@ -214,8 +215,8 @@ def download_report():
     get_players = ModelActions.getPlayerList(token)
     #print(get_players)
     # Ruta al ejecutable wkhtmltopdf en tu sistema
-    ruta_wkhtmltopdf = r'/usr/local/bin/wkhtmltopdf'
-    #ruta_wkhtmltopdf = r'C:\Program Files\wkhtmltopdf\bin\wkhtmltopdf.exe'
+    #ruta_wkhtmltopdf = r'/usr/local/bin/wkhtmltopdf'
+    ruta_wkhtmltopdf = r'C:\Program Files\wkhtmltopdf\bin\wkhtmltopdf.exe'
     config = pdfkit.configuration(wkhtmltopdf=ruta_wkhtmltopdf)
     try:
         contenido_pdf = f"""
@@ -329,6 +330,10 @@ def download_report():
     except Exception as e:
         print("Error:", e)  # Imprime el error en la consola del servidor
         return "Error al generar el PDF", 500
+
+
+def status_404(error):
+    return render_template("404.html")
     
 @app.route('/logout')
 def logout():
@@ -389,5 +394,6 @@ if __name__ == '__main__':
     # Imprimir las credenciales de la base de datos
     print(f"Database Config LF: {app.config['MYSQL_HOST']}, {app.config['MYSQL_USER']}, {app.config['MYSQL_PASSWORD']}, {app.config['MYSQL_DB']}")
     csrf.init_app(app)
+    app.register_error_handler(404, status_404)
     app.run()
 
