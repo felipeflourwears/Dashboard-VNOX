@@ -1,0 +1,34 @@
+<div class="top">
+    <button id="menu-btn">
+        <span class="material-icons-sharp">menu</span>
+    </button>
+    <div class="theme-toggler">
+        <span class="material-icons-sharp active">light_mode</span>
+        <span class="material-icons-sharp">dark_mode</span>
+    </div>
+    <div class="profile">
+        <div class="info">
+            <p>Hey, <b>{{current_user.fullname}}</b></p>
+            <small class="text-muted">
+                {% if current_user.idRol == 1 %}
+                    SuperAdministrator
+                {% elif current_user.idRol == 2 %}
+                    Administrator
+                {% elif current_user.idRol == 3 %}
+                    Viewer
+                {% else %}
+                    Unknown
+                {% endif %}
+            </small>
+        </div>
+        <div class="profile-photo">
+            <img src="{{ url_for('static', filename='img/profile.png') }}">
+        </div>
+        <div class="logout">
+            <a href="{{ url_for('logout') }}">
+                <span class="material-icons-sharp">logout</span>
+                <h3>Logout</h3>
+            </a>
+        </div>
+    </div>
+</div>

@@ -60,7 +60,7 @@ login_manager_app = LoginManager(app)
 
 ALLOWED_EXTENSIONS = {'png', 'jpg', 'jpeg', 'mp4'}
 
-#token = '6576f47e2b077b6878ddb381706f46cc'
+#token = '2cc32439bd97ebcd2871b637fe7600ad'
 
 def allowed_file(filename):
     return '.' in filename and filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
@@ -105,14 +105,13 @@ def reset_player(player_id):
 @app.route('/send_report')
 def send_report():
     try:
-        ModelActions.send_report()
-        # Redirigir al usuario a la ruta principal después de resetear el player
+        mail = request.args.get('email')
+        ModelActions.send_report(mail, token)
         print("Dentro del try")
-        return redirect(url_for('index', sendreport='sendreport'))
+        return jsonify(success=True, message="Report sent successfully!")
     except Exception as e:
-        print(f"Error resetting player: {str(e)}")
-        # Aquí puedes agregar un manejo más específico del error si es necesario
-        return render_template('404.html', error_message=str(e))
+        print(f"Error sending report: {str(e)}")
+        return jsonify(success=False, message=str(e))
 
 @app.route('/edit_player/')
 def edit_player():
@@ -215,8 +214,8 @@ def download_report():
     get_players = ModelActions.getPlayerList(token)
     #print(get_players)
     # Ruta al ejecutable wkhtmltopdf en tu sistema
-    #ruta_wkhtmltopdf = r'/usr/local/bin/wkhtmltopdf'
-    ruta_wkhtmltopdf = r'C:\Program Files\wkhtmltopdf\bin\wkhtmltopdf.exe'
+    ruta_wkhtmltopdf = r'/usr/local/bin/wkhtmltopdf'
+    #ruta_wkhtmltopdf = r'C:\Program Files\wkhtmltopdf\bin\wkhtmltopdf.exe'
     config = pdfkit.configuration(wkhtmltopdf=ruta_wkhtmltopdf)
     try:
         contenido_pdf = f"""
@@ -351,7 +350,6 @@ def index():
 @app.route('/home')
 @login_required
 def home():
-    #token = '0ce1973ddb9a293cf177e3626135078a'
     token = obtener_token()
     get_players = ModelActions.getPlayerList(token)
     get_logs = ModelActions.get_logs(token)
@@ -371,14 +369,17 @@ def login():
     current_user_mode = 0  # Establecer el modo predeterminado en 0 si no se encuentra ningún usuario
 
     if request.method == 'POST':
-        print(request.form['username'])
-        print(request.form['password'])
+        #print(request.form['username'])
+        #print(request.form['password'])
         user = User(0, request.form['username'], request.form['password'], 0, 0)
         logged_user = ModelUser.login(db, user)
         if logged_user:
-            current_user_mode = logged_user.mode  # Actualizar el valor de current_user_mode si se encuentra un usuario
-            print("MODE: ", current_user_mode)
+            print("ID: ", logged_user.id)
+            print("username: ", logged_user.username)
+            print("PASSWORD: ", logged_user.password)
             print("IDROL: ", logged_user.idRol)
+            print("Fullname: ", logged_user.fullname)
+            
             if logged_user.password:
                 login_user(logged_user)
                 return redirect(url_for('home'))

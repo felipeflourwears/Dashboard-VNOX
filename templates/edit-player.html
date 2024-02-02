@@ -91,40 +91,12 @@
         </main>
          <!--==================== END MAIN ====================-->
         <div class="right">
-            <div class="top">
-                <button id="menu-btn">
-                    <span class="material-icons-sharp">menu</span>
-                </button>
-                <div class="theme-toggler">
-                    <span class="material-icons-sharp active">light_mode</span>
-                    <span class="material-icons-sharp">dark_mode</span>
-                </div>
-                <div class="profile">
-                    <div class="info">
-                        <p>Hey, <b>User</b></p>
-                        <p style="display: none;">Mode: <b id="current-user-mode">Administrator</b></p>
-                        <small class="text-muted">
-                                Admin
-                        </small>
-                    </div>
-                    <div class="profile-photo">
-                        <img src="{{ url_for('static', filename='img/profile.png') }}">
-                    </div>
-                    <div class="logout">
-                        <a href="#">
-                            <span class="material-icons-sharp">logout</span>
-                            <h3>Logout</h3>
-                        </a>
-                    </div>
-                </div>
-            </div>
-             <!--====== END TOP ======-->
+            {% include 'right-header.html' %}
+            <!--====== END TOP ======-->
              
             {% include 'recent-updates.html' %}
 
-            <!--==================== END RECENT UPDATES ====================-->
-
-            
+            <!--==================== END RECENT UPDATES ====================-->  
         </div>   
     </div>
     <script src="{{ url_for('static', filename='js/index.js') }}"></script>

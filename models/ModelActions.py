@@ -201,9 +201,10 @@ class ModelActions:
             print(f"Error en la nueva solicitud: {new_http_code}")
     
     @classmethod 
-    def send_report(self):
-        # Solicitud de autenticación para obtener el token
-        auth_url = "https://retailmibeex.net/apiVnnox/emailF.php"
+    def send_report(cls, mail, token):
+        # Construye la URL con el correo electrónico y el token como parámetros
+        auth_url = f"https://retailmibeex.net/apiVnnox/getEmail.php?email={mail}&token={token}"
+        
         auth_payload = {}
 
         # Realizar la solicitud
@@ -215,6 +216,7 @@ class ModelActions:
             print("Exitoso")
         else:
             print(f"Error en la nueva solicitud. Código de estado: {response.status_code}")
+
 
     
 
@@ -523,22 +525,12 @@ class ModelActions:
 
         if new_http_code == 200:
             new_data = new_response.json()
-            print(new_data)
+            #print(new_data)
 
             # Capturar los últimos 3 registros
             last_3_logs = new_data['data']['rows'][-3:]
 
             # Iterar y mostrar los últimos 3 registros con todos los campos disponibles
-            print("\nÚltimos 3 registros:")
-            for i, log in enumerate(last_3_logs, start=1):
-                print(f"\nRegistro {i}:")
-                for key, value in log.items():
-                    if isinstance(value, dict):
-                        print(f"  - {key}:")
-                        for sub_key, sub_value in value.items():
-                            print(f"    - {sub_key}: {sub_value}")
-                    else:
-                        print(f"  - {key}: {value}")
             return last_3_logs
 
         else:
