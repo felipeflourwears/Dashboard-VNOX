@@ -104,6 +104,7 @@ def reset_player(player_id):
 
 @app.route('/send_report')
 def send_report():
+    token = obtener_token()
     try:
         mail = request.args.get('email')
         ModelActions.send_report(mail, token)
