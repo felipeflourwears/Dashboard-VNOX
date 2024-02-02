@@ -86,6 +86,7 @@ def obtener_token():
         return token_info['token']
     
 @app.route('/reset_player/<string:player_id>', methods=['GET'])
+@login_required
 def reset_player(player_id):
     try:
         token = obtener_token()
@@ -95,7 +96,7 @@ def reset_player(player_id):
         print(f"Player reset successfully: {player_id}")
 
         # Redirigir al usuario a la ruta principal después de resetear el player
-        return redirect(url_for('index', reset='reset'))
+        return redirect(url_for('home', reset='reset'))
     except Exception as e:
         print(f"Error resetting player: {str(e)}")
         # Aquí puedes agregar un manejo más específico del error si es necesario
@@ -103,6 +104,7 @@ def reset_player(player_id):
     
 
 @app.route('/send_report')
+@login_required
 def send_report():
     token = obtener_token()
     try:
@@ -115,6 +117,7 @@ def send_report():
         return jsonify(success=False, message=str(e))
 
 @app.route('/edit_player/')
+@login_required
 def edit_player():
     token = obtener_token()
     # Obtener los parámetros de la URL
@@ -137,6 +140,7 @@ def edit_player():
     return render_template('edit-player.html', player_id=player_id, ip=ip, name=name, random_string=random_string, get_logs=get_logs)
 
 @app.route('/submit_form_media', methods=['POST'])
+@login_required
 def submit_form_media():
     player_id = request.form.get('playerId')
     if 'imageUpload' in request.files:
@@ -167,14 +171,15 @@ def submit_form_media():
                 token = obtener_token()  # Asegúrate de tener definida la función obtener_token()
                 ModelActions.upload_media_player(token, player_id, link)
 
-                return redirect(url_for('index'), reset='change')
+                return redirect(url_for('home'), reset='change')
             except Exception as e:
                 print(f"Error al subir el archivo a AWS: {e}")
 
-    return redirect(url_for('index', reset='change'))
+    return redirect(url_for('home', reset='change'))
 
 
 @app.route('/simulate_api')
+@login_required
 def simulate_api():
     token = obtener_token()
     get_players = ModelActions.getPlayerList(token)
@@ -182,6 +187,7 @@ def simulate_api():
     return render_template('simulate-api.html', players_info=get_players)
 
 @app.route('/submit_form_simulate_api', methods=['POST'])
+@login_required
 def submit_form_simulate_api():
     token = obtener_token()
     if request.method == 'POST':
@@ -194,6 +200,7 @@ def submit_form_simulate_api():
 
 
 @app.route('/download_report')
+@login_required
 def download_report():
     token = obtener_token()
     # Obtener la fecha y hora actual
