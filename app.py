@@ -1,17 +1,3 @@
-from flask import Flask, render_template, request, redirect, url_for, flash, jsonify, abort, make_response
-
-#Instances Models
-from models.ModelToken import ModelToken
-from models.ModelActions import ModelActions
-from models.ModelUser import ModelUser
-from werkzeug.utils import secure_filename
-from dotenv import load_dotenv
-from config import config
-from config import Config, DevelopmentConfig
-
-#Entities
-from models.entities.User import User
-
 import time
 import os
 import string
@@ -19,6 +5,23 @@ import random
 import pdfkit
 import base64
 import datetime
+
+from flask import Flask, render_template, request, redirect, url_for, flash, jsonify, abort, make_response
+
+#Instances Models
+from models.ModelToken import ModelToken
+from models.ModelActions import ModelActions
+from models.ModelUser import ModelUser
+from models.ModelS3 import ModelS3
+
+
+from werkzeug.utils import secure_filename
+from dotenv import load_dotenv
+from config import config
+from config import Config, DevelopmentConfig
+
+#Entities
+from models.entities.User import User
 
 #Import to manage tokens to authenticate
 from flask_wtf.csrf import CSRFProtect
@@ -58,9 +61,9 @@ config_instance.print_database_config()
 load_dotenv()
 login_manager_app = LoginManager(app)
 
-ALLOWED_EXTENSIONS = {'png', 'jpg', 'jpeg', 'mp4'}
+ALLOWED_EXTENSIONS = {'png', 'jpg', 'jpeg', 'mp4', 'gif'}
 
-#token = '2cc32439bd97ebcd2871b637fe7600ad'
+token = 'b98a1cc6380b170f0ee5be169406bc0a'
 
 def allowed_file(filename):
     return '.' in filename and filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
@@ -89,7 +92,7 @@ def obtener_token():
 @login_required
 def reset_player(player_id):
     try:
-        token = obtener_token()
+        #token = obtener_token()
         print(f"Token: {token}")
         
         ModelActions.reset_player(token, player_id)
@@ -106,7 +109,7 @@ def reset_player(player_id):
 @app.route('/send_report')
 @login_required
 def send_report():
-    token = obtener_token()
+    #token = obtener_token()
     try:
         mail = request.args.get('email')
         ModelActions.send_report(mail, token)
@@ -119,7 +122,7 @@ def send_report():
 @app.route('/edit_player/')
 @login_required
 def edit_player():
-    token = obtener_token()
+    #token = obtener_token()
     # Obtener los parámetros de la URL
     get_logs = ModelActions.get_logs(token)
     player_id = request.args.get('player_id')
@@ -142,20 +145,21 @@ def edit_player():
 @app.route('/submit_form_media', methods=['POST'])
 @login_required
 def submit_form_media():
+    print("SUBMIT MEDIA")
     player_id = request.form.get('playerId')
     if 'imageUpload' in request.files:
         file = request.files['imageUpload']
-        print(file)
+        print("FILELF: ",file)
         
         if file and allowed_file(file.filename):
             try:
                 filename = secure_filename(file.filename)
                 print("Filename: ", filename)
-                media_type = 'image' if filename.lower().endswith(('.png', '.jpg', '.jpeg')) else 'video'
+                media_type = 'image' if filename.lower().endswith(('.png', '.jpg', '.jpeg', '.gif')) else 'video'
                 print("Type: ", media_type)
                 
                 # Utiliza la función de carga a S3
-                ModelActions.upload_media_to_s3(file, media_type, player_id)
+                ModelS3.upload_media_to_s3(file, media_type, player_id)
                 
                 if media_type == 'image':
                     # Obtener la extensión de la imagen
@@ -168,41 +172,18 @@ def submit_form_media():
 
                 print("URL: ", link)
                 
-                token = obtener_token()  # Asegúrate de tener definida la función obtener_token()
+                #token = obtener_token()  # Asegúrate de tener definida la función obtener_token()
                 ModelActions.upload_media_player(token, player_id, link)
-
-                return redirect(url_for('home'), reset='change')
             except Exception as e:
                 print(f"Error al subir el archivo a AWS: {e}")
 
     return redirect(url_for('home', reset='change'))
 
 
-@app.route('/simulate_api')
-@login_required
-def simulate_api():
-    token = obtener_token()
-    get_players = ModelActions.getPlayerList(token)
-    print(get_players)
-    return render_template('simulate-api.html', players_info=get_players)
-
-@app.route('/submit_form_simulate_api', methods=['POST'])
-@login_required
-def submit_form_simulate_api():
-    token = obtener_token()
-    if request.method == 'POST':
-        selected_player_id = request.form.get('playerId')
-        temperature_variant = request.form.get('temperature')
-        print(f"Selected Player ID: {selected_player_id}")
-        print(f"Temperature Variant: {temperature_variant}")
-        ModelActions.upload_media_player_simulate(token, selected_player_id, temperature_variant)
-    return redirect(url_for('index'))
-
-
 @app.route('/download_report')
 @login_required
 def download_report():
-    token = obtener_token()
+    #token = obtener_token()
     # Obtener la fecha y hora actual
     now = datetime.datetime.now()
     date = now.strftime("%d/%m/%Y")
@@ -338,6 +319,18 @@ def download_report():
         print("Error:", e)  # Imprime el error en la consola del servidor
         return "Error al generar el PDF", 500
 
+@app.route('/media/')
+@login_required
+def media():
+    # Llamar al método media de tu clase ModelS3 para obtener la lista de objetos en tu bucket de S3
+    videos = ModelS3.media()
+    
+    # Imprimir los nombres y tamaños de los videos en la terminal
+    for name, size in videos:
+        print(f"Nombre: {name}, Tamaño: {size}")
+
+    # Pasar la lista de objetos a tu plantilla Jinja media.html
+    return render_template('media.html', objects=videos)
 
 def status_404(error):
     return render_template("404.html")
@@ -358,7 +351,7 @@ def index():
 @app.route('/home')
 @login_required
 def home():
-    token = obtener_token()
+    #token = obtener_token()
     get_players = ModelActions.getPlayerList(token)
     get_logs = ModelActions.get_logs(token)
     #print(get_players)

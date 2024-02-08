@@ -137,68 +137,6 @@ class ModelActions:
         else:
             print("Entre al else")
             print(f"Error en la autenticación: {auth_response.status_code}")
-
-    @classmethod 
-    def upload_media_player(self, token, player_id):
-        api_host = 'openapi-us.vnnox.com'
-        new_api_endpoint = '/v1/player/program/normal'
-
-        username = ModelConfig.username_auth()
-            
-        new_url = f"https://{api_host}{new_api_endpoint}"
-        print("URL:", new_url)
-        headers = {
-            'username': username,
-            'token': token,
-            'Content-Type': 'application/json'  # Asegúrate de incluir el tipo de contenido JSON en los headers
-        }
-
-        # Parámetros a enviar en el cuerpo de la solicitud
-        request_parameters = {
-            "playerIds": [
-                "13630ecc0741dd8246483c89bec9be6e"
-            ],
-            "pages":[
-                {
-                    "name":"a-page",
-                    "widgets":[
-                        {
-                            "zIndex":1,
-                            "type":"PICTURE",
-                            "size":1022978, 
-                            "md5":"0c80b5deb89d607133d445181730ff1d",
-                            "duration":10000,
-                            "url":"https://retailmibeex.net/images/cafe2.png",
-                            "layout":{
-                                "x":"0%",
-                                "y":"0%",
-                                "width":"100%",
-                                "height":"100%"
-                            },
-                            "inAnimation":{
-                                "type":"NONE",
-                                "duration":1000
-                            }
-                        }
-                    ]
-                }
-            ]
-        }
-        # Realizar la nueva solicitud con método POST
-        new_response = requests.post(new_url, headers=headers, json=request_parameters)
-        print(new_response)
-
-        # Obtener información sobre la nueva solicitud
-        new_http_code = new_response.status_code
-
-        # Manejar la respuesta de la nueva solicitud
-        if new_http_code == 200:
-            # La solicitud fue exitosa (código de estado 200)
-            # Decodificar la respuesta JSON de la nueva API
-            new_data = new_response.json()
-            print(new_data)
-        else:
-            print(f"Error en la nueva solicitud: {new_http_code}")
     
     @classmethod 
     def send_report(cls, mail, token):
@@ -216,56 +154,6 @@ class ModelActions:
             print("Exitoso")
         else:
             print(f"Error en la nueva solicitud. Código de estado: {response.status_code}")
-
-
-    
-
-    @classmethod
-    def upload_media_to_s3(cls, file, media_type, id_player):
-        try:
-            keyS3, secretkeyS3, regionS3, nameS3 = cls().credenciales()
-            # Check if the file is not empty
-            if file and not file.filename:
-                raise ValueError("File is empty or not provided.")
-            else:
-                print("Archivo con contenido LF")
-
-            print("Content Type: ", file.content_type)
-
-            s3_client = boto3.client(
-                's3',
-                aws_access_key_id=keyS3,
-                aws_secret_access_key=secretkeyS3,
-                region_name=regionS3
-            )
-
-            # Especifica el parámetro 'Key' en la llamada a put_object
-            if media_type == 'image':
-                key = f'{id_player}.png'
-            elif media_type == 'video':
-                key = f'{id_player}.mp4'
-            else:
-                raise ValueError("Tipo de medio no compatible.")
-
-           
-            file_data = file.stream.read()
-
-            # Usar BytesIO para garantizar que se trate de datos binarios
-            file_stream = BytesIO(file_data)
-
-           # Sube el archivo a S3
-            s3_client.put_object(
-                Bucket=nameS3,
-                Key=key,
-                Body=file_stream
-            )
-
-            print(f"Archivo {key} subido exitosamente.")
-
-        except Exception as e:
-            # Eleva la excepción para que pueda ser manejada externamente
-            raise ValueError(f"Error al subir el archivo a AWS S3: {e}")
-
         
     @classmethod      
     def upload_media_player(self, token, player_id, link):
@@ -275,7 +163,7 @@ class ModelActions:
         username = ModelConfig.username_auth()
             
         new_url = f"https://{api_host}{new_api_endpoint}"
-        print("URL:", new_url)
+        print("URLlf:", new_url)
         headers = {
             'username': username,
             'token': token,
@@ -295,11 +183,12 @@ class ModelActions:
         # Validar el tipo de medio según la extensión del enlace
         if link.endswith('.mp4'):
             typemedia = "VIDEO"
-        elif link.endswith(('.jpg', '.png', '.jpeg')):
+            print("Es un video")
+        elif link.endswith(('.jpg', '.png', '.jpeg', '.gif')):
             typemedia = "PICTURE"
+            print("Es una imagen")
         else:
             print("Extensión de archivo no compatible")
-            return
 
         # Parámetros a enviar en el cuerpo de la solicitud
         if typemedia=="PICTURE":
@@ -414,92 +303,6 @@ class ModelActions:
             print("Response Screen: ",new_data)
         else:
             print(f"Error en la nueva solicitud: {new_http_code}")
-
-    @classmethod      
-    def upload_media_player_simulate(self, token, player_id, temp):
-        temperature_variant = int(temp)
-        api_host = 'openapi-us.vnnox.com'
-        new_api_endpoint = '/v1/player/program/normal'
-
-        username = ModelConfig.username_auth()
-            
-        new_url = f"https://{api_host}{new_api_endpoint}"
-        print("URL:", new_url)
-        headers = {
-            'username': username,
-            'token': token,
-            'Content-Type': 'application/json'  # Asegúrate de incluir el tipo de contenido JSON en los headers
-        }
-
-        if temperature_variant > 0:
-            request_parameters = {
-                    "playerIds": [
-                        player_id
-                    ],
-                    "pages":[
-                    {
-                        "name":"a-page",
-                        "widgets":[
-                            {
-                            "zIndex":2,
-                            "type":"VIDEO",
-                            "size": 23507832,
-                            "md5": "b353959bad9d2b3decefeeeed60f6546",
-                            "duration":0,
-                            "url": "https://mediapopa.s3.amazonaws.com/hot.mp4",
-                                "layout":{
-                                    "x":"0%",
-                                    "y":"0%",
-                                    "width":"100%",
-                                    "height":"100%"
-                                }
-                            }
-                        ]
-                    }
-                ]
-            }
-        else: 
-            request_parameters = {
-                    "playerIds": [
-                        player_id
-                    ],
-                    "pages":[
-                    {
-                        "name":"a-page",
-                        "widgets":[
-                            {
-                            "zIndex":2,
-                            "type":"VIDEO",
-                            "size": 24440147,
-                            "md5": "c156cf0dac971ae49dd5668b345f7fc0",
-                            "duration":0,
-                            "url": "https://mediapopa.s3.amazonaws.com/frio.mp4",
-                                "layout":{
-                                    "x":"0%",
-                                    "y":"0%",
-                                    "width":"100%",
-                                    "height":"100%"
-                                }
-                            }
-                        ]
-                    }
-                ]
-            }
-        # Realizar la nueva solicitud con método POST
-        new_response = requests.post(new_url, headers=headers, json=request_parameters)
-        print(new_response)
-
-        # Obtener información sobre la nueva solicitud
-        new_http_code = new_response.status_code
-
-        # Manejar la respuesta de la nueva solicitud
-        if new_http_code == 200:
-            # La solicitud fue exitosa (código de estado 200)
-            # Decodificar la respuesta JSON de la nueva API
-            new_data = new_response.json()
-            print("Upload Success Player:", new_data)
-        else:
-            print(f"Error en la nueva solicitud: {new_http_code}")
     
     @classmethod 
     def get_logs(self, token):
@@ -509,7 +312,6 @@ class ModelActions:
         username = 'popatelier'
 
         new_url = f"https://{api_host}{new_api_endpoint}"
-        print("URL:", new_url)
         headers = {
             'username': username,
             'token': token,
