@@ -54,6 +54,6 @@ class MediaManager:
 
 # Ejemplo de uso:
 media_manager = MediaManager()
-videos = media_manager.media(search_term="hot", page_size=20, page_number=1)
+videos = media_manager.media(search_term="", page_size=20, page_number=1)
 for video in videos:
     print(video)

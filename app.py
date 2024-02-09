@@ -63,7 +63,7 @@ login_manager_app = LoginManager(app)
 
 ALLOWED_EXTENSIONS = {'png', 'jpg', 'jpeg', 'mp4', 'gif'}
 
-#token = 'b98a1cc6380b170f0ee5be169406bc0a'
+token = '259a41bdfa032a33c6e29338372e9a71'
 
 def allowed_file(filename):
     return '.' in filename and filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
@@ -87,12 +87,14 @@ def obtener_token():
         print("ELSE TODAVIA MISMO TOKEN")
         print("token: ", token_info)
         return token_info['token']
+
+#token = obtener_token()
     
 @app.route('/reset_player/<string:player_id>', methods=['GET'])
 @login_required
 def reset_player(player_id):
     try:
-        token = obtener_token()
+        #token = obtener_token()
         print(f"Token: {token}")
         
         ModelActions.reset_player(token, player_id)
@@ -109,7 +111,7 @@ def reset_player(player_id):
 @app.route('/send_report')
 @login_required
 def send_report():
-    token = obtener_token()
+    #token = obtener_token()
     try:
         mail = request.args.get('email')
         ModelActions.send_report(mail, token)
@@ -122,7 +124,7 @@ def send_report():
 @app.route('/edit_player/')
 @login_required
 def edit_player():
-    token = obtener_token()
+    #token = obtener_token()
     # Obtener los parámetros de la URL
     get_logs = ModelActions.get_logs(token)
     player_id = request.args.get('player_id')
@@ -172,7 +174,7 @@ def submit_form_media():
 
                 print("URL: ", link)
                 
-                token = obtener_token()  # Asegúrate de tener definida la función obtener_token()
+                #token = obtener_token()  # Asegúrate de tener definida la función obtener_token()
                 ModelActions.upload_media_player(token, player_id, link)
             except Exception as e:
                 print(f"Error al subir el archivo a AWS: {e}")
@@ -183,7 +185,7 @@ def submit_form_media():
 @app.route('/download_report')
 @login_required
 def download_report():
-    token = obtener_token()
+    #token = obtener_token()
     # Obtener la fecha y hora actual
     now = datetime.datetime.now()
     date = now.strftime("%d/%m/%Y")
@@ -351,7 +353,7 @@ def index():
 @app.route('/home')
 @login_required
 def home():
-    token = obtener_token()
+    #token = obtener_token()
     get_players = ModelActions.getPlayerList(token)
     get_logs = ModelActions.get_logs(token)
     #print(get_players)
