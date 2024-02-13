@@ -137,23 +137,6 @@ class ModelActions:
         else:
             print("Entre al else")
             print(f"Error en la autenticación: {auth_response.status_code}")
-    
-    @classmethod 
-    def send_report(cls, mail, token):
-        # Construye la URL con el correo electrónico y el token como parámetros
-        auth_url = f"https://retailmibeex.net/apiVnnox/getEmail.php?email={mail}&token={token}"
-        
-        auth_payload = {}
-
-        # Realizar la solicitud
-        response = requests.get(auth_url, data=auth_payload)
-
-        # Verificar el código de estado HTTP
-        print(response)
-        if response.status_code == 200:
-            print("Exitoso")
-        else:
-            print(f"Error en la nueva solicitud. Código de estado: {response.status_code}")
         
     @classmethod      
     def upload_media_player(self, token, player_id, link):

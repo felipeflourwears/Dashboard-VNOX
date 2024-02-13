@@ -2,17 +2,17 @@ import time
 import os
 import string
 import random
-import pdfkit
 import base64
-import datetime
 
-from flask import Flask, render_template, request, redirect, url_for, flash, jsonify, abort, make_response
+
+from flask import Flask, render_template, request, redirect, url_for, flash, jsonify, make_response
 
 #Instances Models
 from models.ModelToken import ModelToken
 from models.ModelActions import ModelActions
 from models.ModelUser import ModelUser
 from models.ModelS3 import ModelS3
+from models.ModelReport import ModelReport
 
 
 from werkzeug.utils import secure_filename
@@ -36,34 +36,31 @@ token_info = {
     'expiration_time': 0
 }
 
+
+
 # Configuración de la aplicación
 app = Flask(__name__)
-
 # Configuración de la base de datos
 app.config.from_object(DevelopmentConfig)
 db = MySQL(app)
-
 # Configuración de Flask-WTF CSRF y Flask-Login
 csrf = CSRFProtect(app)
 login_manager = LoginManager(app)
-
 # Instancias de modelos
 model_token = ModelToken() 
 model_actions = ModelActions()
-
 # Imprimir la configuración de la base de datos directamente desde DevelopmentConfig
 config_instance = DevelopmentConfig()
-config_instance.print_secret_key()
-config_instance.print_database_config()
-
-
-
+#config_instance.print_secret_key()
+#config_instance.print_database_config()
 load_dotenv()
 login_manager_app = LoginManager(app)
 
+
+
 ALLOWED_EXTENSIONS = {'png', 'jpg', 'jpeg', 'mp4', 'gif'}
 
-token = '259a41bdfa032a33c6e29338372e9a71'
+token = 'fca3bf2f86b87bbd4940eff1bc88121a'
 
 def allowed_file(filename):
     return '.' in filename and filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
@@ -114,7 +111,7 @@ def send_report():
     #token = obtener_token()
     try:
         mail = request.args.get('email')
-        ModelActions.send_report(mail, token)
+        ModelReport.send_report(mail, token)
         print("Dentro del try")
         return jsonify(success=True, message="Report sent successfully!")
     except Exception as e:
@@ -147,11 +144,9 @@ def edit_player():
 @app.route('/submit_form_media', methods=['POST'])
 @login_required
 def submit_form_media():
-    print("SUBMIT MEDIA")
     player_id = request.form.get('playerId')
     if 'imageUpload' in request.files:
         file = request.files['imageUpload']
-        print("FILELF: ",file)
         
         if file and allowed_file(file.filename):
             try:
@@ -178,148 +173,41 @@ def submit_form_media():
                 ModelActions.upload_media_player(token, player_id, link)
             except Exception as e:
                 print(f"Error al subir el archivo a AWS: {e}")
-
     return redirect(url_for('home', reset='change'))
 
 
 @app.route('/download_report')
 @login_required
 def download_report():
-    #token = obtener_token()
-    # Obtener la fecha y hora actual
-    now = datetime.datetime.now()
-    date = now.strftime("%d/%m/%Y")
-
-    # Formatear la fecha y hora actual según tu especificación
-    formatted_date = now.strftime("%d%m%Y%H%M%S") + '-' + str(random.randint(100, 999))
-    # Ruta del directorio actual del script
-    ruta_script = os.path.dirname(os.path.abspath(__file__))
-    # Ruta de la imagen
-    ruta_imagen = os.path.join(ruta_script, 'static','img', 'black.jpg')
-    print("RUTA Imagen: ", ruta_imagen)
-    # Leer la imagen en formato base64
-    with open(ruta_imagen, 'rb') as img_file:
-        img_base64 = base64.b64encode(img_file.read()).decode('utf-8')
-
-
-    get_players = ModelActions.getPlayerList(token)
-    #print(get_players)
-    # Ruta al ejecutable wkhtmltopdf en tu sistema
-    ruta_wkhtmltopdf = r'/usr/local/bin/wkhtmltopdf'
-    #ruta_wkhtmltopdf = r'C:\Program Files\wkhtmltopdf\bin\wkhtmltopdf.exe'
-    config = pdfkit.configuration(wkhtmltopdf=ruta_wkhtmltopdf)
     try:
-        contenido_pdf = f"""
-            <!DOCTYPE html>
-            <html>
-            <head>
-                <meta charset="UTF-8">
-                <title>Players PopAtelier</title>
-                <style>
-                    header {{
-                        text-align: center;
-                    }}
-                    img {{
-                        max-width: 500px;
-                    }}
-                    .info {{
-                        text-align: left;
-                        font-size: 20px;
-                        margin-top: 10px;
-                        margin-left: 10px;
-                    }}
-                    .table-container {{
-                        margin-top: 20px;
-                        margin-left: 10px;
-                        width: 98%;
-                    }}
-                    .headers-doc{{
-                        margin-top: 50px;
-                    }}
-                    table {{
-                        border-collapse: collapse;
-                        width: 100%;
-                        margin-top: 10px;
-                    }}
-                    th, td {{
-                        border: 1px solid black;
-                        padding: 8px;
-                        text-align: left;
-                        vertical-align: top; /* Alineación vertical */
-                        line-height: 1.4; /* Ajuste del espaciado vertical */
-                    }}
-                    th {{
-                        background-color: black;
-                        color: white;
-                        text-align: center;
-                    }}
-                    hr {{
-                        margin-top: 50px;
-                        border: none;
-                        border-top: 2px solid black;
-                        width: 100%;
-                    }}
-                </style>
-            </head>
-            <body>
-                <header>
-                    <img src="data:image/jpeg;base64,{img_base64}" alt="Logo"> <!-- Imagen incrustada en formato base64 -->
-                    <div class="info">
-                        <p><strong>POP ATELIER LLC</strong></p>
-                        <p><strong>Date: </strong>{date}</p>
-                    </div>
-                </header>
-        """
-        # Construir el contenido del PDF usando los datos recibidos
-        contenido_pdf += '<h1>Player information</h1>'
-       # Crear una tabla HTML con estilo
-        contenido_pdf += '<table border="1" style="border-collapse: collapse; width: 100%; text-align: center;">'
-        contenido_pdf += '<tr>'
-        contenido_pdf += '<th style="padding: 10px;">Name</th>'
-        #contenido_pdf += '<th style="padding: 10px;">Player ID</th>'
-        contenido_pdf += '<th style="padding: 10px;">Serial Number</th>'
-        #contenido_pdf += '<th style="padding: 10px;">IP Address</th>'
-        contenido_pdf += '<th style="padding: 10px;">Product Name</th>'
-        contenido_pdf += '<th style="padding: 10px;">Online Status</th>'
-        contenido_pdf += '<th style="padding: 10px;">Last Online Time</th>'
-        contenido_pdf += '</tr>'
+        # Obtener los jugadores
+        get_players = ModelActions.getPlayerList(token)
 
-        for player in get_players:
-            # Obtener el estado en línea y establecer el color del cuadrado con bordes redondeados
-            status_color = 'green' if player["onlineStatus"] == 1 else 'red'
-            
-            contenido_pdf += '<tr>'
-            contenido_pdf += f'<td style="padding: 10px;">{player["name"]}</td>'
-            #contenido_pdf += f'<td style="padding: 10px;">{player["playerId"]}</td>'
-            contenido_pdf += f'<td style="padding: 10px;">{player["sn"]}</td>'
-            #contenido_pdf += f'<td style="padding: 10px;">{player["ip"]}</td>'
-            contenido_pdf += f'<td style="padding: 10px;">{player["productName"]}</td>'
-            contenido_pdf += f'<td style="padding: 5px; text-align: center; color: white; background-color: {status_color}; border-radius: 0px;">&nbsp;</td>'
-            contenido_pdf += f'<td style="padding: 10px;">{player["lastOnlineTime"]}</td>'
-            contenido_pdf += '</tr>'
+        # Ruta de la imagen
+        ruta_script = os.path.dirname(os.path.abspath(__file__))
+        ruta_imagen = os.path.join(ruta_script, 'static','img', 'black.jpg')
 
-        contenido_pdf += '</table>'
+        # Leer la imagen en formato base64
+        with open(ruta_imagen, 'rb') as img_file:
+            img_base64 = base64.b64encode(img_file.read()).decode('utf-8')
 
-        contenido_pdf += '</body></html>'
+        # Generar el informe en formato PDF
+        pdf_content = ModelReport.generateReport(img_base64, get_players)
 
-        pdfkit_options = {
-            'page-size': 'A4',
-            'encoding': 'UTF-8',  # Especificar la codificación UTF-8
-            # Otras opciones de configuración si las necesitas
-        }
+        if pdf_content:
+            # Crear la respuesta con el PDF como descarga
+            response = make_response(pdf_content)
+            response.headers['Content-Type'] = 'application/pdf'
+            response.headers['Content-Disposition'] = 'attachment; filename=report-players.pdf'
+            return response
+        else:
+            return render_template('error.html', error='Error al generar el PDF'), 500
 
-        # Generar el PDF
-        pdf = pdfkit.from_string(contenido_pdf, False, configuration=config, options=pdfkit_options)
-
-        # Crear la respuesta con el PDF como descarga
-        response = make_response(pdf)
-        response.headers['Content-Type'] = 'application/pdf'
-        response.headers['Content-Disposition'] = 'attachment; filename=report-players.pdf'
-
-        return response
     except Exception as e:
-        print("Error:", e)  # Imprime el error en la consola del servidor
-        return "Error al generar el PDF", 500
+        print("Error al generar el PDF:", e)  # Maneja el error apropiadamente
+        return render_template('error.html', error=str(e)), 500
+
+    
 
 @app.route('/media/')
 @login_required
@@ -396,7 +284,7 @@ if __name__ == '__main__':
     #app.run(host="0.0.0.0", port=puerto)
     app.config.from_object(config['development'])
     # Imprimir las credenciales de la base de datos
-    print(f"Database Config LF: {app.config['MYSQL_HOST']}, {app.config['MYSQL_USER']}, {app.config['MYSQL_PASSWORD']}, {app.config['MYSQL_DB']}")
+    #print(f"Database Config LF: {app.config['MYSQL_HOST']}, {app.config['MYSQL_USER']}, {app.config['MYSQL_PASSWORD']}, {app.config['MYSQL_DB']}")
     csrf.init_app(app)
     app.register_error_handler(404, status_404)
     app.run()
