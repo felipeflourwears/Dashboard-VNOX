@@ -16,3 +16,5 @@ function confirmDelete(event) {
         }
     });
 }
+
+console.log(document.querySelector('table').offsetWidth);

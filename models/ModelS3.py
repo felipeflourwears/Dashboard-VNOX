@@ -1,10 +1,13 @@
+from .entities.Media import Media
 import boto3
-import requests
-
 from io import BytesIO
-from .ModelConfig import ModelConfig
 
 class ModelS3:
+    
+    def __init__(self):
+        self.s3_client = self.get_s3_client()
+        self.bucket_name = self.credenciales()[3]
+        self.pagination_limit = 10  # Cantidad de resultados por página
 
     def credenciales(self):
         keyS3 = 'AKIAYGSKCJWOE4LDGH3G'
@@ -13,79 +16,110 @@ class ModelS3:
         nameS3 = 'mediapopa'
         return keyS3, secretkeyS3, regionS3, nameS3
 
-    @classmethod
-    def upload_media_to_s3(cls, file, media_type, id_player):
+    def get_s3_client(self):
+        keyS3, secretkeyS3, regionS3, nameS3 = self.credenciales()
+        return boto3.client(
+            's3',
+            aws_access_key_id=keyS3,
+            aws_secret_access_key=secretkeyS3,
+            region_name=regionS3
+        )
+
+    def upload_media_to_s3(self, file, media_type, id_player):
         try:
-            print("Upload function S3")
-            keyS3, secretkeyS3, regionS3, nameS3 = cls().credenciales()
-            # Check if the file is not empty
-            if file and not file.filename:
+            if not file or not file.filename:
                 raise ValueError("File is empty or not provided.")
-            else:
-                print("Archivo con contenido LF")
-
-            print("Content Type: ", file.content_type)
-
-            s3_client = boto3.client(
-                's3',
-                aws_access_key_id=keyS3,
-                aws_secret_access_key=secretkeyS3,
-                region_name=regionS3
-            )
-
-            # Especifica el parámetro 'Key' en la llamada a put_object
+            
             if media_type == 'image':
-                # Extraer la extensión del archivo
                 file_extension = file.filename.split('.')[-1].lower()
-                # Verificar si la extensión es una imagen compatible
                 if file_extension not in ['jpg', 'jpeg', 'png', 'gif']:
-                    raise ValueError("Tipo de imagen no compatible.")
+                    raise ValueError("Unsupported image type.")
                 key = f'{id_player}.{file_extension}'
-                print(key)
             elif media_type == 'video':
                 key = f'{id_player}.mp4'
-                print(key)
             else:
-                raise ValueError("Tipo de medio no compatible.")
+                raise ValueError("Unsupported media type.")
 
-           
             file_data = file.stream.read()
-
-            # Usar BytesIO para garantizar que se trate de datos binarios
             file_stream = BytesIO(file_data)
 
-           # Sube el archivo a S3
-            s3_client.put_object(
-                Bucket=nameS3,
+            self.s3_client.put_object(
+                Bucket=self.bucket_name,
                 Key=key,
                 Body=file_stream
             )
 
-            print(f"Archivo {key} subido exitosamente.")
+            print(f"File {key} uploaded successfully.")
 
         except Exception as e:
-            # Eleva la excepción para que pueda ser manejada externamente
-            raise ValueError(f"Error al subir el archivo a AWS S3: {e}")
+            raise ValueError(f"Error uploading file to AWS S3: {e}")
 
-    @classmethod  
-    def media(cls):
-        keyS3, secretkeyS3, regionS3, nameS3 = cls().credenciales()
-        s3 = boto3.client(
-            's3',
-            aws_access_key_id=keyS3,
-            aws_secret_access_key=secretkeyS3
-        )
+    def list_media(self, page_number=1):
+        start_index = (page_number - 1) * self.pagination_limit
+        end_index = start_index + self.pagination_limit
 
-        bucket_name = nameS3
-        response = s3.list_objects_v2(Bucket=bucket_name)
-        print(response)
+        response = self.s3_client.list_objects_v2(Bucket=self.bucket_name)
 
-        videos = []
+        media = []
         if 'Contents' in response:
             for obj in response['Contents']:
                 if obj['Key'].endswith('.mp4'):
-                    name = obj['Key']  # Nombre del video
-                    size = obj['Size']  # Tamaño del video
-                    videos.append((name, size))
+                    name = obj['Key']
+                    size = obj['Size']
+                    tags = self.get_tags_from_content(name)
+                    media.append(
+                        Media(id=0, title=name, size=size, tags=tags)
+                    )
 
-        return videos
+        return media[start_index:end_index]
+
+    def search_media(self, query, page_number=1):
+        start_index = (page_number - 1) * self.pagination_limit
+        end_index = start_index + self.pagination_limit
+
+        response = self.s3_client.list_objects_v2(Bucket=self.bucket_name)
+        
+        media = []
+        if 'Contents' in response:
+            for obj in response['Contents']:
+                file_extension = obj['Key'].split('.')[-1].lower()
+                if file_extension in ['mp4', 'gif', 'png', 'jpeg', 'jpg']:
+                    name = obj['Key']
+                    size = obj['Size']
+                    file_tags = self.get_tags_from_content(name)
+                    # Verificar si la consulta coincide con el nombre del archivo o con alguna etiqueta
+                    if query.lower() in name.lower() or any(query.lower() in tag.lower() for tag in file_tags):
+                        media.append(
+                            Media(id=0, title=name, size=size, tags=file_tags)
+                        )
+
+        return media[start_index:end_index]
+
+    def get_tags_from_content(self, media_name):
+        response = self.s3_client.get_object_tagging(
+            Bucket=self.bucket_name,
+            Key=media_name,
+        )
+        tagSet = response.get("TagSet")
+        if tagSet:
+            tagList = [element['Value'] for element in tagSet]
+            return tagList
+        return []
+
+    def put_tags_to_content(self, media_name, tags):
+        tag_list = [{'Key': 'tag', 'Value': tag} for tag in tags]
+        response = self.s3_client.put_object_tagging(
+            Bucket=self.bucket_name,
+            Key=media_name,
+            Tagging={'TagSet': tag_list}
+        )
+
+    def total_media(self):
+        response = self.s3_client.list_objects_v2(Bucket=self.bucket_name)
+        total_media = 0
+        if 'Contents' in response:
+            for obj in response['Contents']:
+                file_extension = obj['Key'].split('.')[-1].lower()
+                if file_extension in ['mp4', 'gif', 'png', 'jpeg', 'jpg']:
+                    total_media += 1
+        return total_media

@@ -667,9 +667,6 @@ main .recent-orders a{
     main table thead tr td:first-child{
         display: none;
     }
-    .pagination{
-        /*Responsive working*/
-    }
 
 }
 

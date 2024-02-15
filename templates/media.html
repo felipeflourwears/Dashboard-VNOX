@@ -12,9 +12,10 @@
     <link rel="icon" href="{{ url_for('static', filename='img/logo.png') }}" type="image/png">
     <link rel="stylesheet" href="{{ url_for('static', filename='css/styles.css') }}">
     <link rel="stylesheet" href="{{ url_for('static', filename='css/home.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/pagination.css') }}">
     <link rel="stylesheet" href="{{ url_for('static', filename='css/media.css') }}">
     <link rel="stylesheet" href="{{ url_for('static', filename='css/gadgets.css') }}">
-    <link rel="stylesheet" href="{{ url_for('static', filename='css/pagination.css') }}">
+   
 
     <!-- CDN de Sweet Alert -->
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11.0.20/dist/sweetalert2.min.js"></script>
@@ -27,7 +28,7 @@
         <!--====================BEGIN ASIDE ====================-->
         {% include 'sidebar.html' %}
          <!--====================END ASIDE ====================-->
-         <main class="main-media">
+        <main class="main-media">
             <!--====================BEGIN CONTENT MEDIA ====================-->
             <div class="recent-orders">
                 <h2>Media</h2>
@@ -35,38 +36,46 @@
                     <thead>
                         <tr>
                             <th>Name</th>
-                            <th>Video</th>
+                            <th>Media</th>
                             <th>Size</th>
                             <th>Tagging</th>
                             <th>Options</th>   
                         </tr>
                     </thead>
                     <tbody id="order-table-body">
-                        <td>cocacola.mp4</td>
-                        <td>
-                            <video controls width="150">
-                                <source src="https://mediapopa.s3.amazonaws.com/hot.mp4" type="video/mp4">
-                                Your browser does not support the video tag.
-                            </video>
-                        </td>
-                        <td>44.44 MB</td>
-                        <td>Coca Cola</td>
-                        <td>
-                            <a class="btn-edit" href="#" style="color: white;">Edit</a>
-                            <a class="btn-delete" href="#" style="color: white;" onclick="confirmDelete(event)">Delete</a>
-                        </td>
+                        {% for media in objects %}
+                        <tr>
+                            <td>{{ media.title }}</td>
+                            <td class="media-content">
+                                {% if media.title.endswith('.mp4') %}
+                                <video controls class="media-video">
+                                    <source src="https://mediapopa.s3.amazonaws.com/{{ media.title }}" type="video/mp4">
+                                    Your browser does not support the video tag.
+                                </video>
+                                {% else %}
+                                <img src="https://mediapopa.s3.amazonaws.com/{{ media.title }}" alt="Image" class="media-image">
+                                {% endif %}
+                            </td>
+                            <td>{{ media.size }} MB</td>
+                            <td>{{ media.tags }}</td>
+                            <td>
+                                <a class="btn-edit" href="#" style="color: white;">Edit</a>
+                                <a class="btn-delete" href="#" style="color: white;" onclick="confirmDelete(event)">Delete</a>
+                            </td>
+                        </tr>
+                        {% endfor %}
                     </tbody>
                 </table>    
             </div>
             <div class="pagination">
-                <a href='#' class='btn btn-danger'>Previous</a>
-                <a href='#' class='btn btn-primary active'>1</a>
-                <a href='#' class='btn btn-primary active'>2</a>
-                <a href='#' class='btn btn-primary active'>3</a>
-                <a href='#' class='btn btn-danger'>Next</a>
+                <a href="{{ url_for('media', page=page_number - 1) }}" class="btn btn-danger">Previous</a>
+                {% for page in range(1, total_pages + 1) %}
+                    <a href="{{ url_for('media', page=page) }}" class="btn btn-primary{% if page == page_number %} active{% endif %}">{{ page }}</a>
+                {% endfor %}
+                <a href="{{ url_for('media', page=page_number + 1) }}" class="btn btn-danger">Next</a>
             </div>
             <!--====================END CONTENT MEDIA ====================-->
-        </main>
+        </main>        
         
          <!--==================== END MAIN ====================-->
         <div class="right">

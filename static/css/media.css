@@ -1,9 +1,57 @@
 .main-media {
-    border: .2rem solid blue;
+    /* border: .2rem solid blue; */
     display: flex; /* Utilizamos flexbox para controlar el diseño */
     flex-direction: column; /* Apilamos los elementos verticalmente */
+    padding: 1rem;
 }
 
 .recent-orders {
+    margin-top: 2rem;
+    overflow-x: auto;
+    border: .2rem solid purple;
+}
+.media-content {
+    text-align: center;
+    border: .2rem solid green;
+}
+.media-video,
+.media-image {
+        display: inline-block;
+        vertical-align: middle;
+        margin: 5px; /* Ajusta el margen según sea necesario */
+}
+.media-image{
+    width: 100px; 
+    height: 120px;
     border: .2rem solid red;
 }
+.media-video{
+    width: 150px;
+    height: 150px;
+    border: .2rem solid blue;
+}
+.pagination{
+
+    border: .2rem solid rgb(46, 248, 73);
+}
+
+@media screen and (max-width: 1200px) {
+    .right{
+        display: none;
+    }
+    
+}
+
+/* Estilos adicionales para la paginación en dispositivos entre 768px y 1200px */
+@media screen and (min-width: 768px) and (max-width: 1200px) {
+    .pagination {
+        display: none; 
+    }
+}
+
+@media screen and (max-width: 768px) {
+    .right{
+        display: block;
+    }
+}
+

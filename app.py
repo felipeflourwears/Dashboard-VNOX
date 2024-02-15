@@ -49,6 +49,8 @@ login_manager = LoginManager(app)
 # Instancias de modelos
 model_token = ModelToken() 
 model_actions = ModelActions()
+model_s3_instance = ModelS3()
+
 # Imprimir la configuración de la base de datos directamente desde DevelopmentConfig
 config_instance = DevelopmentConfig()
 #config_instance.print_secret_key()
@@ -60,7 +62,7 @@ login_manager_app = LoginManager(app)
 
 ALLOWED_EXTENSIONS = {'png', 'jpg', 'jpeg', 'mp4', 'gif'}
 
-#token = 'fca3bf2f86b87bbd4940eff1bc88121a'
+token = 'b36d2cdea296af2b455002503141b73e'
 
 def allowed_file(filename):
     return '.' in filename and filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
@@ -85,7 +87,7 @@ def obtener_token():
         print("token: ", token_info)
         return token_info['token']
 
-token = obtener_token()
+#token = obtener_token()
     
 @app.route('/reset_player/<string:player_id>', methods=['GET'])
 @login_required
@@ -156,7 +158,7 @@ def submit_form_media():
                 print("Type: ", media_type)
                 
                 # Utiliza la función de carga a S3
-                ModelS3.upload_media_to_s3(file, media_type, player_id)
+                model_s3_instance.upload_media_to_s3(file, media_type, player_id)
                 
                 if media_type == 'image':
                     # Obtener la extensión de la imagen
@@ -212,15 +214,23 @@ def download_report():
 @app.route('/media/')
 @login_required
 def media():
-    # Llamar al método media de tu clase ModelS3 para obtener la lista de objetos en tu bucket de S3
-    videos = ModelS3.media()
+    model = ModelS3()
     
-    # Imprimir los nombres y tamaños de los videos en la terminal
-    for name, size in videos:
-        print(f"Nombre: {name}, Tamaño: {size}")
+    # Obtener parámetros de búsqueda y página
+    query = request.args.get('q', '')  # Obtener parámetro de búsqueda (default '')
+    page_number = int(request.args.get('page', 1))  # Obtener parámetro de página (default 1)
+    
+    # Realizar la búsqueda
+    media = model.search_media(query, page_number)
+    print("Media found: ", media)
 
-    # Pasar la lista de objetos a tu plantilla Jinja media.html
-    return render_template('media.html', objects=videos)
+    # Calcular el número total de páginas
+    total_media = model.total_media()
+    print("Total Media: ", total_media)
+    total_pages = (total_media + model.pagination_limit - 1) // model.pagination_limit
+    
+    # Renderizar la plantilla HTML con los resultados
+    return render_template('media.html', objects=media, query=query, page_number=page_number, total_pages=total_pages)
 
 def status_404(error):
     return render_template("404.html")
