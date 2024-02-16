@@ -8,11 +8,11 @@
 .recent-orders {
     margin-top: 2rem;
     overflow-x: auto;
-    border: .2rem solid purple;
+    /* border: .2rem solid purple; */
 }
 .media-content {
     text-align: center;
-    border: .2rem solid green;
+    /* border: .2rem solid green; */
 }
 .media-video,
 .media-image {
@@ -23,16 +23,16 @@
 .media-image{
     width: 100px; 
     height: 120px;
-    border: .2rem solid red;
+    /* border: .2rem solid red; */
 }
 .media-video{
     width: 150px;
     height: 150px;
-    border: .2rem solid blue;
+    /* border: .2rem solid blue; */
 }
 .pagination{
 
-    border: .2rem solid rgb(46, 248, 73);
+    /* border: .2rem solid rgb(46, 248, 73); */
 }
 
 .header-media {
@@ -125,4 +125,3 @@
         display: block;
     }
 }
-

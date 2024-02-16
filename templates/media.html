@@ -80,14 +80,16 @@
                 </table>    
             </div>
             <div class="pagination">
-                {% if page_number > 1 %}
-                    <a href="{{ url_for('media', page=page_number - 1) }}" class="btn btn-danger">Previous</a>
-                {% endif %}
-                {% for page in range(start_range, end_range + 1) %}
-                    <a href="{{ url_for('media', page=page) }}" class="btn btn-primary{% if page == page_number %} active{% endif %}">{{ page }}</a>
-                {% endfor %}
-                {% if page_number < total_pages %}
-                    <a href="{{ url_for('media', page=page_number + 1) }}" class="btn btn-danger">Next</a>
+                {% if total_pages > 1 %}
+                    {% if page_number > 1 %}
+                        <a href="{{ url_for('media', page=page_number - 1) }}" class="btn btn-danger">Previous</a>
+                    {% endif %}
+                    {% for page in range(start_range, end_range + 1) %}
+                        <a href="{{ url_for('media', page=page) }}" class="btn btn-primary{% if page == page_number %} active{% endif %}">{{ page }}</a>
+                    {% endfor %}
+                    {% if page_number < total_pages %}
+                        <a href="{{ url_for('media', page=page_number + 1) }}" class="btn btn-danger">Next</a>
+                    {% endif %}
                 {% endif %}
             </div>            
             <!--====================END CONTENT MEDIA ====================-->
