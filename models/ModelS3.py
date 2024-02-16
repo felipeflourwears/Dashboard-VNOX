@@ -7,7 +7,7 @@ class ModelS3:
     def __init__(self):
         self.s3_client = self.get_s3_client()
         self.bucket_name = self.credenciales()[3]
-        self.pagination_limit = 10  # Cantidad de resultados por página
+        self.pagination_limit = 8  # Cantidad de resultados por página
 
     def credenciales(self):
         keyS3 = 'AKIAYGSKCJWOE4LDGH3G'
@@ -55,15 +55,13 @@ class ModelS3:
             raise ValueError(f"Error uploading file to AWS S3: {e}")
 
     def list_media(self, page_number=1):
-        start_index = (page_number - 1) * self.pagination_limit
-        end_index = start_index + self.pagination_limit
-
         response = self.s3_client.list_objects_v2(Bucket=self.bucket_name)
 
         media = []
         if 'Contents' in response:
             for obj in response['Contents']:
-                if obj['Key'].endswith('.mp4'):
+                file_extension = obj['Key'].split('.')[-1].lower()
+                if file_extension in ['mp4', 'jpeg', 'jpg', 'png', 'gif']:
                     name = obj['Key']
                     size = obj['Size']
                     tags = self.get_tags_from_content(name)
@@ -71,7 +69,8 @@ class ModelS3:
                         Media(id=0, title=name, size=size, tags=tags)
                     )
 
-        return media[start_index:end_index]
+        return media
+
 
     def search_media(self, query, page_number=1):
         start_index = (page_number - 1) * self.pagination_limit

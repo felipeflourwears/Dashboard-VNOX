@@ -62,7 +62,7 @@ login_manager_app = LoginManager(app)
 
 ALLOWED_EXTENSIONS = {'png', 'jpg', 'jpeg', 'mp4', 'gif'}
 
-token = 'b36d2cdea296af2b455002503141b73e'
+#token = 'b36d2cdea296af2b455002503141b73e'
 
 def allowed_file(filename):
     return '.' in filename and filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
@@ -87,7 +87,7 @@ def obtener_token():
         print("token: ", token_info)
         return token_info['token']
 
-#token = obtener_token()
+token = obtener_token()
     
 @app.route('/reset_player/<string:player_id>', methods=['GET'])
 @login_required
@@ -220,17 +220,36 @@ def media():
     query = request.args.get('q', '')  # Obtener parámetro de búsqueda (default '')
     page_number = int(request.args.get('page', 1))  # Obtener parámetro de página (default 1)
     
-    # Realizar la búsqueda
-    media = model.search_media(query, page_number)
-    print("Media found: ", media)
-
+    # Realizar la búsqueda si hay una consulta
+    if query:
+        media = model.search_media(query)
+    else:
+        media = model.list_media()  # Obtener todos los medios
+    
+    # Calcular el número total de medios
+    total_media = len(media)
+    
     # Calcular el número total de páginas
-    total_media = model.total_media()
-    print("Total Media: ", total_media)
     total_pages = (total_media + model.pagination_limit - 1) // model.pagination_limit
     
+    # Calcular el rango de páginas a mostrar
+    max_pages = 5  # Número máximo de páginas a mostrar en la paginación
+    start_range = max(1, page_number - max_pages // 2)
+    end_range = min(total_pages, start_range + max_pages - 1)
+    start_range = max(1, end_range - max_pages + 1)
+    
+    # Obtener los medios para la página actual
+    start_index = (page_number - 1) * model.pagination_limit
+    end_index = min(start_index + model.pagination_limit, total_media)
+    media = media[start_index:end_index]
+    
     # Renderizar la plantilla HTML con los resultados
-    return render_template('media.html', objects=media, query=query, page_number=page_number, total_pages=total_pages)
+    return render_template('media.html', objects=media, query=query, page_number=page_number, total_pages=total_pages, start_range=start_range, end_range=end_range)
+
+
+
+
+
 
 def status_404(error):
     return render_template("404.html")
