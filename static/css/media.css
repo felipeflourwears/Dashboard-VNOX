@@ -104,6 +104,57 @@
     width: 100%;
 }
 
+/* Estilo para el checkbox */
+.styled-checkbox {
+    width: 25px;
+    height: 25px;
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    appearance: none;
+    border: 2px solid red;
+    border-radius: 4px;
+    outline: none;
+    cursor: pointer;
+}
+/* Estilo para el checkbox cuando está marcado */
+.styled-checkbox:checked {
+    background-color: red;
+}
+
+#delete-button {
+    background-color: red;
+    border: none;
+    color: white;
+    padding: 8px 12px;
+    border-radius: 5px;
+    margin-left: 10px; /* Agregar margen izquierdo para separar del texto anterior */
+    cursor: pointer;
+    display: flex; /* Para que los elementos dentro del botón se alineen correctamente */
+    align-items: center; /* Para alinear verticalmente los elementos dentro del botón */
+}
+
+#delete-button .material-icons {
+    margin-right: 5px; /* Agregar margen a la derecha del icono para separarlo del texto */
+    font-size: 18px; /* Tamaño del icono */
+}
+
+#test {
+    background-color: rgb(183, 0, 255);
+    border: none;
+    color: white;
+    padding: 8px 12px;
+    border-radius: 5px;
+    margin-left: 10px; /* Agregar margen izquierdo para separar del texto anterior */
+    cursor: pointer;
+    display: flex; /* Para que los elementos dentro del botón se alineen correctamente */
+    align-items: center; /* Para alinear verticalmente los elementos dentro del botón */
+}
+
+#test .material-icons {
+    margin-right: 5px; /* Agregar margen a la derecha del icono para separarlo del texto */
+    font-size: 18px; /* Tamaño del icono */
+}
+
 
 
 @media screen and (max-width: 1200px) {

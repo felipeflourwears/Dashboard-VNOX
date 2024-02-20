@@ -62,7 +62,7 @@ login_manager_app = LoginManager(app)
 
 ALLOWED_EXTENSIONS = {'png', 'jpg', 'jpeg', 'mp4', 'gif'}
 
-#token = 'cfa267b24c0c32d17d5c608cf0908486'
+token = 'a8c3d9c5e6a24600c4ab2e05f6cfc991'
 
 def allowed_file(filename):
     return '.' in filename and filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
@@ -87,7 +87,7 @@ def obtener_token():
         print("token: ", token_info)
         return token_info['token']
 
-token = obtener_token()
+#token = obtener_token()
     
 @app.route('/reset_player/<string:player_id>', methods=['GET'])
 @login_required
@@ -308,6 +308,30 @@ def login():
         else:
             flash("User not found...")
     return render_template('auth/login.html', current_user_mode=current_user_mode)
+
+@app.route('/upload_media', methods=['POST'])
+def upload_media():
+    # Obtener el nombre del archivo de la solicitud POST
+    file_name = request.data.decode('utf-8')
+
+    # Verificar si se recibió algún nombre de archivo
+    if not file_name:
+        return 'No file name received'
+
+    # Imprimir el nombre del archivo recibido
+    print('Nombre del archivo recibido:', file_name)
+
+    # Realizar aquí cualquier procesamiento adicional que necesites con el nombre del archivo
+
+    return 'File name received: ' + file_name
+
+@app.route('/test', methods=['POST'])
+def test_route():
+    if request.method == 'POST':
+        print("Hello world")
+        data = request.get_json()  # Obtener datos enviados desde el cliente
+        print(data)  # Imprimir los datos recibidos
+        return 'Hola'
 
 if __name__ == '__main__':
     #app.run(host="0.0.0.0", port=puerto)

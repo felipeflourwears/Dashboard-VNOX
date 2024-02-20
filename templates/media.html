@@ -34,19 +34,31 @@
                 
                 <div class="header-media">
                     <h2>Media</h2>
-                    <button id="upload-button">
+                    <button id="upload-button" type="button">
                         <span class="material-symbols-outlined">
                             cloud_upload
                         </span>Upload
+                    </button>
+                    <button id="delete-button" type="button">
+                        <span class="material-symbols-outlined">
+                            delete
+                        </span>Delete
+                    </button>
+                    <button id="test" type="button">
+                        <span class="material-symbols-outlined">
+                            favorite
+                        </span>Test
                     </button>
                     <form action="{{ url_for('media') }}" method="get" class="search-form">
                         <input type="search" class="search" name="q" placeholder="Search" value="{{ query }}">
                         <button type="submit" class="search-button"><span class="material-symbols-outlined">search</span></button>
                     </form>
+                    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
                 </div>
                 <table>
                     <thead>
                         <tr>
+                            <th>Delete</th>
                             <th>Name</th>
                             <th>Media</th>
                             <th>Size</th>
@@ -57,6 +69,9 @@
                     <tbody id="order-table-body">
                         {% for media in objects %}
                         <tr>
+                            <td>
+                                <input type="checkbox" class="styled-checkbox" >
+                            </td>                          
                             <td>{{ media.title }}</td>
                             <td class="media-content">
                                 {% if media.title.endswith('.mp4') %}
@@ -91,7 +106,7 @@
                         <a href="{{ url_for('media', page=page_number + 1) }}" class="btn btn-danger">Next</a>
                     {% endif %}
                 {% endif %}
-            </div>            
+            </div>           
             <!--====================END CONTENT MEDIA ====================-->
         </main>        
         
@@ -107,31 +122,72 @@
     <script src="{{ url_for('static', filename='js/media.js') }}"></script>
     <script src="{{ url_for('static', filename='js/gadgets.js') }}"></script>
     <script>
-       document.getElementById('upload-button').addEventListener('click', function() {
-            // Mostrar popup de Sweet Alert con campos de entrada
-            Swal.fire({
-                title: 'Upload Content',
-                html: `
-                    <input type="file" id="file-input" accept=".mp4, .jpg, .jpeg, .png, .gif" class="media-input-file" required>
-                    <input type="text" id="tags-input" class="media-input-tags" placeholder="Enter media tags">
-                    <div id="file-error" style="display: none; color: red;">Media upload is required</div>
-                `,
-                icon: 'info',
-                showCancelButton: true,
-                confirmButtonText: 'Upload',
-                preConfirm: () => {
-                    const file = document.getElementById('file-input').files[0];
-                    const tags = document.getElementById('tags-input').value;
-                    if (!file) {
-                        document.getElementById('file-error').style.display = 'block';
-                        return false; // Evita que se cierre el diálogo
-                    }
-                    // Aquí puedes agregar la lógica para subir el archivo y los tags
-                    // Por ejemplo, puedes usar Fetch API para enviar los datos al servidor
-                    // Una vez que el archivo y los tags se hayan subido exitosamente, puedes mostrar un mensaje de éxito
+    document.getElementById('upload-button').addEventListener('click', function(event) {
+        event.stopPropagation();
+
+        // Mostrar popup de Sweet Alert con el formulario HTML
+        Swal.fire({
+            title: 'Upload Content',
+            html: '<form id="upload-form">' +
+                      '<input type="text" id="file-input" name="file" class="media-input-file" required>' +
+                      '<div id="file-error" style="display: none; color: red;">Media upload is required</div>' +
+                  '</form>',
+            icon: 'info',
+            showCancelButton: true,
+            confirmButtonText: 'Upload',
+            preConfirm: () => {
+                const formData = new FormData(document.getElementById('upload-form'));
+                const fileName = formData.get('file');
+
+                if (!fileName) {
+                    document.getElementById('file-error').style.display = 'block';
+                    return false; // Evita que se cierre el diálogo
                 }
-            });
+
+                // Imprimir información del archivo seleccionado en la consola
+                console.log('Archivo seleccionado:', fileName);
+
+                // Enviar los datos al servidor Flask
+                fetch('/upload_media', {
+                    method: 'POST',
+                    body: "Hola"
+                })
+                .then(response => {
+                    if (response.ok) {
+                        return response.text();
+                    }
+                    throw new Error('Network response was not ok.');
+                })
+                .then(data => {
+                    console.log(data); // Manejar la respuesta del servidor (opcional)
+                    Swal.fire('Success', 'File uploaded successfully', 'success');
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                    Swal.fire('Error', 'Failed to upload file', 'error');
+                });
+            }
+        });
+    });
+    </script>
+    <script>
+        document.getElementById("test").addEventListener("click", function() {
+            console.log("Click")
+            fetch("/test", {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRFToken': document.querySelector('input[name="csrf_token"]').value // Incluir el token CSRF en las cabeceras
+                },
+                body: JSON.stringify({key: 'value'})
+            })
+            .then(response => response.text())
+            .then(data => console.log(data))
+            .catch(error => console.error('Error:', error));
         });
     </script>
+    
+    
+    
 </body>
 </html>
