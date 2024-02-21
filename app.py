@@ -62,7 +62,7 @@ login_manager_app = LoginManager(app)
 
 ALLOWED_EXTENSIONS = {'png', 'jpg', 'jpeg', 'mp4', 'gif'}
 
-token = 'a8c3d9c5e6a24600c4ab2e05f6cfc991'
+token = '860649922dadfcc1bf91662843e3a93a'
 
 def allowed_file(filename):
     return '.' in filename and filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
@@ -311,27 +311,24 @@ def login():
 
 @app.route('/upload_media', methods=['POST'])
 def upload_media():
-    # Obtener el nombre del archivo de la solicitud POST
-    file_name = request.data.decode('utf-8')
-
-    # Verificar si se recibió algún nombre de archivo
-    if not file_name:
-        return 'No file name received'
-
-    # Imprimir el nombre del archivo recibido
-    print('Nombre del archivo recibido:', file_name)
-
-    # Realizar aquí cualquier procesamiento adicional que necesites con el nombre del archivo
-
-    return 'File name received: ' + file_name
+    if request.method == 'POST':
+        file = request.files['file']  # Obtener el archivo enviado desde el cliente
+        tag = request.form['tag']
+        filename = file.filename  # Obtener el nombre del archivo
+        print(type(file))
+        print(type(filename))
+        print("Archivo recibido:", filename)
+        print("Tag recibido:", tag)  # Imprimir el tag
+        model_s3_instance.upload_file_to_s3(file)
+        return 'Archivo recibido: ' + filename 
 
 @app.route('/test', methods=['POST'])
 def test_route():
     if request.method == 'POST':
-        print("Hello world")
-        data = request.get_json()  # Obtener datos enviados desde el cliente
-        print(data)  # Imprimir los datos recibidos
-        return 'Hola'
+        data = request.get_json()
+        text = data.get('text', '')  # Obtener el texto enviado desde el cliente
+        print("Texto recibido:", text)
+        return text  # Devolver el texto recibido como respuesta
 
 if __name__ == '__main__':
     #app.run(host="0.0.0.0", port=puerto)

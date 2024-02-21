@@ -24,6 +24,26 @@ class ModelS3:
             aws_secret_access_key=secretkeyS3,
             region_name=regionS3
         )
+    
+
+    def upload_file_to_s3(self, file):
+        print("Entrando a la función de upload")
+        try:
+            if not file or not file.filename:
+                raise ValueError("File is empty or not provided.")
+            
+            file_data = file.stream.read()
+            file_stream = BytesIO(file_data)
+
+            self.s3_client.upload_fileobj(
+                file_stream,
+                self.bucket_name,
+                file.filename
+            )
+
+            print(f"File {file.filename} uploaded successfully.")
+        except Exception as e:
+            print(f"Error uploading file to S3: {e}")
 
     def upload_media_to_s3(self, file, media_type, id_player):
         try:
@@ -55,8 +75,9 @@ class ModelS3:
             raise ValueError(f"Error uploading file to AWS S3: {e}")
 
     def list_media(self, page_number=1):
+        print("Entrando LISTA Busqueda de S3")
         response = self.s3_client.list_objects_v2(Bucket=self.bucket_name)
-
+        print(response)
         media = []
         if 'Contents' in response:
             for obj in response['Contents']:
@@ -64,15 +85,19 @@ class ModelS3:
                 if file_extension in ['mp4', 'jpeg', 'jpg', 'png', 'gif']:
                     name = obj['Key']
                     size = obj['Size']
+                    lastModified = obj['LastModified']
                     tags = self.get_tags_from_content(name)
                     media.append(
-                        Media(id=0, title=name, size=size, tags=tags)
+                        Media(id=0, title=name, size=size, lastModified=lastModified, tags=tags)
                     )
 
+        # Ordenar la lista media por lastModified en orden descendente
+        media.sort(key=lambda x: x.lastModified, reverse=True)
+        
         return media
 
-
     def search_media(self, query, page_number=1):
+        print("Entrando funcion Busqueda de S3")
         start_index = (page_number - 1) * self.pagination_limit
         end_index = start_index + self.pagination_limit
 
@@ -85,13 +110,17 @@ class ModelS3:
                 if file_extension in ['mp4', 'gif', 'png', 'jpeg', 'jpg']:
                     name = obj['Key']
                     size = obj['Size']
+                    lastModified = obj['LastModified']
                     file_tags = self.get_tags_from_content(name)
                     # Verificar si la consulta coincide con el nombre del archivo o con alguna etiqueta
                     if query.lower() in name.lower() or any(query.lower() in tag.lower() for tag in file_tags):
                         media.append(
-                            Media(id=0, title=name, size=size, tags=file_tags)
+                            Media(id=0, title=name, size=size, lastModified=lastModified, tags=file_tags)
                         )
 
+        # Ordenar la lista media por lastModified en orden descendente
+        media.sort(key=lambda x: x.lastModified, reverse=True)
+        
         return media[start_index:end_index]
 
     def get_tags_from_content(self, media_name):

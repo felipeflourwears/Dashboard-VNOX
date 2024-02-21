@@ -6,3 +6,4 @@ class Media:
     title: str
     size: int
     tags: list
+    lastModified: str
