@@ -49,7 +49,7 @@ login_manager = LoginManager(app)
 # Instancias de modelos
 model_token = ModelToken() 
 model_actions = ModelActions()
-model_s3_instance = ModelS3()
+model_s3 = ModelS3()
 
 # Imprimir la configuración de la base de datos directamente desde DevelopmentConfig
 config_instance = DevelopmentConfig()
@@ -62,7 +62,7 @@ login_manager_app = LoginManager(app)
 
 ALLOWED_EXTENSIONS = {'png', 'jpg', 'jpeg', 'mp4', 'gif'}
 
-token = '860649922dadfcc1bf91662843e3a93a'
+token = 'a50a2d399af728fb24cfa5f286da8ff7'
 
 def allowed_file(filename):
     return '.' in filename and filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
@@ -158,7 +158,7 @@ def submit_form_media():
                 print("Type: ", media_type)
                 
                 # Utiliza la función de carga a S3
-                model_s3_instance.upload_media_to_s3(file, media_type, player_id)
+                model_s3.upload_media_to_s3(file, media_type, player_id)
                 
                 if media_type == 'image':
                     # Obtener la extensión de la imagen
@@ -246,8 +246,35 @@ def media():
     # Renderizar la plantilla HTML con los resultados
     return render_template('media.html', objects=media, query=query, page_number=page_number, total_pages=total_pages, start_range=start_range, end_range=end_range)
 
+@app.route('/upload_media', methods=['POST'])
+def upload_media():
+    if request.method == 'POST':
+        file = request.files['file']  # Obtener el archivo enviado desde el cliente
+        tags_received = request.form['tag']
+        filename = file.filename  # Obtener el nombre del archivo
+        print(type(file))
+        print(type(filename))
+        print("Archivo recibido:", filename)
+        print("Tag recibido:", tags_received)  # Imprimir el tag
+        
+        model_s3.upload_file_to_s3(file)
+        tags=model_s3.adapt_tag(tags_received)
+        model_s3.put_tags(filename,tags)
+        return redirect('/media')
+    
+@app.route('/delete', methods=['POST'])
+def delete_items():
+    selected_items = request.json['selectedItems']
+    print("Datos recibidos:", selected_items)
+    model_s3.delete_files(selected_items)
 
+    print("Delete parace success")
 
+    # Utilizar boto3 para eliminar los elementos seleccionados del bucket de S3
+    # Aquí deberías tener la lógica para eliminar los elementos de tu bucket
+
+    return redirect('/media')
+     
 
 
 
@@ -309,18 +336,7 @@ def login():
             flash("User not found...")
     return render_template('auth/login.html', current_user_mode=current_user_mode)
 
-@app.route('/upload_media', methods=['POST'])
-def upload_media():
-    if request.method == 'POST':
-        file = request.files['file']  # Obtener el archivo enviado desde el cliente
-        tag = request.form['tag']
-        filename = file.filename  # Obtener el nombre del archivo
-        print(type(file))
-        print(type(filename))
-        print("Archivo recibido:", filename)
-        print("Tag recibido:", tag)  # Imprimir el tag
-        model_s3_instance.upload_file_to_s3(file)
-        return 'Archivo recibido: ' + filename 
+
 
 @app.route('/test', methods=['POST'])
 def test_route():
