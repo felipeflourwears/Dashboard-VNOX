@@ -62,7 +62,7 @@ login_manager_app = LoginManager(app)
 
 ALLOWED_EXTENSIONS = {'png', 'jpg', 'jpeg', 'mp4', 'gif'}
 
-token = '860649922dadfcc1bf91662843e3a93a'
+token = '7f74f6b22572485903aa5c13ec87f085'
 
 def allowed_file(filename):
     return '.' in filename and filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
@@ -107,13 +107,13 @@ def reset_player(player_id):
         return render_template('404.html', error_message=str(e))
     
 
-@app.route('/send_report')
+@app.route('/send_report', methods=['POST'])
 @login_required
 def send_report():
     #token = obtener_token()
     try:
-        mail = request.args.get('email')
-        ModelReport.send_report(mail, token)
+        # mail = request.args.get('text')
+        ModelReport.send_report(token)
         print("Dentro del try")
         return jsonify(success=True, message="Report sent successfully!")
     except Exception as e:
