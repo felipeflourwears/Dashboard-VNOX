@@ -15,7 +15,7 @@
     <link rel="stylesheet" href="{{ url_for('static', filename='css/pagination.css') }}">
     <link rel="stylesheet" href="{{ url_for('static', filename='css/media.css') }}">
     <link rel="stylesheet" href="{{ url_for('static', filename='css/gadgets.css') }}">
-    <link rel="stylesheet" href="{{ url_for('static', filename='css/loader.css') }}">
+   
 
     <!-- CDN de Sweet Alert -->
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11.0.20/dist/sweetalert2.min.js"></script>
@@ -24,9 +24,7 @@
 
 </head>
 <body>
-    <div class="loader-container" id="loaderContainer">
-        <div class="loader"></div>
-    </div>
+
     <div class="container">
         <!--====================BEGIN ASIDE ====================-->
         {% include 'sidebar.html' %}
@@ -46,6 +44,11 @@
                         <span class="material-symbols-outlined">
                             delete
                         </span>Delete
+                    </button>
+                    <button id="test" type="button">
+                        <span class="material-symbols-outlined">
+                            favorite
+                        </span>Test
                     </button>
                     <form action="{{ url_for('media') }}" method="get" class="search-form">
                         <input type="search" class="search" name="q" placeholder="Search" value="{{ query }}">
@@ -163,11 +166,63 @@
     <script src="{{ url_for('static', filename='js/index.js') }}"></script>
     <script src="{{ url_for('static', filename='js/media.js') }}"></script>
     <script src="{{ url_for('static', filename='js/gadgets.js') }}"></script>
-    <style>
-        .swal2-input{
-            max-width: 80%;
-            width: 290px;
+    <script>
+        document.getElementById("upload-button").addEventListener("click", async function() {
+    const { value: formValues } = await Swal.fire({
+        title: "Subir archivo",
+        html:
+            '<input id="swal-input1" class="swal2-input" placeholder="Tag">' +
+            '<input id="file-input" type="file" accept="video/*, image/*">',
+        focusConfirm: false,
+        preConfirm: () => {
+            return [
+                document.getElementById("swal-input1").value,
+                document.getElementById("file-input").files[0]
+            ];
         }
-    </style>
+    });
+
+    const tag = formValues[0];
+    const file = formValues[1];
+
+    if (file) {
+        const formData = new FormData();
+        formData.append("file", file);
+        formData.append("tag", tag);
+
+        // Obtener el token CSRF de la metaetiqueta
+        const csrfToken = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
+
+        fetch("/upload_media", {
+            method: "POST",
+            headers: {
+                'X-CSRFToken': csrfToken  // Incluir el token CSRF en los encabezados
+            },
+            body: formData
+        })
+        .then(response => response.text())
+        .then(data => {
+            Swal.fire({
+                title: "Respuesta del servidor",
+                text: data
+            });
+        })
+        .catch(error => {
+            console.error('Error:', error);
+            Swal.fire({
+                icon: 'error',
+                title: 'Error',
+                text: 'Hubo un error al subir el archivo.'
+            });
+        });
+    }
+});
+
+    </script>
+    
+   
+    
+    
+    
 </body>
 </html>
