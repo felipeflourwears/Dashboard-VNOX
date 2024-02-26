@@ -124,6 +124,7 @@ class ModelS3:
         end_index = start_index + self.pagination_limit
 
         response = self.s3_client.list_objects_v2(Bucket=self.bucket_name)
+        print("Response: ", response)
         media = []
         if 'Contents' in response:
             for obj in response['Contents']:

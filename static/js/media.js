@@ -1,21 +1,46 @@
-function confirmDelete(event) {
+function confirmDelete(fileName) {
     event.preventDefault(); // Evita el comportamiento predeterminado del enlace
-    const url = event.target.href; // Obtiene la URL del enlace
-
+    const csrfToken = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
+    
     Swal.fire({
         title: 'Are you sure?',
-        text: 'You will delete this media!',
+        text: 'You will delete ' + fileName + '!',
         icon: 'warning',
         showCancelButton: true,
         confirmButtonColor: '#3085d6',
         cancelButtonColor: '#d33',
-        confirmButtonText: 'Yes, reset it!'
+        confirmButtonText: 'Yes, delete it!'
     }).then((result) => {
         if (result.isConfirmed) {
-            window.location.href = url; // Redirige a la URL si se confirma la eliminación
+            // Mostrar el loader
+            document.getElementById("loaderContainer").style.display = 'flex';
+            // Hacer una solicitud POST al servidor para eliminar el archivo
+            fetch('/delete', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRFToken': csrfToken
+                },
+                body: JSON.stringify({ selectedItems: [fileName] })
+            })
+            .then(response => {
+                // Mostrar el loader
+                document.getElementById("loaderContainer").style.display = 'none';
+                if(response.redirected) {
+                    window.location.href = response.url; // Redirige a la URL proporcionada por el servidor
+                }else{
+                    return response.text(); // Si no hay redirección, devuelve el cuerpo de la respuesta como texto
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                // Mostrar el loader
+                document.getElementById("loaderContainer").style.display = 'none';
+            });
         }
     });
 }
+
 //Modify
 document.getElementById("upload-button").addEventListener("click", async function() {
     const { value: formValues } = await Swal.fire({
@@ -149,3 +174,14 @@ document.getElementById("delete-button").addEventListener("click", function() {
         console.error('Error:', error);
     });
 });
+
+
+
+function loadVideo(wrapper) {
+    var video = wrapper.querySelector('video');
+    if (!video.src) {
+        var source = video.querySelector('source');
+        video.src = source.src;
+    }
+    video.play();
+}

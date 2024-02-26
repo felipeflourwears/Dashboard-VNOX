@@ -58,6 +58,7 @@
                         <tr>
                             <th>Delete</th>
                             <th>Name</th>
+                            <th>Type</th>
                             <th>Media</th>
                             <th>Size</th>
                             <th>Tagging</th>
@@ -71,23 +72,64 @@
                             <td>
                                 <input type="checkbox" class="styled-checkbox" >
                             </td>                          
-                            <td>{{ media.title }}</td>
-                            <td class="media-content">
-                                {% if media.title.endswith('.mp4') %}
-                                <video controls class="media-video">
-                                    <source src="https://mediapopa.s3.amazonaws.com/{{ media.title }}" type="video/mp4">
-                                    Your browser does not support the video tag.
-                                </video>
+                            <td>
+                                {% set title = media.title %}
+                                {% if title|length > 15 %}
+                                    {{ title[:15] }}...
                                 {% else %}
-                                <img src="https://mediapopa.s3.amazonaws.com/{{ media.title }}" alt="Image" class="media-image">
+                                    {{ title }}
                                 {% endif %}
                             </td>
-                            <td>{{ media.size }} MB</td>
-                            <td>{{ media.tags }}</td>
+                            <td>
+                                {% set title = media.title %}
+                                {% if title.endswith('.mp4') %}
+                                    MP4
+                                {% elif title.endswith('.jpeg') or title.endswith('.jpg') %}
+                                    JPEG
+                                {% elif title.endswith('.png') %}
+                                    PNG
+                                {% elif title.endswith('.gif') %}
+                                    GIF
+                                {% else %}
+                                    Otro
+                                {% endif %}
+                            </td>
+                            <!-- Asi sirve -->
+                            <td class="media-content">
+                                {% if media.title.endswith('.mp4') %}
+                                    <div class="video-wrapper" onclick="loadVideo(this)">
+                                        <img src="placeholder_image.jpg" alt="" class="video-thumbnail">
+                                        <video class="media-video" controls>
+                                            <source src="https://mediapopa.s3.amazonaws.com/{{ media.title }}" type="video/mp4">
+                                            Your browser does not support the video tag.
+                                        </video>
+                                    </div>
+                                {% else %}
+                                    <img src="https://mediapopa.s3.amazonaws.com/{{ media.title }}" alt="Image" class="media-image">
+                                {% endif %}
+                            </td>
+
+                            {% if media.size < 1024 * 1024 %}
+                                <td class="fileSize">{{ '%.2f' % (media.size / (1024)) }} KB</td>
+                            {% elif media.size < 1024 * 1024 * 1024 %}
+                                <td class="fileSize">{{ '%.2f' % (media.size / (1024 * 1024)) }} MB</td>
+                            {% else %}
+                                <td class="fileSize">{{ '%.2f' % (media.size / (1024 * 1024 * 1024)) }} GB</td>
+                            {% endif %}
+
+                            <td>
+                                {% set tag = media.tags[0] %}
+                                {% if tag|length > 8 %}
+                                    {{ tag[:8] }}...
+                                {% else %}
+                                    {{ tag }}
+                                {% endif %}
+                            </td>
+                            
                             <td>{{ media.lastModified }}</td>
                             <td>
-                                <a class="btn-edit" href="#" style="color: white;">Edit</a>
-                                <a class="btn-delete" href="#" style="color: white;" onclick="confirmDelete(event)">Delete</a>
+                                <!-- <a class="btn-edit" href="#" style="color: white;">Edit</a> -->
+                                <a class="btn-delete" href="#" style="color: white;" onclick="confirmDelete('{{ media.title }}')">Delete</a>
                             </td>
                         </tr>
                         {% endfor %}
