@@ -2,13 +2,14 @@ import datetime
 import pdfkit
 import requests
 
+
 class ModelReport:
 
     def requirementsPDF(self):
         now = datetime.datetime.now()
         date = now.strftime("%d/%m/%Y")
-        #ruta_wkhtmltopdf = r'C:\Program Files\wkhtmltopdf\bin\wkhtmltopdf.exe'
-        ruta_wkhtmltopdf = r'/usr/local/bin/wkhtmltopdf'
+        ruta_wkhtmltopdf = r'C:/Program Files/wkhtmltopdf/bin/wkhtmltopdf.exe'
+        # ruta_wkhtmltopdf = r'/usr/local/bin/wkhtmltopdf'
         config = pdfkit.configuration(wkhtmltopdf=ruta_wkhtmltopdf)
 
         return date, config
@@ -124,19 +125,32 @@ class ModelReport:
             print("Error:", e)  # Imprime el error en la consola del servidor
             return "Error al generar el PDF", 500
         
-    @classmethod 
-    def send_report(cls, mail, token):
-        # Construye la URL con el correo electrónico y el token como parámetros
-        auth_url = f"https://retailmibeex.net/apiVnnox/getEmail.php?email={mail}&token={token}"
-        
-        auth_payload = {}
+    @classmethod
+    def send_report(cls,token):        
+       # Recupera los datos del formulario
+        dato = requests.form['dato']
 
-        # Realizar la solicitud
-        response = requests.get(auth_url, data=auth_payload)
+        # Aquí reemplaza 'tu_token' con el token real que necesitas enviar a la API
+        # token = '7f74f6b22572485903aa5c13ec87f085'
 
-        # Verificar el código de estado HTTP
-        print(response)
+        # URL de la API a la que enviar los datos
+        url_api = f'https://retailmibeex.net/apiVnnox/postEmail.php?token={token}'
+
+        # Cuerpo de la solicitud que se enviará a la API
+        data = {
+            'emails': dato
+        }
+
+        # Encabezados de la solicitud que incluyen el token de autorización
+        headers = {
+            'Content-Type': 'application/json',
+        }
+
+        # Enviar la solicitud POST a la API con los datos y encabezados
+        response = requests.post(url_api, json=data)
+
+        # Verificar si la solicitud fue exitosa
         if response.status_code == 200:
-            print("Exitoso")
+            return jsonify({'message': 'Datos enviados correctamente a la API.'}), 200
         else:
-            print(f"Error en la nueva solicitud. Código de estado: {response.status_code}")
+            return jsonify({'error': 'Hubo un problema al enviar los datos a la API.'}), 500
