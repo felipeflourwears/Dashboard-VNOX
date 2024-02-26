@@ -42,6 +42,7 @@ function confirmDelete(fileName) {
 }
 
 //Modify
+//Modify
 document.getElementById("upload-button").addEventListener("click", async function() {
     const { value: formValues } = await Swal.fire({
         title: "Upload File Media",
@@ -142,10 +143,10 @@ document.getElementById("delete-button").addEventListener("click", function() {
     checkboxes.forEach(function(checkbox) {
         if (checkbox.checked) {
             var name = checkbox.parentElement.parentElement.querySelector('td:nth-child(2)').textContent;
-            selectedItems.push(name);
+            console.log("Nombre del archivo:", name);
+            selectedItems.push(name.trim()); // Guardar el nombre del archivo en el array y eliminar espacios en blanco
         }
     });
-    console.log("CHECKBOXES: ", checkboxes);
     console.log("SELECTED: ", selectedItems);
 
     // Mostrar el loader
@@ -156,7 +157,7 @@ document.getElementById("delete-button").addEventListener("click", function() {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json',
-            'X-CSRFToken': csrfToken  // Incluir el token CSRF en los encabezados
+            'X-CSRFToken': csrfToken
         },
         body: JSON.stringify({selectedItems: selectedItems})
     }).then(function(response) {
@@ -164,9 +165,9 @@ document.getElementById("delete-button").addEventListener("click", function() {
         document.getElementById("loaderContainer").style.display = 'none';
         // Manejar la respuesta del servidor si es necesario
         if(response.redirected) {
-            window.location.href = response.url; // Redirige a la URL proporcionada por el servidor
-        }else{
-            return response.text(); // Si no hay redirección, devuelve el cuerpo de la respuesta como texto
+            window.location.href = response.url;
+        } else {
+            return response.text();
         }
     }).catch(function(error) {
         // Ocultar el loader si hay un error

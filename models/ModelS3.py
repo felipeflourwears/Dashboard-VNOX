@@ -25,9 +25,18 @@ class ModelS3:
             region_name=regionS3
         )
     
+    def delete_files(self, files_name_array):
+        for file_name in files_name_array:
+            try:
+                response = self.s3_client.delete_object(Bucket=self.bucket_name, Key=file_name)
+                print(f"Archivo '{file_name}' eliminado correctamente del bucket '{self.bucket_name}'")
+            except Exception as e:
+                print(f"Error al eliminar el archivo '{file_name}' del bucket '{self.bucket_name}': {e}")
+    
 
-    def upload_file_to_s3(self, file):
+    def upload_file_to_s3(self, file, tag=None):
         print("Entrando a la función de upload")
+        print("Tipo: ", type(tag), "Tag: ", tag)
         try:
             if not file or not file.filename:
                 raise ValueError("File is empty or not provided.")
@@ -35,49 +44,62 @@ class ModelS3:
             file_data = file.stream.read()
             file_stream = BytesIO(file_data)
 
+            # Generar la clave del objeto en S3 con el nombre de archivo
+            object_key = file.filename
+
+            # Si se proporciona un tag, agregarlo como metadato
+            extra_args = {}
+            if tag:
+                extra_args['Metadata'] = {'tag': tag}
+
+            # Subir el archivo al bucket de S3
             self.s3_client.upload_fileobj(
                 file_stream,
                 self.bucket_name,
-                file.filename
+                object_key,
+                ExtraArgs=extra_args
             )
 
             print(f"File {file.filename} uploaded successfully.")
         except Exception as e:
             print(f"Error uploading file to S3: {e}")
 
-    def upload_media_to_s3(self, file, media_type, id_player):
+    def upload_file_to_s3(self, file, tag=None):
+        print("Entrando a la función de upload")
+        print("Tipo: ", type(tag), "Tag: ", tag)  # Imprimir los metadatos
         try:
             if not file or not file.filename:
                 raise ValueError("File is empty or not provided.")
             
-            if media_type == 'image':
-                file_extension = file.filename.split('.')[-1].lower()
-                if file_extension not in ['jpg', 'jpeg', 'png', 'gif']:
-                    raise ValueError("Unsupported image type.")
-                key = f'{id_player}.{file_extension}'
-            elif media_type == 'video':
-                key = f'{id_player}.mp4'
-            else:
-                raise ValueError("Unsupported media type.")
-
             file_data = file.stream.read()
             file_stream = BytesIO(file_data)
 
+            # Generar la clave del objeto en S3 con el nombre de archivo
+            object_key = file.filename
+
+            # Si se proporciona un tag, agregarlo como metadato
+            metadata = {}
+            if tag:
+                metadata['tag'] = tag
+
+            print("Metaddatoa",metadata)
+
+            # Subir el archivo al bucket de S3 con los metadatos
             self.s3_client.put_object(
                 Bucket=self.bucket_name,
-                Key=key,
-                Body=file_stream
+                Key=object_key,
+                Body=file_stream,
+                Metadata=metadata
             )
 
-            print(f"File {key} uploaded successfully.")
-
+            print(f"File {file.filename} uploaded successfully.")
         except Exception as e:
-            raise ValueError(f"Error uploading file to AWS S3: {e}")
+            print(f"Error uploading file to S3: {e}")
 
     def list_media(self, page_number=1):
         print("Entrando LISTA Busqueda de S3")
         response = self.s3_client.list_objects_v2(Bucket=self.bucket_name)
-        print(response)
+        #print(response)
         media = []
         if 'Contents' in response:
             for obj in response['Contents']:
@@ -120,6 +142,7 @@ class ModelS3:
 
         # Ordenar la lista media por lastModified en orden descendente
         media.sort(key=lambda x: x.lastModified, reverse=True)
+        print(media)
         
         return media[start_index:end_index]
 
@@ -141,6 +164,25 @@ class ModelS3:
             Key=media_name,
             Tagging={'TagSet': tag_list}
         )
+    
+    def put_tags(self, media_name, tags):
+        response = self.s3_client.put_object_tagging(
+            Bucket=self.credenciales()[3],
+            Key=media_name,
+            Tagging = tags
+        )
+
+    def adapt_tag(self, tag_string):
+        # Dividir la cadena de tags en una lista de tags individuales
+        tags_list = tag_string.split(',')
+        
+        # Crear una lista de diccionarios en el formato necesario
+        tags = {
+            'TagSet': [
+                {'Key': str(i+1), 'Value': tag} for i, tag in enumerate(tags_list)
+            ]
+        }
+        return tags
 
     def total_media(self):
         response = self.s3_client.list_objects_v2(Bucket=self.bucket_name)

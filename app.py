@@ -62,7 +62,7 @@ login_manager_app = LoginManager(app)
 
 ALLOWED_EXTENSIONS = {'png', 'jpg', 'jpeg', 'mp4', 'gif'}
 
-token = '43beab86c0a7118b3d3787578ac69c2a'
+token = '645ac21334ca41a3f548a15132f75ea7'
 
 def allowed_file(filename):
     return '.' in filename and filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
@@ -107,13 +107,13 @@ def reset_player(player_id):
         return render_template('404.html', error_message=str(e))
     
 
-@app.route('/send_report', methods=['POST'])
+@app.route('/send_report')
 @login_required
 def send_report():
     #token = obtener_token()
     try:
-        # mail = request.args.get('text')
-        ModelReport.send_report(token)
+        mail = request.args.get('email')
+        ModelReport.send_report(mail, token)
         print("Dentro del try")
         return jsonify(success=True, message="Report sent successfully!")
     except Exception as e:
@@ -260,6 +260,8 @@ def upload_media():
         model_s3.upload_file_to_s3(file)
         tags=model_s3.adapt_tag(tags_received)
         model_s3.put_tags(filename,tags)
+
+        print("Hoal test")
         return redirect('/media')
     
 @app.route('/delete', methods=['POST'])
@@ -267,8 +269,6 @@ def delete_items():
     selected_items = request.json['selectedItems']
     print("Datos recibidos:", selected_items)
     model_s3.delete_files(selected_items)
-
-    print("Delete parace success")
 
     # Utilizar boto3 para eliminar los elementos seleccionados del bucket de S3
     # Aquí deberías tener la lógica para eliminar los elementos de tu bucket
