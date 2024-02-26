@@ -1,62 +1,49 @@
 function openPopupMail(event) {
     event.preventDefault();
+    console.log('ENTRADO AL SWAL')
+    const csrfToken = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
+
 
     Swal.fire({
-        title: "Enter your email address",
-        input: "email",
+        title: 'Ingrese un dato:',
+        input: 'text',
         inputAttributes: {
-            autocapitalize: "off"
+            autocapitalize: 'off'
         },
         showCancelButton: true,
-        confirmButtonText: "Send Report",
-        allowOutsideClick: () => !Swal.isLoading(),
+        confirmButtonText: 'Enviar',
+        showLoaderOnConfirm: true,
+        preConfirm: (dato) => {
+            return fetch('/send_report', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/x-www-form-urlencoded',
+                    'X-CSRFToken': csrfToken  // Incluir el token CSRF en los encabezados
+                },
+                body: new URLSearchParams({
+                    'emails': dato
+                })
+            })
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error(response.statusText)
+                }
+                return response.json();
+            })
+            .catch(error => {
+                Swal.showValidationMessage(
+                    `Hubo un error al enviar los datos: ${error}`
+                )
+            });
+        },
+        allowOutsideClick: () => !Swal.isLoading()
     }).then((result) => {
         if (result.isConfirmed) {
-            const email = result.value;
-
-            if (!email || email.trim() === "") {
-                Swal.fire({
-                    title: "Invalid email address",
-                    icon: "error"
-                });
-                return;
-            }
-
-            fetch(`/send_report?email=${email}`)
-                .then(response => {
-                    if (!response.ok) {
-                        throw new Error(`Request failed with status: ${response.status}`);
-                    }
-                    return response.json();
-                })
-                .then(data => {
-                    console.log(data);  // Imprime la respuesta del servidor en la consola
-
-                    if (data && data.success) {
-                        Swal.fire({
-                            title: "Report sent successfully!",
-                            icon: "success"
-                        });
-                    } else {
-                        Swal.fire({
-                            title: "Error sending report",
-                            text: data && data.message ? data.message : "Unknown error",
-                            icon: "error"
-                        });
-                    }
-                })
-                .catch(error => {
-                    Swal.fire({
-                        title: "Error sending report",
-                        text: error.message,
-                        icon: "error"
-                    });
-                });
-        } else if (result.isDenied) {
-            Swal.fire({
-                title: "Canceled",
-                icon: "info"
-            });
+            Swal.fire(
+                '¡Enviado!',
+                'Los datos fueron enviados correctamente.',
+                'success'
+            )
         }
-    });
+    })
 }
