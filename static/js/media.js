@@ -186,3 +186,24 @@ function loadVideo(wrapper) {
     }
     video.play();
 }
+
+
+document.addEventListener("DOMContentLoaded", function() {
+    var salesAnalytics = document.querySelector('.sales-analytics');
+    var totalSpace = 10 * 1024 * 1024 * 1024; // 10GB en bytes
+
+    var totalStorageMB = salesAnalytics.dataset.totalStorage.replace(" MB", "");
+    var usedSpace = parseFloat(totalStorageMB) * 1024 * 1024; // Convertir total_storage de MB a bytes
+
+    var storageBar = salesAnalytics.querySelector('.storage-bar');
+    var storageInfo = salesAnalytics.querySelector('.storage-info');
+
+    // Calcula el porcentaje de espacio utilizado
+    var percentageUsed = (usedSpace / totalSpace) * 100;
+
+    // Establece el ancho de la barra de storage
+    storageBar.style.width = percentageUsed + '%';
+
+    // Actualiza el texto de información
+    storageInfo.textContent = totalStorageMB + 'MB / 10GB';
+});

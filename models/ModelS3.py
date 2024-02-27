@@ -1,5 +1,6 @@
 from .entities.Media import Media
 import boto3
+import math
 from io import BytesIO
 
 class ModelS3:
@@ -193,3 +194,25 @@ class ModelS3:
                 if file_extension in ['mp4', 'gif', 'png', 'jpeg', 'jpg']:
                     total_media += 1
         return total_media
+    
+    def convert_size(self, size_bytes):
+        # Función para convertir el tamaño de bytes a KB, MB, GB, etc.
+        if size_bytes == 0:
+            return "0 Bytes"
+        size_name = ("Bytes", "KB", "MB", "GB", "TB", "PB", "EB", "ZB", "YB")
+        i = int(math.floor(math.log(size_bytes, 1024)))
+        p = math.pow(1024, i)
+        s = round(size_bytes / p, 2)
+        return "%s %s" % (s, size_name[i])
+
+    def get_bucket_size(self):
+        response = self.s3_client.list_objects_v2(Bucket=self.bucket_name)
+        total_size = sum(obj['Size'] for obj in response.get('Contents', []))
+        return self.convert_size(total_size)
+
+    def count_files_by_extension(self, extensions):
+        total_count = 0
+        for ext in extensions:
+            response = self.s3_client.list_objects_v2(Bucket=self.bucket_name, Prefix='', Delimiter='/', StartAfter='', MaxKeys=1000)
+            total_count += sum(1 for obj in response.get('Contents', []) if obj['Key'].lower().endswith(ext.lower()))
+        return total_count

@@ -1,0 +1,32 @@
+<div class="sales-analytics" data-total-storage="{{ total_storage }}">
+    <h2>Data Storage</h2>
+    <div class="item storage">
+        <div>
+            <span class="material-symbols-outlined">
+                cloud_upload
+            </span>
+            <h3>Used</h3>
+        </div>
+        <div class="storage-bar"></div> <!-- Barra de storage -->
+        <div class="storage-info"></div> <!-- Texto de información -->
+    </div>
+    <div class="item storage">
+        <div>
+            <span class="material-symbols-outlined">
+                photo_library
+            </span>
+            <h3>Images</h3>
+            <p>Total: {{ total_images }}</p> <!-- Mostrar la cantidad total de imágenes -->
+        </div>
+    </div>
+    <div class="item storage">
+        <div>
+            <span class="material-symbols-outlined">
+                movie
+            </span>
+            <h3>Videos</h3>
+            <p>Total: {{ total_videos }}</p> <!-- Mostrar la cantidad total de videos -->
+        </div>
+    </div>
+</div>
+

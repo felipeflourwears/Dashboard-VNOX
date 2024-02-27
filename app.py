@@ -214,23 +214,21 @@ def download_report():
 @app.route('/media/')
 @login_required
 def media():
-    model = ModelS3()
-    
     # Obtener parámetros de búsqueda y página
     query = request.args.get('q', '')  # Obtener parámetro de búsqueda (default '')
     page_number = int(request.args.get('page', 1))  # Obtener parámetro de página (default 1)
     
     # Realizar la búsqueda si hay una consulta
     if query:
-        media = model.search_media(query)
+        media = model_s3.search_media(query)
     else:
-        media = model.list_media()  # Obtener todos los medios
+        media = model_s3.list_media()  # Obtener todos los medios
     
     # Calcular el número total de medios
     total_media = len(media)
     
     # Calcular el número total de páginas
-    total_pages = (total_media + model.pagination_limit - 1) // model.pagination_limit
+    total_pages = (total_media + model_s3.pagination_limit - 1) // model_s3.pagination_limit
     
     # Calcular el rango de páginas a mostrar
     max_pages = 5  # Número máximo de páginas a mostrar en la paginación
@@ -239,12 +237,18 @@ def media():
     start_range = max(1, end_range - max_pages + 1)
     
     # Obtener los medios para la página actual
-    start_index = (page_number - 1) * model.pagination_limit
-    end_index = min(start_index + model.pagination_limit, total_media)
+    start_index = (page_number - 1) * model_s3.pagination_limit
+    end_index = min(start_index + model_s3.pagination_limit, total_media)
     media = media[start_index:end_index]
-    
+
+    total_storage = model_s3.get_bucket_size()
+    print("Total Storage: ", total_storage)
+    total_videos = model_s3.count_files_by_extension(['.mp4'])
+    total_images = model_s3.count_files_by_extension(['.gif', '.jpg', '.jpeg', '.png'])
+    print("Count Type Media Videos: ", total_videos)
+    print("Count Type Media Images: ", total_images)    
     # Renderizar la plantilla HTML con los resultados
-    return render_template('media.html', objects=media, query=query, page_number=page_number, total_pages=total_pages, start_range=start_range, end_range=end_range)
+    return render_template('media.html', objects=media, query=query, page_number=page_number, total_pages=total_pages, start_range=start_range, end_range=end_range, total_storage=total_storage, total_videos=total_videos, total_images=total_images)
 
 @app.route('/upload_media', methods=['POST'])
 def upload_media():
@@ -260,8 +264,6 @@ def upload_media():
         model_s3.upload_file_to_s3(file)
         tags=model_s3.adapt_tag(tags_received)
         model_s3.put_tags(filename,tags)
-
-        print("Hoal test")
         return redirect('/media')
     
 @app.route('/delete', methods=['POST'])
@@ -269,10 +271,6 @@ def delete_items():
     selected_items = request.json['selectedItems']
     print("Datos recibidos:", selected_items)
     model_s3.delete_files(selected_items)
-
-    # Utilizar boto3 para eliminar los elementos seleccionados del bucket de S3
-    # Aquí deberías tener la lógica para eliminar los elementos de tu bucket
-
     return redirect('/media')
      
 
