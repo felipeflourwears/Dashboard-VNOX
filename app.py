@@ -62,7 +62,7 @@ login_manager_app = LoginManager(app)
 
 ALLOWED_EXTENSIONS = {'png', 'jpg', 'jpeg', 'mp4', 'gif'}
 
-#token = '645ac21334ca41a3f548a15132f75ea7'
+token = '8605f4d5cd6d73f736d3ec93d765474c'
 
 def allowed_file(filename):
     return '.' in filename and filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
@@ -87,7 +87,7 @@ def obtener_token():
         print("token: ", token_info)
         return token_info['token']
 
-token = obtener_token()
+#token = obtener_token()
     
 @app.route('/reset_player/<string:player_id>', methods=['GET'])
 @login_required
@@ -242,11 +242,9 @@ def media():
     media = media[start_index:end_index]
 
     total_storage = model_s3.get_bucket_size()
-    print("Total Storage: ", total_storage)
+    #print("Total Storage: ", total_storage)
     total_videos = model_s3.count_files_by_extension(['.mp4'])
     total_images = model_s3.count_files_by_extension(['.gif', '.jpg', '.jpeg', '.png'])
-    print("Count Type Media Videos: ", total_videos)
-    print("Count Type Media Images: ", total_images)    
     # Renderizar la plantilla HTML con los resultados
     return render_template('media.html', objects=media, query=query, page_number=page_number, total_pages=total_pages, start_range=start_range, end_range=end_range, total_storage=total_storage, total_videos=total_videos, total_images=total_images)
 
@@ -261,9 +259,9 @@ def upload_media():
         print("Archivo recibido:", filename)
         print("Tag recibido:", tags_received)  # Imprimir el tag
         
-        model_s3.upload_file_to_s3(file)
-        tags=model_s3.adapt_tag(tags_received)
-        model_s3.put_tags(filename,tags)
+        unique_filename = model_s3.upload_file_to_s3(file)
+        tags = model_s3.adapt_tag(tags_received)
+        model_s3.put_tags(unique_filename, tags)
         return redirect('/media')
     
 @app.route('/delete', methods=['POST'])
@@ -273,9 +271,6 @@ def delete_items():
     model_s3.delete_files(selected_items)
     return redirect('/media')
      
-
-
-
 def status_404(error):
     return render_template("404.html")
     

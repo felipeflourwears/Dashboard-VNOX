@@ -2,6 +2,7 @@ from .entities.Media import Media
 import boto3
 import math
 from io import BytesIO
+import os
 
 class ModelS3:
     
@@ -65,37 +66,65 @@ class ModelS3:
         except Exception as e:
             print(f"Error uploading file to S3: {e}")
 
-    def upload_file_to_s3(self, file, tag=None):
-        print("Entrando a la función de upload")
-        print("Tipo: ", type(tag), "Tag: ", tag)  # Imprimir los metadatos
+    def upload_file_to_s3(self, file):
         try:
             if not file or not file.filename:
                 raise ValueError("File is empty or not provided.")
             
             file_data = file.stream.read()
             file_stream = BytesIO(file_data)
-
-            # Generar la clave del objeto en S3 con el nombre de archivo
-            object_key = file.filename
-
-            # Si se proporciona un tag, agregarlo como metadato
-            metadata = {}
-            if tag:
-                metadata['tag'] = tag
-
-            print("Metaddatoa",metadata)
-
-            # Subir el archivo al bucket de S3 con los metadatos
-            self.s3_client.put_object(
-                Bucket=self.bucket_name,
-                Key=object_key,
-                Body=file_stream,
-                Metadata=metadata
+            
+            original_object_key = file.filename
+            
+            # Verificar si el archivo original ya existe en el bucket
+            if self._file_exists_in_s3(original_object_key):
+                # Generar un nombre único para el archivo y obtener los tags asociados
+                unique_object_key = self._generate_unique_filename(original_object_key)
+                print(f"Generated unique filename: {unique_object_key} (Original: {original_object_key})")
+            else:
+                unique_object_key = original_object_key
+            
+            # Subir el archivo al bucket de S3
+            self.s3_client.upload_fileobj(
+                file_stream,
+                self.bucket_name,
+                unique_object_key
             )
 
-            print(f"File {file.filename} uploaded successfully.")
+            print(f"File {file.filename} uploaded successfully as {unique_object_key}.")
+
+            return unique_object_key  # Devolver el nombre único generado
         except Exception as e:
             print(f"Error uploading file to S3: {e}")
+
+
+    def _generate_unique_filename(self, filename):
+        filename_base, filename_ext = os.path.splitext(filename)
+        counter = 1
+        original_filename = filename_base + filename_ext  # Almacenar el nombre original del archivo
+
+        # Verificar si el archivo original ya existe en el bucket
+        if not self._file_exists_in_s3(original_filename):
+            return original_filename
+
+        # Si el archivo original ya existe, generar un nombre único
+        while True:
+            unique_filename = f"{filename_base}_{counter}{filename_ext}"
+            if not self._file_exists_in_s3(unique_filename):
+                print(f"Found unique filename: {unique_filename} (Original: {original_filename})")
+                return unique_filename
+            counter += 1
+
+    def _file_exists_in_s3(self, object_key):
+        try:
+            response = self.s3_client.head_object(Bucket=self.bucket_name, Key=object_key)
+            return True
+        except self.s3_client.exceptions.ClientError as e:
+            if e.response['Error']['Code'] == '404':
+                return False
+            else:
+                raise
+
 
     def list_media(self, page_number=1):
         print("Entrando LISTA Busqueda de S3")

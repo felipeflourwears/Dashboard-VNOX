@@ -73,7 +73,7 @@
                             <td>
                                 <input type="checkbox" class="styled-checkbox" >
                             </td>                          
-                            <td>
+                            <td title="{{ media.title }}">
                                 {% set title = media.title %}
                                 {% if title|length > 15 %}
                                     {{ title[:15] }}...
@@ -127,7 +127,9 @@
                                 {% endif %}
                             </td>
                             
-                            <td>{{ media.lastModified }}</td>
+                            <td class="mediaItem">
+                                <span class="lastModified" data-original-time="{{ media.lastModified }}"></span>
+                            </td>
                             <td>
                                 <!-- <a class="btn-edit" href="#" style="color: white;">Edit</a> -->
                                 <a class="btn-delete" href="#" style="color: white;" onclick="confirmDelete('{{ media.title }}')">Delete</a>
@@ -164,10 +166,5 @@
     <script src="{{ url_for('static', filename='js/index.js') }}"></script>
     <script src="{{ url_for('static', filename='js/media.js') }}"></script>
     <script src="{{ url_for('static', filename='js/gadgets.js') }}"></script>
-    
-   
-    
-    
-    
 </body>
 </html>

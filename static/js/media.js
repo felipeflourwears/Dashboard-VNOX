@@ -134,17 +134,19 @@ document.getElementById("upload-button").addEventListener("click", async functio
     }
 });
 
-
+//Modify//
 document.getElementById("delete-button").addEventListener("click", function() {
     console.log("CLICK delete");
     const csrfToken = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
     var selectedItems = [];
     var checkboxes = document.querySelectorAll('.styled-checkbox');
-    checkboxes.forEach(function(checkbox) {
+    checkboxes.forEach(function(checkbox) { 
         if (checkbox.checked) {
-            var name = checkbox.parentElement.parentElement.querySelector('td:nth-child(2)').textContent;
-            console.log("Nombre del archivo:", name);
-            selectedItems.push(name.trim()); // Guardar el nombre del archivo en el array y eliminar espacios en blanco
+            var filename = checkbox.parentElement.parentElement.querySelector('td:nth-child(2)').getAttribute('title');
+            console.log("Nombre del archivo:", filename);
+            if (filename) {
+                selectedItems.push(filename.trim()); // Guardar el nombre del archivo en el array y eliminar espacios en blanco
+            }
         }
     });
     console.log("SELECTED: ", selectedItems);
@@ -178,6 +180,7 @@ document.getElementById("delete-button").addEventListener("click", function() {
 
 
 
+
 function loadVideo(wrapper) {
     var video = wrapper.querySelector('video');
     if (!video.src) {
@@ -207,3 +210,42 @@ document.addEventListener("DOMContentLoaded", function() {
     // Actualiza el texto de información
     storageInfo.textContent = totalStorageMB + 'MB / 10GB';
 });
+
+
+/*Last Modified*/
+
+document.addEventListener('DOMContentLoaded', function() {
+    var lastModifiedElements = document.querySelectorAll('.lastModified');
+    lastModifiedElements.forEach(function(element) {
+        var originalTime = new Date(element.dataset.originalTime);
+        
+        // Obtener la hora local ajustada
+        var localTime = getLocalTime(originalTime);
+
+        element.innerText = localTime;
+    });
+});
+
+function getLocalTime(originalTime) {
+    // Obtener la hora local en formato deseado
+    var localTimeString = originalTime.toLocaleString('es-MX', { timeZone: 'America/Mexico_City', hour: '2-digit', minute: '2-digit', second: '2-digit', year: 'numeric', month: '2-digit', day: '2-digit' });
+
+    // Verificar si la hora es antes de cierto umbral
+    var umbralHora = 1; // Umbral en horas
+    var umbralHoraAnterior = 24 - umbralHora;
+
+    // Obtener la hora local actual
+    var horaLocal = originalTime.getHours();
+
+    // Si la hora local es antes del umbral, ajustar la fecha
+    if (horaLocal < umbralHora) {
+        // Obtener la fecha del día anterior
+        var fechaAnterior = new Date(originalTime);
+        fechaAnterior.setDate(originalTime.getDate() - 1);
+
+        // Obtener la hora local ajustada con la fecha del día anterior
+        localTimeString = fechaAnterior.toLocaleString('es-MX', { timeZone: 'America/Mexico_City', hour: '2-digit', minute: '2-digit', second: '2-digit', year: 'numeric', month: '2-digit', day: '2-digit' });
+    }
+
+    return localTimeString;
+}

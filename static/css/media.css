@@ -165,8 +165,10 @@
     color: var(--color-primary);
     margin-top: 5px;
 }
-
-
+#swal-input1{
+    max-width: 80%;
+    width: 290px;
+}
 /*Storage Data*/
 .right .sales-analytics .storage-bar {
     height: 20px; /* Altura de la barra */
