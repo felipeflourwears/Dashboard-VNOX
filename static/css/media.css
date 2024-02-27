@@ -167,9 +167,8 @@
 }
 
 
-/*Storage*/
+/*Storage Data*/
 .right .sales-analytics .storage-bar {
-    width: 50%; /* Porcentaje de espacio utilizado (ajusta este valor según corresponda) */
     height: 20px; /* Altura de la barra */
     background-color: var(--color-primary-variant); /* Color de la barra */
     max-width: 100%; /* Ancho máximo igual al 100% del contenedor */
@@ -189,20 +188,11 @@
     font-weight: 600;
 }
 
-/* Resto de estilos existentes */
-.right .sales-analytics .download {
-    background-color: transparent;
-    border: 2px dashed var(--color-primary-variant);
-    color: var(--color-primary-variant);
-    display: flex;
-    align-items: center;
-    justify-content: center;
+.right .sales-analytics .storage-info {
+    font-size: 0.8rem; /* Tamaño del texto */
+    margin-top: 0.5rem; /* Espacio superior */
 }
 
-.right .sales-analytics .download:hover {
-    background: var(--color-primary-variant);
-    color: white;
-}
 
 
 

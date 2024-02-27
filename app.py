@@ -62,7 +62,7 @@ login_manager_app = LoginManager(app)
 
 ALLOWED_EXTENSIONS = {'png', 'jpg', 'jpeg', 'mp4', 'gif'}
 
-token = '645ac21334ca41a3f548a15132f75ea7'
+#token = '645ac21334ca41a3f548a15132f75ea7'
 
 def allowed_file(filename):
     return '.' in filename and filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
@@ -87,7 +87,7 @@ def obtener_token():
         print("token: ", token_info)
         return token_info['token']
 
-#token = obtener_token()
+token = obtener_token()
     
 @app.route('/reset_player/<string:player_id>', methods=['GET'])
 @login_required
