@@ -245,3 +245,32 @@ class ModelS3:
             response = self.s3_client.list_objects_v2(Bucket=self.bucket_name, Prefix='', Delimiter='/', StartAfter='', MaxKeys=1000)
             total_count += sum(1 for obj in response.get('Contents', []) if obj['Key'].lower().endswith(ext.lower()))
         return total_count
+
+    def upload_test(self, file, media_type, id_player):
+        try:
+            if not file or not file.filename:
+                raise ValueError("File is empty or not provided.")
+            
+            if media_type == 'image':
+                file_extension = file.filename.split('.')[-1].lower()
+                if file_extension not in ['jpg', 'jpeg', 'png', 'gif']:
+                    raise ValueError("Unsupported image type.")
+                key = f'{id_player}.{file_extension}'
+            elif media_type == 'video':
+                key = f'{id_player}.mp4'
+            else:
+                raise ValueError("Unsupported media type.")
+
+            file_data = file.stream.read()
+            file_stream = BytesIO(file_data)
+
+            self.s3_client.put_object(
+                Bucket=self.bucket_name,
+                Key=key,
+                Body=file_stream
+            )
+
+            print(f"File {key} uploaded successfully.")
+
+        except Exception as e:
+            raise ValueError(f"Error uploading file to AWS S3: {e}")

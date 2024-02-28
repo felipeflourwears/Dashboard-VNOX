@@ -158,7 +158,7 @@ def submit_form_media():
                 print("Type: ", media_type)
                 
                 # Utiliza la función de carga a S3
-                model_s3.upload_media_to_s3(file, media_type, player_id)
+                model_s3.upload_test(file, media_type, player_id)
                 
                 if media_type == 'image':
                     # Obtener la extensión de la imagen
