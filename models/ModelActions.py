@@ -1,21 +1,10 @@
-import json
 import requests
-import boto3
-import os
+import json
 import hashlib
 
-from werkzeug.utils import secure_filename
 from .ModelConfig import ModelConfig
-from io import BytesIO
 
 class ModelActions:
-
-    def credenciales(self):
-        keyS3 = 'AKIAYGSKCJWOE4LDGH3G'
-        secretkeyS3 = '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'
-        regionS3 = 'us-east-1'
-        nameS3 = 'mediapopa'
-        return keyS3, secretkeyS3, regionS3, nameS3
 
     @classmethod  
     def reset_player(self,token, player_id):
@@ -80,7 +69,7 @@ class ModelActions:
             # Nueva URL y encabezados para la siguiente solicitud
             start_parameter = 0
             #start_parameter = 287
-            count_parameter = 10  # El valor que deseas enviar como parámetro count
+            count_parameter = 2  # El valor que deseas enviar como parámetro count
             new_url = f"https://{api_host}{new_api_endpoint}?count={count_parameter}&start={start_parameter}"
             new_headers = {
                 'username': username,
@@ -321,3 +310,71 @@ class ModelActions:
         else:
             print(f"Error en la nueva solicitud: {new_http_code}")
             return []
+    
+    @classmethod 
+    def getPlayerList_Selected(self, token):
+        api_host = 'openapi-us.vnnox.com'
+        new_api_endpoint = '/v1/player/get/syncCurrentInfo'
+
+        username = ModelConfig.username_auth()
+        password = ModelConfig.pass_username()
+
+        # Solicitud de autenticación para obtener el token
+        auth_url = f"https://{api_host}/v1/oauth/token"
+        auth_payload = {
+            'username': username,
+            'password': password,
+            'grant_type': 'password'
+        }
+
+        auth_response = requests.post(auth_url, data=auth_payload)
+
+        if auth_response.status_code == 200:
+            
+            players_selected = ['e711e1b488714b0cae07ab873ab42f54', 'cba03d3e4372481cbbdf177ffbb213b6']
+            new_url = f"https://{api_host}{new_api_endpoint}"
+            new_headers = {
+                'username': username,
+                'token': token,
+                'Content-Type': 'application/json'
+            }
+
+            # Modificar la estructura de los datos según el formato deseado
+            data = {
+                "playerIds": players_selected
+            }
+
+            # Convertir los datos a formato JSON
+            json_data = json.dumps(data)
+
+            # Realizar la nueva solicitud con método POST y los datos en formato JSON
+            new_response = requests.post(new_url, data=json_data, headers=new_headers)
+            # Obtener información sobre la nueva solicitud
+            new_http_code = new_response.status_code
+
+            # Crear una lista para almacenar la información
+            players_info = []
+
+            # Manejar la respuesta de la nueva solicitud
+            if new_http_code == 200:
+                # Decodificar la respuesta JSON de la nueva API
+                new_data = new_response.json()
+                if 'data' in new_data:
+                    for player in new_data['data']:
+                        player_info = {
+                            'playerId': player.get('playerId'),
+                            'playerType': player.get('playerType'),
+                            'name': player.get('name'),
+                            'sn': player.get('sn'),
+                            'version': player.get('version'),
+                            'ip': player.get('ip'),
+                            'productName': player.get('productName'),
+                            'onlineStatus': player.get('onlineStatus'),
+                            'lastOnlineTime': player.get('lastOnlineTime')
+                        }
+                        players_info.append(player_info)
+            return players_info
+        else:
+            print("Error en la autenticación:", auth_response.status_code)
+
+

@@ -62,7 +62,7 @@ login_manager_app = LoginManager(app)
 
 ALLOWED_EXTENSIONS = {'png', 'jpg', 'jpeg', 'mp4', 'gif'}
 
-#token = '8605f4d5cd6d73f736d3ec93d765474c'
+token = '32cb4f5ca5fb05c9bfadd408be835992'
 
 def allowed_file(filename):
     return '.' in filename and filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
@@ -87,7 +87,7 @@ def obtener_token():
         print("token: ", token_info)
         return token_info['token']
 
-token = obtener_token()
+#token = obtener_token()
     
 @app.route('/reset_player/<string:player_id>', methods=['GET'])
 @login_required
@@ -183,7 +183,8 @@ def submit_form_media():
 def download_report():
     try:
         # Obtener los jugadores
-        get_players = ModelActions.getPlayerList(token)
+        #get_players = ModelActions.getPlayerList(token)
+        get_players2 = ModelActions.getPlayerList_Selected(token)
 
         # Ruta de la imagen
         ruta_script = os.path.dirname(os.path.abspath(__file__))
@@ -194,7 +195,7 @@ def download_report():
             img_base64 = base64.b64encode(img_file.read()).decode('utf-8')
 
         # Generar el informe en formato PDF
-        pdf_content = ModelReport.generateReport(img_base64, get_players)
+        pdf_content = ModelReport.generateReport(img_base64, get_players2)
 
         if pdf_content:
             # Crear la respuesta con el PDF como descarga
@@ -273,6 +274,11 @@ def delete_items():
      
 def status_404(error):
     return render_template("404.html")
+
+# Manejar el error 401 (Unauthorized)
+@app.errorhandler(401)
+def unauthorized(error):
+    return render_template('401.html'), 401
     
 @app.route('/logout')
 def logout():
@@ -291,7 +297,8 @@ def index():
 @login_required
 def home():
     #token = obtener_token()
-    get_players = ModelActions.getPlayerList(token)
+    #get_players = ModelActions.getPlayerList(token)
+    get_players = model_actions.getPlayerList_Selected(token)
     get_logs = ModelActions.get_logs(token)
     #print(get_players)
     num_players = len(get_players)
