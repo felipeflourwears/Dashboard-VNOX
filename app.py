@@ -62,7 +62,7 @@ login_manager_app = LoginManager(app)
 
 ALLOWED_EXTENSIONS = {'png', 'jpg', 'jpeg', 'mp4', 'gif'}
 
-token = '32cb4f5ca5fb05c9bfadd408be835992'
+#token = '9f7efb9ad49cbfcf475e6b38ddfbedec'
 
 def allowed_file(filename):
     return '.' in filename and filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
@@ -87,7 +87,7 @@ def obtener_token():
         print("token: ", token_info)
         return token_info['token']
 
-#token = obtener_token()
+token = obtener_token()
     
 @app.route('/reset_player/<string:player_id>', methods=['GET'])
 @login_required
@@ -185,6 +185,7 @@ def download_report():
         # Obtener los jugadores
         #get_players = ModelActions.getPlayerList(token)
         get_players2 = ModelActions.getPlayerList_Selected(token)
+        print("Data: ", get_players2)
 
         # Ruta de la imagen
         ruta_script = os.path.dirname(os.path.abspath(__file__))

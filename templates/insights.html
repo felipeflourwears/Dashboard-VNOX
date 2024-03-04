@@ -34,8 +34,8 @@
                     <circle cx="38" cy="38" r="36" class="offline-circle" stroke-dasharray="{{ num_offline / num_players * 226.195 }}" stroke-dashoffset="{{ num_online / num_players * 226.195 }}"></circle>
                 </svg>
                 <div class="number">
-                    <p>{{ num_online / num_players * 100 }}%</p>
-                </div>
+                    <p>{{ (num_online / num_players * 100) | round(2) }}%</p>
+                </div>                
             </div>
         </div>
         <small class="text-muted">Last 24 Hours</small>
@@ -55,8 +55,8 @@
                     <circle cx="38" cy="38" r="36" class="offline-circle" stroke-dasharray="{{ num_offline / num_players * 226.195 }}" stroke-dashoffset="{{ num_online / num_players * 226.195 }}"></circle>
                 </svg>
                 <div class="number">
-                    <p>{{ num_offline / num_players * 100 }}%</p>
-                </div>
+                    <p>{{ (num_offline / num_players * 100) | round(2) }}%</p>
+                </div>                
             </div>
         </div>
         <small class="text-muted">Last 24 Hours</small>
