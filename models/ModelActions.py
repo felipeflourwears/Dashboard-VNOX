@@ -332,7 +332,7 @@ class ModelActions:
         if auth_response.status_code == 200:
             
             #players_selected = ['e711e1b488714b0cae07ab873ab42f54', 'cba03d3e4372481cbbdf177ffbb213b6']
-            players_selected = ['c7171e192368d1af8e259f2874c21d4c', '12b7cb332b4582cd342763cf0929ff16']
+            players_selected = ['c7171e192368d1af8e259f2874c21d4c', '12b7cb332b4582cd342763cf0929ff16', 'e711e1b488714b0cae07ab873ab42f54', 'cba03d3e4372481cbbdf177ffbb213b6']
             new_url = f"https://{api_host}{new_api_endpoint}"
             new_headers = {
                 'username': username,
