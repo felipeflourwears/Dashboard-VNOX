@@ -62,7 +62,7 @@ login_manager_app = LoginManager(app)
 
 ALLOWED_EXTENSIONS = {'png', 'jpg', 'jpeg', 'mp4', 'gif'}
 
-#token = '9f7efb9ad49cbfcf475e6b38ddfbedec'
+token = '200fad2d7676bfed84701abf33a53172'
 
 def allowed_file(filename):
     return '.' in filename and filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
@@ -87,7 +87,7 @@ def obtener_token():
         print("token: ", token_info)
         return token_info['token']
 
-token = obtener_token()
+#token = obtener_token()
     
 @app.route('/reset_player/<string:player_id>', methods=['GET'])
 @login_required
@@ -133,7 +133,7 @@ def edit_player():
     # Generar una cadena aleatoria para evitar el almacenamiento en caché
     random_string = ''.join(random.choices(string.ascii_letters + string.digits, k=8))
 
-   
+    
     #token = '0ce1973ddb9a293cf177e3626135078a'
     ModelActions.get_screnn_player(token, player_id)
     
@@ -185,8 +185,7 @@ def download_report():
         # Obtener los jugadores
         #get_players = ModelActions.getPlayerList(token)
         get_players2 = ModelActions.getPlayerList_Selected(token)
-        print("Data: ", get_players2)
-
+       
         # Ruta de la imagen
         ruta_script = os.path.dirname(os.path.abspath(__file__))
         ruta_imagen = os.path.join(ruta_script, 'static','img', 'black.jpg')
@@ -210,6 +209,15 @@ def download_report():
     except Exception as e:
         print("Error al generar el PDF:", e)  # Maneja el error apropiadamente
         return render_template('error.html', error=str(e)), 500
+
+@app.route('/button_test')
+@login_required    
+def buttonTest():
+    get_players = ModelActions.getPlayerList_Selected(token)
+    ###Generate_graphics
+    ModelReport.graphics(token, get_players)
+    return 'OK'
+
 
     
 

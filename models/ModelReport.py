@@ -1,15 +1,17 @@
 import datetime
 import pdfkit
 import requests
-
+import matplotlib.pyplot as plt
+import ast
+import json
 
 class ModelReport:
 
     def requirementsPDF(self):
         now = datetime.datetime.now()
         date = now.strftime("%d/%m/%Y")
-        #ruta_wkhtmltopdf = r'C:/Program Files/wkhtmltopdf/bin/wkhtmltopdf.exe'
-        ruta_wkhtmltopdf = r'/usr/local/bin/wkhtmltopdf'
+        ruta_wkhtmltopdf = r'C:/Program Files/wkhtmltopdf/bin/wkhtmltopdf.exe'
+        #ruta_wkhtmltopdf = r'/usr/local/bin/wkhtmltopdf'
         config = pdfkit.configuration(wkhtmltopdf=ruta_wkhtmltopdf)
 
         return date, config
@@ -150,7 +152,47 @@ class ModelReport:
         response = requests.post(url_api, json=data)
 
         # Verificar si la solicitud fue exitosa
-        if response.status_code == 200:
+        """if response.status_code == 200:
             return jsonify({'message': 'Datos enviados correctamente a la API.'}), 200
         else:
-            return jsonify({'error': 'Hubo un problema al enviar los datos a la API.'}), 500
+            return jsonify({'error': 'Hubo un problema al enviar los datos a la API.'}), 500 """
+    
+    @classmethod
+    def graphics(cls, token, get_players):
+        ##Players Get
+        print("DATA: ", get_players)
+        print("End DATA\n")
+
+        # Contadores para activos e inactivos
+        activos = 0
+        inactivos = 0
+        
+        # Contar activos e inactivos
+        for player in get_players:
+            if player['onlineStatus'] == 1:
+                activos += 1
+            else:
+                inactivos += 1
+        
+        # Datos para el gráfico
+        labels = ['Online', 'Offline']
+        sizes = [activos, inactivos]
+        colors = ['lightblue', 'lightcoral']
+        explode = (0.1, 0)  # Explode first slice
+
+        # Crear el gráfico
+        plt.figure(figsize=(8, 6))
+        plt.pie(sizes, explode=explode, labels=labels, colors=colors, autopct='%1.1f%%', shadow=True, startangle=140)
+        plt.axis('equal')  # Equal aspect ratio ensures that pie is drawn as a circle.
+        plt.title('Player Status')
+
+        # Guardar el gráfico en un archivo
+        filename = "playerStatus.png"
+        plt.savefig(filename)
+        print(f"Gráfico guardado como {filename}")
+
+        # No mostrar el gráfico en la pantalla
+        plt.close()
+
+        # Retornar el nombre del archivo donde se guardó el gráfico
+        return filename
