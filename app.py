@@ -5,7 +5,7 @@ import random
 import base64
 
 
-from flask import Flask, render_template, request, redirect, url_for, flash, jsonify, make_response
+from flask import Flask, render_template, request, redirect, url_for, flash, jsonify, make_response, session
 
 #Instances Models
 from models.ModelToken import ModelToken
@@ -62,7 +62,7 @@ login_manager_app = LoginManager(app)
 
 ALLOWED_EXTENSIONS = {'png', 'jpg', 'jpeg', 'mp4', 'gif'}
 
-token = '200fad2d7676bfed84701abf33a53172'
+token = 'caad7293364c9467a3eb85ed58e07709'
 
 def allowed_file(filename):
     return '.' in filename and filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
@@ -310,6 +310,11 @@ def home():
     get_players = model_actions.getPlayerList_Selected(token)
     get_logs = ModelActions.get_logs(token)
     #print(get_players)
+
+    #hello = ModelUser.codeVerification()
+    #print(hello)
+
+
     num_players = len(get_players)
     num_online = sum(player['onlineStatus'] == 1 for player in get_players)
     num_offline = sum(player['onlineStatus'] == 0 for player in get_players)
@@ -325,25 +330,68 @@ def login():
     current_user_mode = 0  # Establecer el modo predeterminado en 0 si no se encuentra ningún usuario
 
     if request.method == 'POST':
-        #print(request.form['username'])
-        #print(request.form['password'])
-        user = User(0, request.form['username'], request.form['password'], 0, 0)
-        logged_user = ModelUser.login(db, user)
-        if logged_user:
-            print("ID: ", logged_user.id)
-            print("username: ", logged_user.username)
-            print("PASSWORD: ", logged_user.password)
-            print("IDROL: ", logged_user.idRol)
-            print("Fullname: ", logged_user.fullname)
+
+        email = request.form['correo']
+        password = request.form['password']
+        code = request.form['code']
+
+        print("Email: ", email)
+        print("PASSWORD: ", password)
+        print("CODE: ", code)
+
+        user = User(0, None, email, password, 0, None)
+        
+        verify_email = ModelUser.email_exists(db, email)
+        print("VERIFY: ",verify_email)
+
+        if verify_email:
+            logged_user = ModelUser.login(db, user)
+
+            if logged_user:
+                print("ID: ", logged_user.id)
+                print("username: ", logged_user.username)
+                print("Email: ", logged_user.email)
+                print("PASSWORD: ", logged_user.password)
+                print("IDROL: ", logged_user.idRol)
+                print("Fullname: ", logged_user.fullname)
             
-            if logged_user.password:
-                login_user(logged_user)
-                return redirect(url_for('home'))
+                # Verifica si el código enviado coincide con el código almacenado en la sesión
+                if 'verification_code' in session and session['verification_code'] == code:
+                    if logged_user.password:
+                        login_user(logged_user)
+                        # Limpia el código almacenado en la sesión después de su uso
+                        session.pop('verification_code', None)
+                        return redirect(url_for('home'))
+                    else:
+                        flash("Invalid Password...")
+                else:
+                    flash("Incorrect verification code...")
+                    session.pop('verification_code', None)  # Elimina el código almacenado en la sesión
             else:
-                flash("Invalid Password...")
+                flash("User not found...")
+                session.pop('verification_code', None)  # Elimina el código almacenado en la sesión
         else:
-            flash("User not found...")
+            flash("Email not found...")
+            session.pop('verification_code', None)  # Elimina el código almacenado en la sesión
+
     return render_template('auth/login.html', current_user_mode=current_user_mode)
+
+
+@app.route('/send_code', methods=['POST'])
+def send_code():
+    print("Entre al send code")
+    email = request.form.get('email')
+    print("EMAIL: ", email)
+    verify_email = ModelUser.email_exists(db, email)
+    print(verify_email)
+    if verify_email:
+        code_sent = ModelUser.code_verification(email)
+        print(code_sent)
+        session['verification_code'] = code_sent
+        stored_code = session['verification_code']
+        return jsonify({'message': 'Code sent successfully'}), 200
+    else:
+        return jsonify({'error': 'Email not found'}), 404
 
 
 
