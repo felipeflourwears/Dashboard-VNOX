@@ -210,14 +210,6 @@ def download_report():
         print("Error al generar el PDF:", e)  # Maneja el error apropiadamente
         return render_template('error.html', error=str(e)), 500
 
-@app.route('/button_test')
-@login_required    
-def buttonTest():
-    get_players = ModelActions.getPlayerList_Selected(token)
-    ###Generate_graphics
-    ModelReport.graphics(token, get_players)
-    return 'OK'
-
 
     
 
