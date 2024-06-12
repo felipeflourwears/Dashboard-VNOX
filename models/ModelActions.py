@@ -332,7 +332,31 @@ class ModelActions:
         if auth_response.status_code == 200:
             
             #players_selected = ['e711e1b488714b0cae07ab873ab42f54', 'cba03d3e4372481cbbdf177ffbb213b6']
-            players_selected = ['c7171e192368d1af8e259f2874c21d4c', 'c20c6634f9c54b3a8fdeade75719af90', '12b7cb332b4582cd342763cf0929ff16', 'e711e1b488714b0cae07ab873ab42f54', 'cba03d3e4372481cbbdf177ffbb213b6']
+            #players_selected = ['c7171e192368d1af8e259f2874c21d4c', 'c20c6634f9c54b3a8fdeade75719af90', '12b7cb332b4582cd342763cf0929ff16', 'e711e1b488714b0cae07ab873ab42f54', 'cba03d3e4372481cbbdf177ffbb213b6']
+            players_selected = [
+                "02f731f425cd4295a914595ee5309af8",
+                "23916f448a3e488f9aaaabd6c32a19e8",
+                "a00d95f6b2964b5aafc4516a02676e23",
+                "fe17a17ee4d451ecc31d5391eeea30de",
+                "6eda146077f54c4ea6a8dad94408aaf9",
+                "c85072abef3b4676b8c1895795f31a0b",
+                "cca07f360ddb4f73bbe82f094dc62bc2",
+                "dee2e4d70db248c19579dae1f998f754",
+                "b3219585e524412f920d4cab9abc0bde",
+                "a42b82d6f9154ee38e0587a34f365590",
+                "c64b9c27bc804d2aa71fc8d762d560e3",
+                "76f46e96362244eeb7698796b6ade240",
+                "4db0f13e2eba4e89b01f9634a1920b1f",
+                "dfd889e1c61c4346a9372399d62edd37",
+                "23178b68d17b41f4ae91f762f7b2b447",
+                "ce8e75bde7124fbc946306186970f368",
+                "256ea17ec4da4836896948dd3f15a323",
+                "bf9eba224b4f49ddba5768ffd41bef3a",
+                "184719cfb545e337c6e5fc8793a96b75",
+                "70429d2f73dc4e58b9988036b92c2a98",
+                "da9e35672bd1c9fdf583fb5876361932",
+                "d40dc00ab57be6f54f8f3288bf961dfd"
+            ]
             new_url = f"https://{api_host}{new_api_endpoint}"
             new_headers = {
                 'username': username,

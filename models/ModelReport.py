@@ -2,19 +2,48 @@ import datetime
 import pdfkit
 import requests
 
+from .ModelConfig import ModelConfig
+
+
 class ModelReport:
 
     def requirementsPDF(self):
         now = datetime.datetime.now()
         date = now.strftime("%d/%m/%Y")
-        #ruta_wkhtmltopdf = r'C:/Program Files/wkhtmltopdf/bin/wkhtmltopdf.exe'
-        ruta_wkhtmltopdf = r'/usr/local/bin/wkhtmltopdf'
+        ruta_wkhtmltopdf = r'C:/Program Files/wkhtmltopdf/bin/wkhtmltopdf.exe'
+        #ruta_wkhtmltopdf = r'/usr/local/bin/wkhtmltopdf'
         config = pdfkit.configuration(wkhtmltopdf=ruta_wkhtmltopdf)
 
         return date, config
     
+    @classmethod      
+    def get_screen_player(self, token, player_id):
+        api_host = 'openapi-us.vnnox.com'
+        new_api_endpoint = '/v1/player/control/screenshot'
+        received = 'https://retailmibeex.net/apiVnnox/recibe.php'
+
+        username = ModelConfig.username_auth()
+            
+        new_url = f"https://{api_host}{new_api_endpoint}"
+        print("URL:", new_url)
+        headers = {
+            'username': username,
+            'token': token,
+            'Content-Type': 'application/json'  # Asegúrate de incluir el tipo de contenido JSON en los headers
+        }
+
+        # Parámetros a enviar en el cuerpo de la solicitud
+        request_parameters = {
+            "playerIds": [player_id],
+            "noticeUrl": received
+        }
+
+        # Realizar la nueva solicitud con método POST
+        new_response = requests.post(new_url, headers=headers, json=request_parameters)
+
+    
     @classmethod
-    def generateReport(cls, img_base64, get_players):
+    def generateReport(cls, img_base64, get_players, token):
         try:
             date, config = cls().requirementsPDF()
             contenido_pdf = f"""
@@ -86,13 +115,15 @@ class ModelReport:
             contenido_pdf += '<th style="padding: 10px;">Name</th>'
             #contenido_pdf += '<th style="padding: 10px;">Player ID</th>'
             contenido_pdf += '<th style="padding: 10px;">Serial Number</th>'
+            contenido_pdf += '<th style="padding: 10px;">Image</th>'
             #contenido_pdf += '<th style="padding: 10px;">IP Address</th>'
             #contenido_pdf += '<th style="padding: 10px;">Product Name</th>'
             contenido_pdf += '<th style="padding: 10px;">Online Status</th>'
             contenido_pdf += '<th style="padding: 10px;">Last Online Time</th>'
             contenido_pdf += '</tr>'
-
+            
             for player in get_players:
+                cls.get_screen_player(token, player["playerId"])
                 # Obtener el estado en línea y establecer el color del cuadrado con bordes redondeados
                 status_color = 'green' if player["onlineStatus"] == 1 else 'red'
                 
@@ -100,6 +131,7 @@ class ModelReport:
                 contenido_pdf += f'<td style="padding: 10px;">{player["name"]}</td>'
                 #contenido_pdf += f'<td style="padding: 10px;">{player["playerId"]}</td>'
                 contenido_pdf += f'<td style="padding: 10px;">{player["sn"]}</td>'
+                contenido_pdf += f'<td style="padding: 10px;"><img src="https://retailmibeex.net/apiVnnox/screenPlayers/{player["playerId"]}.jpg" alt="Screenshot" style="max-width: 100px;"></td>'
                 #contenido_pdf += f'<td style="padding: 10px;">{player["ip"]}</td>'
                 #contenido_pdf += f'<td style="padding: 10px;">{player["productName"]}</td>'
                 contenido_pdf += f'<td style="padding: 5px; text-align: center; color: white; background-color: {status_color}; border-radius: 0px;">&nbsp;</td>'

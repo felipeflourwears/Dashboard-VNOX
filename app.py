@@ -62,7 +62,7 @@ login_manager_app = LoginManager(app)
 
 ALLOWED_EXTENSIONS = {'png', 'jpg', 'jpeg', 'mp4', 'gif'}
 
-#token = 'b250bb7e83d84df0b62c28e0e7744950'
+token = 'ca277ba7995fcd8e933feb57afac7cbc'
 
 def allowed_file(filename):
     return '.' in filename and filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
@@ -87,7 +87,7 @@ def obtener_token():
         print("token: ", token_info)
         return token_info['token']
 
-token = obtener_token()
+#token = obtener_token()
     
 @app.route('/reset_player/<string:player_id>', methods=['GET'])
 @login_required
@@ -195,7 +195,7 @@ def download_report():
             img_base64 = base64.b64encode(img_file.read()).decode('utf-8')
 
         # Generar el informe en formato PDF
-        pdf_content = ModelReport.generateReport(img_base64, get_players2)
+        pdf_content = ModelReport.generateReport(img_base64, get_players2, token)
 
         if pdf_content:
             # Crear la respuesta con el PDF como descarga
