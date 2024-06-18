@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PopAtelier</title>
+    
+    <!--Material CDN-->
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons+Sharp" rel="stylesheet">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@24,400,0,0" />
+    <!--Styles-->
+    <link rel="icon" href="{{ url_for('static', filename='img/logo.png') }}" type="image/png">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/styles.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/home.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/gadgets.css') }}">
+
+    <!-- CDN de Sweet Alert -->
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11.0.20/dist/sweetalert2.min.js"></script>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11.0.20/dist/sweetalert2.min.css">
+    <meta name="csrf-token" content="{{ csrf_token() }}">
+
+</head>
+<body>
+
+    <div class="container">
+        <!--====================BEGIN ASIDE ====================-->
+        {% include 'sidebar.html' %}
+         <!--====================END ASIDE ====================-->
+        <main>
+            <!-- <h1 id="popAtelierHeader">PopAtelier</h1> -->
+           
+           <!--  <div class="date">
+                Welcome again
+            </div> -->
+            
+            {% include 'buttons-dashboard.html' %}
+
+             <!--==================== END INSIGHTS ====================-->
+             <!--=== BEGIN ORDERS ====-->
+             <!-- <div class="recent-orders">
+                <h2>Players</h2>
+                <table>
+                    <thead>
+                        <tr>
+                            <th>ID</th>
+                            <th>Name Player</th>
+                            <th>SN</th>
+                            <th>Location</th>
+                            <th>Version</th>
+                            <th>IP</th>
+                            <th>Online Status</th>
+                            <th>Last Online Time</th>
+                            <th>Options</th>   
+                        </tr>
+                    </thead>
+                    <tbody id="order-table-body">
+                        {% for player in players_info %}
+                            <tr>
+                                <td>{{ player['playerId'] }}</td>
+                                <td>{{ player['name'] }}</td>
+                                <td>{{ player['sn'] }}</td>
+                                <th style="font-weight: normal;">Show Room Santa Fe</th>
+                               <td>{{ player['version'] }}</td>
+                                <td>{{ player['ip'] }}</td>
+                                <td>
+                                    {% if player['onlineStatus'] == 1 %}
+                                        <span class="circle-green"></span>
+                                    {% else %}
+                                        <span class="circle-red"></span>
+                                    {% endif %}
+                                </td>
+                                <td>{{ player['lastOnlineTime'] }}</td>
+                                <td>
+                                    <a class="btn-edit" href="{{ url_for('edit_player', player_id=player['playerId'], ip=player['ip'], name=player['name']) }}" style="color: white;">Edit</a>
+                                    <a class="btn-delete" href="{{ url_for('reset_player', player_id=player['playerId']) }}" style="color: white;" onclick="confirmDelete(event)">Reset</a>
+                                </td>
+                            </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>    
+            </div> -->
+            <!-- <div class="pagination">
+                <ul id="pagination-list">
+                    <li class="page-item" id="page-previous">
+                        <a href="#" class="page-link">Previous</a>
+                    </li>
+                </ul>
+            </div> -->
+            
+        </main>
+         <!--==================== END MAIN ====================-->
+        <div class="right">
+            {% include 'right-header.html' %}
+
+            <!--====== END TOP ======-->
+             
+            {% include 'recent-updates.html' %}
+
+            <!--==================== END RECENT UPDATES ====================-->
+
+            {% include 'sales-analytics.html' %}
+        </div>   
+    </div>
+    <script src="{{ url_for('static', filename='js/index.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/home.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/gadgets.js') }}"></script>
+
+    {% if reset_status == 'reset' %}
+    <script>
+        console.log("Hello lf")
+        popupSuccess('Reset correctly');
+        console.log("Hello lf")
+    </script>
+    {% endif %}
+
+    {% if reset_status == 'change' %}
+    <script>
+        console.log("Hello lf")
+        popupSuccess('Change Content correctly');
+        console.log("Hello lf")
+    </script>
+    {% endif %}
+
+    {% if send_report_status == 'sendreport' %}
+    <script>
+        console.log("Hello Mail")
+        popupSuccess('Send Report correctly');
+        console.log("Hello Mail")
+    </script>
+    {% endif %}
+ 
+</body>
+</html>

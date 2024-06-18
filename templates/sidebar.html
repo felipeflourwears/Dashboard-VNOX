@@ -14,7 +14,7 @@
             <span class="material-icons-sharp">grid_view</span>
             <h3>Dashboard</h3>
         </a>    
-        <div class="submenu">
+        <!-- <div class="submenu">
             <a href="#">
                 <span class="material-symbols-outlined">shelves</span>
                 <h3>Shelfs</h3>
@@ -39,7 +39,7 @@
                     <h3>Endcaps</h3>
                 </a>
             </div>
-        </div>
+        </div> -->
         <a href="{{ url_for('media') }}">
             <span class="material-icons-sharp">movie</span>
             <h3>Media</h3>
@@ -50,5 +50,11 @@
             </span>
             <h3>Tickets</h3>
         </a>
+        <a href="{{ url_for('reports') }}">
+            <span class="material-symbols-outlined">
+                problem
+            </span>
+            <h3>Reports</h3>
+        </a>   
     </div>
 </aside>

@@ -325,6 +325,14 @@ main .insights > div.income span{
     background: var(--color-danger);
 }
 
+main .insights > div.report-button span{
+    background: var(--color-success);
+}
+
+main .insights > div.report-button span{
+    background: var(--color-danger);
+}
+
 main .insights > div .middle{
     display: flex;
     align-items: center;

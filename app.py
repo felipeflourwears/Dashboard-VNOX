@@ -62,7 +62,7 @@ login_manager_app = LoginManager(app)
 
 ALLOWED_EXTENSIONS = {'png', 'jpg', 'jpeg', 'mp4', 'gif'}
 
-token = 'ca277ba7995fcd8e933feb57afac7cbc'
+token = '656cce7a6c44cca33962afd0b4478d98'
 
 def allowed_file(filename):
     return '.' in filename and filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
@@ -313,6 +313,13 @@ def home():
     reset_status = request.args.get('reset', None)
     send_report_status = request.args.get('sendreport', None)
     return render_template('home.html', players_info=get_players, reset_status=reset_status, send_report_status = send_report_status, num_players=num_players, num_online=num_online, num_offline=num_offline, get_logs=get_logs)
+
+
+@app.route('/reports')
+@login_required
+def reports():
+    get_logs = ModelActions.get_logs(token)
+    return render_template('reports.html', get_logs=get_logs)
 
 @app.route('/login', methods=['GET', 'POST'])
 def login():
