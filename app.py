@@ -62,7 +62,7 @@ login_manager_app = LoginManager(app)
 
 ALLOWED_EXTENSIONS = {'png', 'jpg', 'jpeg', 'mp4', 'gif'}
 
-#token = '656cce7a6c44cca33962afd0b4478d98'
+#token = 'ff10e30cadbe21f91ab0cf6243732e46'
 
 def allowed_file(filename):
     return '.' in filename and filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
@@ -182,9 +182,32 @@ def submit_form_media():
 @login_required
 def download_report():
     try:
-        # Obtener los jugadores
-        #get_players = ModelActions.getPlayerList(token)
-        get_players2 = ModelActions.getPlayerList_Selected(token)
+        playerIdsCoca = [
+            "02f731f425cd4295a914595ee5309af8",
+            "23916f448a3e488f9aaaabd6c32a19e8",
+            "a00d95f6b2964b5aafc4516a02676e23",
+            "fe17a17ee4d451ecc31d5391eeea30de",
+            "6eda146077f54c4ea6a8dad94408aaf9",
+            "c85072abef3b4676b8c1895795f31a0b",
+            "cca07f360ddb4f73bbe82f094dc62bc2",
+            "dee2e4d70db248c19579dae1f998f754",
+            "b3219585e524412f920d4cab9abc0bde",
+            "a42b82d6f9154ee38e0587a34f365590",
+            "c64b9c27bc804d2aa71fc8d762d560e3",
+            "76f46e96362244eeb7698796b6ade240",
+            "4db0f13e2eba4e89b01f9634a1920b1f",
+            "dfd889e1c61c4346a9372399d62edd37",
+            "23178b68d17b41f4ae91f762f7b2b447",
+            "ce8e75bde7124fbc946306186970f368",
+            "256ea17ec4da4836896948dd3f15a323",
+            "bf9eba224b4f49ddba5768ffd41bef3a",
+            "184719cfb545e337c6e5fc8793a96b75",
+            "70429d2f73dc4e58b9988036b92c2a98",
+            "da9e35672bd1c9fdf583fb5876361932",
+            "d40dc00ab57be6f54f8f3288bf961dfd"
+        ]
+        get_players = ModelReport.getPlayerList(token, playerIdsCoca)
+        print(get_players)
        
         # Ruta de la imagen
         ruta_script = os.path.dirname(os.path.abspath(__file__))
@@ -193,9 +216,11 @@ def download_report():
         # Leer la imagen en formato base64
         with open(ruta_imagen, 'rb') as img_file:
             img_base64 = base64.b64encode(img_file.read()).decode('utf-8')
+        
 
         # Generar el informe en formato PDF
-        pdf_content = ModelReport.generateReport(img_base64, get_players2, token)
+        #pdf_content = ModelReport.generateReport(img_base64, get_players, token)
+        pdf_content = ModelReport.generar_pdf(token, get_players)
 
         if pdf_content:
             # Crear la respuesta con el PDF como descarga
@@ -404,6 +429,7 @@ def test_route():
 
 if __name__ == '__main__':
     #app.run(host="0.0.0.0", port=puerto)
+    print("Hello")
     app.config.from_object(config['development'])
     # Imprimir las credenciales de la base de datos
     #print(f"Database Config LF: {app.config['MYSQL_HOST']}, {app.config['MYSQL_USER']}, {app.config['MYSQL_PASSWORD']}, {app.config['MYSQL_DB']}")
