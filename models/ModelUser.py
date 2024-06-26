@@ -5,16 +5,15 @@ import string
 from .entities.User import User
 
 class ModelUser():
-
     @classmethod
     def login(self, db, user):
         try:
             cursor = db.connection.cursor()
-            sql = """SELECT id, username, email, password, idRol, fullname FROM user WHERE email = '{}'""".format(user.email)
+            sql = """SELECT u.id, u.username, u.email, u.password, u.idRol, u.fullname, c.vnnox, c.zkong, c.hexnode, c.magicInfo, c.idCustomer FROM user u JOIN customers c ON u.idCustomer = c.idCustomer WHERE email = '{}'""".format(user.email)
             cursor.execute(sql)
             row = cursor.fetchone()
-            if row != None:
-                user = User(row[0], row[1], row[2], User.check_password(row[3], user.password), row[4], row[5])
+            if row is not None:
+                user = User(row[0], row[1], row[2], User.check_password(row[3], user.password), row[4], row[6], row[7], row[8], row[9], row[10], row[5])
                 return user
             else:
                 return None
@@ -25,13 +24,12 @@ class ModelUser():
     def get_by_id(self, db, id):
         try:
             cursor = db.connection.cursor()
-            sql = "SELECT id, username, email, idRol, fullname FROM user WHERE id = {}".format(id)
+            sql = "SELECT u.id, u.username, u.email, u.password, u.idRol, u.fullname, c.vnnox, c.zkong, c.hexnode, c.magicInfo, c.idCustomer FROM user u JOIN customers c ON u.idCustomer = c.idCustomer WHERE id = '{}'".format(id)
             cursor.execute(sql)
             row = cursor.fetchone()
-            if row != None:
-                return User(row[0], row[1], row[2], None, row[3], row[4])
-            else:
-                return None
+            if row is not None:
+                return User(row[0], row[1], row[2], None, row[3], row[6], row[7], row[8], row[9], row[10], row[5])
+            return None
         except Exception as ex:
             raise Exception(ex)
     

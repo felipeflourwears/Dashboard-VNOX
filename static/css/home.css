@@ -89,4 +89,17 @@
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent; /* Para Safari */
     color: transparent;
-  }
+}
+.header-dashboard {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    color: black;
+    padding: 7px;
+    border-radius: 10px;
+    margin-bottom: 20px;
+}
+.header-dashboard h1 {
+    margin: 0;
+    font-size: 1.2rem; /* Ajusta este valor según tus necesidades */
+}

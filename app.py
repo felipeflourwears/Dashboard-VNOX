@@ -5,7 +5,7 @@ import random
 import base64
 
 
-from flask import Flask, render_template, request, redirect, url_for, flash, jsonify, make_response, session
+from flask import Flask, render_template, request, redirect, url_for, flash, jsonify, make_response, session, flash
 
 #Instances Models
 from models.ModelToken import ModelToken
@@ -13,7 +13,7 @@ from models.ModelActions import ModelActions
 from models.ModelUser import ModelUser
 from models.ModelS3 import ModelS3
 from models.ModelReport import ModelReport
-
+from models.ModelVnoxx import ModelVnoxx
 
 from werkzeug.utils import secure_filename
 from dotenv import load_dotenv
@@ -50,6 +50,7 @@ login_manager = LoginManager(app)
 model_token = ModelToken() 
 model_actions = ModelActions()
 model_s3 = ModelS3()
+model_vnoxx = ModelVnoxx()
 
 # Imprimir la configuración de la base de datos directamente desde DevelopmentConfig
 config_instance = DevelopmentConfig()
@@ -62,7 +63,7 @@ login_manager_app = LoginManager(app)
 
 ALLOWED_EXTENSIONS = {'png', 'jpg', 'jpeg', 'mp4', 'gif'}
 
-#token = 'ff10e30cadbe21f91ab0cf6243732e46'
+token = 'ee44b2a5e0a9350a960316ce26f07a7c'
 
 def allowed_file(filename):
     return '.' in filename and filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
@@ -87,7 +88,7 @@ def obtener_token():
         print("token: ", token_info)
         return token_info['token']
 
-token = obtener_token()
+#token = obtener_token()
     
 @app.route('/reset_player/<string:player_id>', methods=['GET'])
 @login_required
@@ -322,22 +323,10 @@ def index():
 @app.route('/home')
 @login_required
 def home():
-    #token = obtener_token()
-    #get_players = ModelActions.getPlayerList(token)
-    get_players = model_actions.getPlayerList_Selected(token)
-    get_logs = ModelActions.get_logs(token)
-    #print(get_players)
-
-    #hello = ModelUser.codeVerification()
-    #print(hello)
-
-
-    num_players = len(get_players)
-    num_online = sum(player['onlineStatus'] == 1 for player in get_players)
-    num_offline = sum(player['onlineStatus'] == 0 for player in get_players)
-    reset_status = request.args.get('reset', None)
-    send_report_status = request.args.get('sendreport', None)
-    return render_template('home.html', players_info=get_players, reset_status=reset_status, send_report_status = send_report_status, num_players=num_players, num_online=num_online, num_offline=num_offline, get_logs=get_logs)
+    if not current_user.is_authenticated:
+        return redirect(url_for('login'))
+    user = ModelUser.get_by_id(db, current_user.id)
+    return render_template('home.html', user=user)
 
 
 @app.route('/reports')
@@ -362,14 +351,16 @@ def login():
         print("Email: ", email)
         print("PASSWORD: ", password)
         print("CODE: ", code)
+    
 
-        user = User(0, None, email, password, 0, None)
+        user = User(0, None, email, password, 0, None, None, None, None, None, "")
         
         verify_email = ModelUser.email_exists(db, email)
         print("VERIFY: ",verify_email)
 
         if verify_email:
             logged_user = ModelUser.login(db, user)
+            print(logged_user)
 
             if logged_user:
                 print("ID: ", logged_user.id)
@@ -378,6 +369,13 @@ def login():
                 print("PASSWORD: ", logged_user.password)
                 print("IDROL: ", logged_user.idRol)
                 print("Fullname: ", logged_user.fullname)
+                print("VNNOX: ", logged_user.vnnox)
+                print("ZKONG: ", logged_user.zkong)
+                print("MAGICINFO: ", logged_user.magicInfo)
+                print("HEXNODE: ", logged_user.hexnode)
+                print("idCustomer: ", logged_user.idCustomer)
+                session['idCustomer'] = logged_user.idCustomer
+
             
                 # Verifica si el código enviado coincide con el código almacenado en la sesión
                 if 'verification_code' in session and session['verification_code'] == code:
@@ -385,7 +383,7 @@ def login():
                         login_user(logged_user)
                         # Limpia el código almacenado en la sesión después de su uso
                         session.pop('verification_code', None)
-                        return redirect(url_for('home'))
+                        return redirect(url_for('home', user=logged_user))
                     else:
                         flash("Invalid Password...")
                 else:
@@ -426,6 +424,31 @@ def test_route():
         text = data.get('text', '')  # Obtener el texto enviado desde el cliente
         print("Texto recibido:", text)
         return text  # Devolver el texto recibido como respuesta
+    
+
+
+@app.route("/vnox", methods=["GET", "POST"])
+#@login_required
+def vnoxx():
+    idCustomer = session.get('idCustomer')
+    print("En vnnox idcustomer: ", idCustomer)
+    if idCustomer is None:
+        # Manejar el caso donde idCustomer no está en la sesión
+        flash("User not logged in or session expired.")
+        return redirect(url_for('login'))
+    
+    get_players_db = model_vnoxx.list_players_vnoxx(db, idCustomer)
+    print("-----------------------------------------------------")
+    
+    get_players = model_actions.getPlayerList_Selected(token)
+    #print(get_players)
+
+    #hello = ModelUser.codeVerification()
+    num_players = len(get_players)
+    num_online = sum(player['onlineStatus'] == 1 for player in get_players)
+    num_offline = sum(player['onlineStatus'] == 0 for player in get_players)
+    return render_template('vnox.html', players_info=get_players, num_players=num_players, num_online=num_online, num_offline=num_offline, get_players_db = get_players_db)
+
 
 if __name__ == '__main__':
     #app.run(host="0.0.0.0", port=puerto)

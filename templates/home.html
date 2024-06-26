@@ -21,84 +21,25 @@
 
 </head>
 <body>
-
     <div class="container">
         <!--====================BEGIN ASIDE ====================-->
         {% include 'sidebar.html' %}
          <!--====================END ASIDE ====================-->
         <main>
-            <!-- <h1 id="popAtelierHeader">PopAtelier</h1> -->
-           
-           <!--  <div class="date">
-                Welcome again
-            </div> -->
+           <div class="header-dashboard">
+                <h1>Service Interaction Dashboard</h1>
+           </div>
             
-            {% include 'insights.html' %}
+            {% include 'buttons-dashboard.html' %}
 
-             <!--==================== END INSIGHTS ====================-->
-             <!--=== BEGIN ORDERS ====-->
-             <div class="recent-orders">
-                <h2>Players</h2>
-                <table>
-                    <thead>
-                        <tr>
-                            <th>ID</th>
-                            <th>Name Player</th>
-                            <th>SN</th>
-                            <th>Location</th>
-                            <!-- <th>Version</th> -->
-                            <!-- <th>IP</th> -->
-                            <th>Online Status</th>
-                            <th>Last Online Time</th>
-                            <th>Options</th>   
-                        </tr>
-                    </thead>
-                    <tbody id="order-table-body">
-                        {% for player in players_info %}
-                            <tr>
-                                <td>{{ player['playerId'] }}</td>
-                                <td>{{ player['name'] }}</td>
-                                <td>{{ player['sn'] }}</td>
-                                <th style="font-weight: normal;">Show Room Santa Fe</th>
-                               <!--  <td>{{ player['version'] }}</td> -->
-                                <!-- <td>{{ player['ip'] }}</td> -->
-                                <td>
-                                    {% if player['onlineStatus'] == 1 %}
-                                        <span class="circle-green"></span>
-                                    {% else %}
-                                        <span class="circle-red"></span>
-                                    {% endif %}
-                                </td>
-                                <td>{{ player['lastOnlineTime'] }}</td>
-                                <td>
-                                    <a class="btn-edit" href="{{ url_for('edit_player', player_id=player['playerId'], ip=player['ip'], name=player['name']) }}" style="color: white;">Edit</a>
-                                    <a class="btn-delete" href="{{ url_for('reset_player', player_id=player['playerId']) }}" style="color: white;" onclick="confirmDelete(event)">Reset</a>
-                                </td>
-                            </tr>
-                        {% endfor %}
-                    </tbody>
-                </table>    
-            </div>
-            <!-- <div class="pagination">
-                <ul id="pagination-list">
-                    <li class="page-item" id="page-previous">
-                        <a href="#" class="page-link">Previous</a>
-                    </li>
-                </ul>
-            </div> -->
             
         </main>
          <!--==================== END MAIN ====================-->
         <div class="right">
             {% include 'right-header.html' %}
 
-            <!--====== END TOP ======-->
-             
-            {% include 'recent-updates.html' %}
-
             <!--==================== END RECENT UPDATES ====================-->
 
-            {% include 'sales-analytics.html' %}
         </div>   
     </div>
     <script src="{{ url_for('static', filename='js/index.js') }}"></script>
