@@ -14,7 +14,7 @@ from models.ModelActions import ModelActions
 from models.ModelUser import ModelUser
 from models.ModelS3 import ModelS3
 from models.ModelReport import ModelReport
-from models.ModelVnoxx import ModelVnoxx
+from models.ModelVnnox import ModelVnnox
 
 from werkzeug.utils import secure_filename
 from dotenv import load_dotenv
@@ -51,7 +51,7 @@ login_manager = LoginManager(app)
 model_token = ModelToken() 
 model_actions = ModelActions()
 model_s3 = ModelS3()
-model_vnoxx = ModelVnoxx()
+model_vnnox = ModelVnnox()
 
 # Imprimir la configuración de la base de datos directamente desde DevelopmentConfig
 config_instance = DevelopmentConfig()
@@ -417,29 +417,42 @@ def send_code():
         return jsonify({'error': 'Email not found'}), 404
 
 
-    
 
 @app.route("/vnnox", methods=["GET", "POST"])
-#@login_required
 def vnnox():
     idCustomer = session.get('idCustomer')
-    print("En vnnox idcustomer: ", idCustomer)
     if idCustomer is None:
-        # Manejar el caso donde idCustomer no está en la sesión
         flash("User not logged in or session expired.")
         return redirect(url_for('login'))
     
-    get_players_db = model_vnoxx.list_players_vnoxx(db, idCustomer)
-    print("-----------------------------------------------------")
+    # Obtener los datos reales de la API usando model_vnnox.consumir_api
+    data = model_vnnox.consumir_api(token, idCustomer)
+    print(data)  # Asegúrate de que los datos se impriman correctamente para verificar la estructura
     
-    get_players = model_actions.getPlayerList_Selected(token)
-    #print(get_players)
+    # Verifica la estructura de los datos impresos y adapta el acceso a los jugadores
+    # Supongamos que data es una lista de listas de diccionarios, como en tu ejemplo
+    
+    # Si data es exactamente como el ejemplo proporcionado:
+    players_info = data[0] if data else []  # Ajusta según cómo se estructuran realmente tus datos
+    
+    # Contar jugadores en línea y fuera de línea
+    num_online = sum(player['onlineStatus'] == 1 for player in players_info)
+    num_offline = sum(player['onlineStatus'] == 0 for player in players_info)
+    
+    # Número total de jugadores
+    num_players = len(players_info)
+    print(num_offline)
+    print(num_online)
+    print(num_players)
+    
+    return render_template('vnnox.html', players_info=players_info, num_players=num_players, num_online=num_online, num_offline=num_offline)
+    
 
-    #hello = ModelUser.codeVerification()
-    num_players = len(get_players)
-    num_online = sum(player['onlineStatus'] == 1 for player in get_players)
-    num_offline = sum(player['onlineStatus'] == 0 for player in get_players)
-    return render_template('vnnox.html', players_info=get_players, num_players=num_players, num_online=num_online, num_offline=num_offline, get_players_db = get_players_db)
+   
+    #num_players = len(get_players)
+    #num_online = sum(player['onlineStatus'] == 1 for player in get_players)
+    #num_offline = sum(player['onlineStatus'] == 0 for player in get_players)
+    #return render_template('vnnox.html', players_info=get_players, num_players=num_players, num_online=num_online, num_offline=num_offline, get_players_db = get_players_db)
 
 
 if __name__ == '__main__':

@@ -34,28 +34,51 @@
                 Welcome again
             </div> -->
             
-            <!-- {% include 'insights.html' %}  -->
+            {% include 'insights.html' %}
 
              <!--==================== END INSIGHTS ====================-->
              <!--=== BEGIN ORDERS ====-->
-            <div class="recent-orders">
+             <div class="recent-orders">
                 <h2>Players</h2>
                 <table>
                     <thead>
                         <tr>
-                            <th>IDVnnox</th>
-                            <th>Player ID</th>
-                            <th>Client</th>
+                            <th>playerId</th>
+                            <th>onlineStatus</th>
+                            <th>lastOnlineTime</th>
+                            <th>Cliente</th>
                             <th>Store</th>
                             <th>ICCID</th>
                             <th>IMSI</th>
                             <th>MSISDN</th>
-                            <th>Options</th>   
+                            <th>Options</th>
                         </tr>
                     </thead>
                     <tbody id="order-table-body">
+                        {% for player in players_info %}
+                        <tr>
+                            <td>{{ player['playerId'] }}</td>
+                            <td>
+                                {% if player['onlineStatus'] == 1 %}
+                                    <span class="circle-green"></span>
+                                {% else %}
+                                    <span class="circle-red"></span>
+                                {% endif %}
+                            </td>
+                            <td>{{ player['lastOnlineTime'] }}</td>
+                            <td>{{ player['cliente'] }}</td>
+                            <td>{{ player['tienda'] }}</td>
+                            <td>{{ player['iccid'] }}</td>
+                            <td>{{ player['imsi'] }}</td>
+                            <td>{{ player['msisdn'] }}</td>
+                            <td>
+                                <a class="btn-edit" href="#" style="color: white;">Edit</a>
+                                <a class="btn-delete" href="#" style="color: white;" onclick="confirmDelete(event)">Reset</a>
+                            </td>
+                        </tr>
+                        {% endfor %}
                     </tbody>
-                </table>    
+                </table>
             </div>
             <div class="pagination">
                 <a href="#" class="btn btn-danger">Previous</a>

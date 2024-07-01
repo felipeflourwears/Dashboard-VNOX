@@ -5,7 +5,7 @@ import time
 from .ModelConfig import ModelConfig
 
 
-class ModelVnoxx():
+class ModelVnnox():
     @classmethod
     def list_players_vnoxx(cls, db, idCustomer):
         try:
@@ -126,9 +126,6 @@ class ModelVnoxx():
         payload = {
             "idCustomer": idCustomer,
         }
-        print("URL: ", url)
-        print("TOKEN: ", token)
-        print("idCustomer: ", idCustomer)
         
         try:
             response = requests.post(url, headers=headers, json=payload)
