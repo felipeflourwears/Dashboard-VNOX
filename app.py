@@ -3,9 +3,10 @@ import os
 import string
 import random
 import base64
+import json
 
 
-from flask import Flask, render_template, request, redirect, url_for, flash, jsonify, make_response, session, flash
+from flask import Flask, g, render_template, request, redirect, url_for, flash, jsonify, make_response, session, flash
 
 #Instances Models
 from models.ModelToken import ModelToken
@@ -63,7 +64,7 @@ login_manager_app = LoginManager(app)
 
 ALLOWED_EXTENSIONS = {'png', 'jpg', 'jpeg', 'mp4', 'gif'}
 
-token = 'ee44b2a5e0a9350a960316ce26f07a7c'
+token = 'c51c56f9f09d1faa42b9ddbff8348e3e'
 
 def allowed_file(filename):
     return '.' in filename and filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
@@ -416,20 +417,11 @@ def send_code():
         return jsonify({'error': 'Email not found'}), 404
 
 
-
-@app.route('/test', methods=['POST'])
-def test_route():
-    if request.method == 'POST':
-        data = request.get_json()
-        text = data.get('text', '')  # Obtener el texto enviado desde el cliente
-        print("Texto recibido:", text)
-        return text  # Devolver el texto recibido como respuesta
     
 
-
-@app.route("/vnox", methods=["GET", "POST"])
+@app.route("/vnnox", methods=["GET", "POST"])
 #@login_required
-def vnoxx():
+def vnnox():
     idCustomer = session.get('idCustomer')
     print("En vnnox idcustomer: ", idCustomer)
     if idCustomer is None:
@@ -447,12 +439,11 @@ def vnoxx():
     num_players = len(get_players)
     num_online = sum(player['onlineStatus'] == 1 for player in get_players)
     num_offline = sum(player['onlineStatus'] == 0 for player in get_players)
-    return render_template('vnox.html', players_info=get_players, num_players=num_players, num_online=num_online, num_offline=num_offline, get_players_db = get_players_db)
+    return render_template('vnnox.html', players_info=get_players, num_players=num_players, num_online=num_online, num_offline=num_offline, get_players_db = get_players_db)
 
 
 if __name__ == '__main__':
-    #app.run(host="0.0.0.0", port=puerto)
-    print("Hello")
+
     app.config.from_object(config['development'])
     # Imprimir las credenciales de la base de datos
     #print(f"Database Config LF: {app.config['MYSQL_HOST']}, {app.config['MYSQL_USER']}, {app.config['MYSQL_PASSWORD']}, {app.config['MYSQL_DB']}")

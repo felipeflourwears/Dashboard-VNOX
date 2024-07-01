@@ -13,6 +13,7 @@
     <link rel="stylesheet" href="{{ url_for('static', filename='css/styles.css') }}">
     <link rel="stylesheet" href="{{ url_for('static', filename='css/home.css') }}">
     <link rel="stylesheet" href="{{ url_for('static', filename='css/gadgets.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/pagination.css') }}">
 
     <!-- CDN de Sweet Alert -->
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11.0.20/dist/sweetalert2.min.js"></script>
@@ -33,11 +34,11 @@
                 Welcome again
             </div> -->
             
-            {% include 'insights.html' %}
+            <!-- {% include 'insights.html' %}  -->
 
              <!--==================== END INSIGHTS ====================-->
              <!--=== BEGIN ORDERS ====-->
-             <div class="recent-orders">
+            <div class="recent-orders">
                 <h2>Players</h2>
                 <table>
                     <thead>
@@ -46,8 +47,6 @@
                             <th>Player ID</th>
                             <th>Client</th>
                             <th>Store</th>
-                            <!-- <th>Version</th> -->
-                            <!-- <th>IP</th> -->
                             <th>ICCID</th>
                             <th>IMSI</th>
                             <th>MSISDN</th>
@@ -55,32 +54,14 @@
                         </tr>
                     </thead>
                     <tbody id="order-table-body">
-                        {% for player in get_players_db %}
-                        <tr>
-                            <td>{{ player['idVnnox'] }}</td>
-                            <td>{{ player['playerId'] }}</td>
-                            <td>{{ player['cliente'] }}</td>
-                            <td>{{ player['tienda'][:10] }}{% if player['tienda']|length > 10 %}...{% endif %}</td>
-                            <td>{{ player['iccid'] }}</td>
-                            <td>{{ player['imsi'] }}</td>
-                            <td>{{ player['msisdn'] }}</td>
-                            <td>
-                                <a class="btn-edit" href="#" style="color: white;">Edit</a>
-                                <a class="btn-delete" href="#" style="color: white;" onclick="confirmDelete(event)">Reset</a>
-                            </td>
-                        </tr>
-                        {% endfor %}
                     </tbody>
                 </table>    
             </div>
-            <!-- <div class="pagination">
-                <ul id="pagination-list">
-                    <li class="page-item" id="page-previous">
-                        <a href="#" class="page-link">Previous</a>
-                    </li>
-                </ul>
-            </div> -->
-            
+            <div class="pagination">
+                <a href="#" class="btn btn-danger">Previous</a>
+                <a href="#" class="btn btn-primary">1</a>
+                <a href="#" class="btn btn-danger">Next</a>
+            </div> 
         </main>
          <!--==================== END MAIN ====================-->
         <div class="right">

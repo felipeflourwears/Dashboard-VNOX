@@ -69,6 +69,39 @@
         console.log("Hello Mail")
     </script>
     {% endif %}
- 
+    
+
+    <script>
+        function sendDataToBeforeVnox() {
+            // Obtener el token CSRF del atributo data
+            var csrfToken = document.querySelector('.report-button').getAttribute('data-csrf-token');
+            
+            // Construir los datos para la solicitud POST
+            var postData = {
+                csrf_token: csrfToken  // Asegúrate de incluir el token CSRF en los datos
+                // Puedes agregar más datos aquí si es necesario
+            };
+            
+            fetch('/before_vnox', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(postData)
+            }).then(response => {
+                if (response.redirected) {
+                    window.location.href = response.url;
+                } else {
+                    return response.json();
+                }
+            }).then(data => {
+                if (data.redirect) {
+                    window.location.href = data.redirect;
+                }
+            }).catch(error => {
+                console.error('Error al enviar la solicitud POST', error);
+            });
+        }
+    </script>
 </body>
 </html>
