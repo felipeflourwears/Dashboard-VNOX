@@ -64,7 +64,7 @@ login_manager_app = LoginManager(app)
 
 ALLOWED_EXTENSIONS = {'png', 'jpg', 'jpeg', 'mp4', 'gif'}
 
-token = 'c51c56f9f09d1faa42b9ddbff8348e3e'
+#token = '135bad7a3921ea5cc403692b523b8e3e'
 
 def allowed_file(filename):
     return '.' in filename and filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
@@ -89,7 +89,7 @@ def obtener_token():
         print("token: ", token_info)
         return token_info['token']
 
-#token = obtener_token()
+token = obtener_token()
     
 @app.route('/reset_player/<string:player_id>', methods=['GET'])
 @login_required
@@ -427,7 +427,7 @@ def vnnox():
     
     # Obtener los datos reales de la API usando model_vnnox.consumir_api
     data = model_vnnox.consumir_api(token, idCustomer)
-    print(data)  # Asegúrate de que los datos se impriman correctamente para verificar la estructura
+    print("Data: ", data)  # Asegúrate de que los datos se impriman correctamente para verificar la estructura
     
     # Verifica la estructura de los datos impresos y adapta el acceso a los jugadores
     # Supongamos que data es una lista de listas de diccionarios, como en tu ejemplo
