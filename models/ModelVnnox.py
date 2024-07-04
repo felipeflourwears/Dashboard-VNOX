@@ -117,7 +117,7 @@ class ModelVnnox():
             return []
         
     @classmethod
-    def consumir_api(cls , token, idCustomer):
+    def request_data_api(cls , token, idCustomer):
         url = 'https://retailmibeex.net/apiVnnox/vnnoxService.php?token='
         url += token
         headers = {

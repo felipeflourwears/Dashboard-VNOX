@@ -1,6 +1,7 @@
 import datetime
 import pdfkit
 import requests
+import time
 
 from .ModelConfig import ModelConfig
 
@@ -10,11 +11,17 @@ class ModelReport:
     def requirementsPDF(self):
         now = datetime.datetime.now()
         date = now.strftime("%d/%m/%Y")
-        #ruta_wkhtmltopdf = r'C:/Program Files/wkhtmltopdf/bin/wkhtmltopdf.exe'
-        ruta_wkhtmltopdf = r'/usr/local/bin/wkhtmltopdf'
+        ruta_wkhtmltopdf = r'C:/Program Files/wkhtmltopdf/bin/wkhtmltopdf.exe'
+        #ruta_wkhtmltopdf = r'/usr/local/bin/wkhtmltopdf'
         config = pdfkit.configuration(wkhtmltopdf=ruta_wkhtmltopdf)
 
         return date, config
+    
+    @staticmethod
+    def chunks(lst, n):
+        """Divide una lista en sublistas de tamaño n."""
+        for i in range(0, len(lst), n):
+            yield lst[i:i + n]
     
     @classmethod
     def getPlayerList(cls, token, playerIds):
@@ -28,32 +35,38 @@ class ModelReport:
             "username": username,
             "token": token
         }
+        i = 0
+        for player_ids_chunk in cls.chunks(playerIds, 100):
+            try:
+                i += 1
+                print("Vueltas: ", i)
+                response = requests.post(new_url, headers=headers, json={"playerIds": player_ids_chunk})
+                response.raise_for_status()  # Raise an HTTPError for bad responses (4xx and 5xx)
 
-        try:
-            response = requests.post(new_url, headers=headers, json={"playerIds": playerIds})
-            response.raise_for_status()  # Raise an HTTPError for bad responses (4xx and 5xx)
+                data = response.json()
+                if "status" in data and data["status"] == 0 and "data" in data:
+                    rows = data["data"]
+                    result_array.extend([
+                        {
+                            "playerId": row["playerId"],
+                            "name": row["name"],
+                            "sn": row["sn"],
+                            "lastOnlineTime": row["lastOnlineTime"],
+                            "onlineStatus": row["onlineStatus"]
+                        }
+                        for row in rows
+                    ])
+                else:
+                    print("La estructura de la respuesta no es la esperada.")
 
-            data = response.json()
-            if "status" in data and data["status"] == 0 and "data" in data:
-                rows = data["data"]
-                result_array.extend([
-                    {
-                        "playerId": row["playerId"],
-                        "name": row["name"],
-                        "sn": row["sn"],
-                        "lastOnlineTime": row["lastOnlineTime"],
-                        "onlineStatus": row["onlineStatus"]
-                    }
-                    for row in rows
-                ])
-            else:
-                print("La estructura de la respuesta no es la esperada.")
+            except requests.exceptions.RequestException as e:
+                print(f"Error en la solicitud para el lote {player_ids_chunk}: {e}")
 
-        except requests.exceptions.RequestException as e:
-            print(f"Error en la solicitud: {e}")
-
-        except Exception as e:
-            print(f"Error desconocido: {e}")
+            except Exception as e:
+                print(f"Error desconocido para el lote {player_ids_chunk}: {e}")
+            
+            # Agregar un retardo de 1 segundo entre solicitudes
+            time.sleep(1)
 
         return result_array
 
@@ -153,6 +166,7 @@ class ModelReport:
             # Crear una tabla HTML con estilo
             contenido_pdf += '<table border="1" style="border-collapse: collapse; width: 100%; text-align: center;">'
             contenido_pdf += '<tr>'
+            contenido_pdf += '<th style="padding: 10px;">No.</th>'
             contenido_pdf += '<th style="padding: 10px;">Name</th>'
             #contenido_pdf += '<th style="padding: 10px;">Player ID</th>'
             contenido_pdf += '<th style="padding: 10px;">Serial Number</th>'
@@ -162,13 +176,15 @@ class ModelReport:
             contenido_pdf += '<th style="padding: 10px;">Online Status</th>'
             contenido_pdf += '<th style="padding: 10px;">Last Online Time</th>'
             contenido_pdf += '</tr>'
-            
+            i = 0
             for player in get_players:
+                i+= 1
                 cls.get_screen_player(token, player["playerId"])
                 # Obtener el estado en línea y establecer el color del cuadrado con bordes redondeados
                 status_color = 'green' if player["onlineStatus"] == 1 else 'red'
                 
                 contenido_pdf += '<tr>'
+                contenido_pdf += f'<td style="padding: 10px;">{i}</td>'
                 contenido_pdf += f'<td style="padding: 10px;">{player["name"]}</td>'
                 #contenido_pdf += f'<td style="padding: 10px;">{player["playerId"]}</td>'
                 contenido_pdf += f'<td style="padding: 10px;">{player["sn"]}</td>'
@@ -199,7 +215,6 @@ class ModelReport:
         
     @classmethod
     def generar_pdf(cls, token, datos_api):
-        print("Entre LFFFFFFFFFFFFFFFFF")
         onlinePlayer = 0
         offlinePlayer = 0
         date, config = cls().requirementsPDF()
@@ -328,6 +343,7 @@ class ModelReport:
                         <table>
                             <thead>
                                 <tr>
+                                    <th>No.</th>
                                     <th>Status</th>
                                     <th>Name</th>
                                     <th>Serial Number</th>
@@ -337,13 +353,15 @@ class ModelReport:
                             </thead>
                             <tbody>
             """
-
+            i = 0
             for fila in datos_api:
+                i+=1
                 cls.get_screen_player(token, fila["playerId"])
                 online_status_circle = "circle-green" if fila["onlineStatus"] == 1 else "circle-red"
 
                 contenido_pdf += f"""
                     <tr>
+                        <td>{i}</td>
                         <td><div class="circle {online_status_circle}"></div></td>
                         <td>{fila["name"]}</td>
                         <td>{fila["sn"]}</td>

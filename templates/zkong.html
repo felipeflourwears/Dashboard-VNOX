@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PopAtelier</title>
+    
+    <!--Material CDN-->
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons+Sharp" rel="stylesheet">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@24,400,0,0" />
+    <!--Styles-->
+    <link rel="icon" href="{{ url_for('static', filename='img/logo.png') }}" type="image/png">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/styles.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/home.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/gadgets.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/pagination.css') }}">
+
+    <!-- CDN de Sweet Alert -->
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11.0.20/dist/sweetalert2.min.js"></script>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11.0.20/dist/sweetalert2.min.css">
+    <meta name="csrf-token" content="{{ csrf_token() }}">
+
+</head>
+<body>
+
+    <div class="container">
+        <!--====================BEGIN ASIDE ====================-->
+        {% include 'sidebar.html' %}
+         <!--====================END ASIDE ====================-->
+        <main>
+            <!-- <h1 id="popAtelierHeader">PopAtelier</h1> -->
+           
+           <!--  <div class="date">
+                Welcome again
+            </div> -->
+            
+            {% include 'insights.html' %}
+
+             <!--==================== END INSIGHTS ====================-->
+             <!--=== BEGIN ORDERS ====-->
+             <div class="recent-orders">
+                <h2>Players</h2>
+                <table>
+                    <thead>
+                        <tr>
+                            <th>duidOne</th>
+                            <th>Status One</th>
+                            <th>Last Report</th>
+                            <th>duidTwo</th>
+                            <th>Status Two</th>
+                            <th>Last Report</th>
+                            <th>Client</th>
+                            <th>Tienda</th>
+                            <!-- <th>ICCID</th> -->
+                            <!-- <th>IMSI</th> -->
+                            <!-- <th>MSISDN</th> -->
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody id="order-table-body">
+                        {% if players_info %}
+                            {% for player in players_info %}
+                            <tr>
+                                <td>{{ player['duidOne'] }}</td>
+                                <td>
+                                    {% if player['statusOne'] == 1 %}
+                                    <span class="circle-green"></span>
+                                    {% else %}
+                                        <span class="circle-red"></span>
+                                    {% endif %}
+                                </td>
+                                <td>
+                                    {% if player['lastReportTimeOne'] != 'NO' %}
+                                        {{player['lastReportTimeOne']}}
+                                    {% else %}
+                                        No date
+                                    {% endif %}
+                                </td>
+                                <td>{{ player['duidTwo'] }} </td>
+                                <td>{% if player['statusTwo'] == 1 %}
+                                    <span class="circle-green"></span>
+                                    {% else %}
+                                        <span class="circle-red"></span>
+                                    {% endif %}
+                                </td>
+                                <td>
+                                    {% if player['lastReportTimeTwo'] != 'NO' %}
+                                        {{player['lastReportTimeTwo']}}
+                                    {% else %}
+                                        No date
+                                    {% endif %}
+                                </td>
+                                <td>{{ player['cliente'] }}</td>
+                                <td>{{ player['tienda'] }}</td>
+                               <!--  <td>{{ player['iccid'] }}</td>
+                                <td>{{ player['imsi'] }}</td>
+                                <td>{{ player['msisdn'] }}</td> -->
+                                <td>
+                                    <a class="btn-view" href="#" style="color: white;">More</a>
+                                </td>
+                            </tr>
+                            {% endfor %}
+                        {% else %}
+                            <tr>
+                                <td colspan="10">No players found</td>
+                            </tr>
+                        {% endif %}
+                    </tbody>
+                </table>
+            </div>
+            <div class="pagination">
+                <a href="#" class="btn btn-danger">Previous</a>
+                <a href="#" class="btn btn-primary">1</a>
+                <a href="#" class="btn btn-danger">Next</a>
+            </div> 
+        </main>
+         <!--==================== END MAIN ====================-->
+        <div class="right">
+            {% include 'right-header.html' %}
+
+            <!--====== END TOP ======-->
+             
+            {% include 'recent-updates.html' %}
+
+            <!--==================== END RECENT UPDATES ====================-->
+
+            {% include 'sales-analytics.html' %}
+        </div>   
+    </div>
+    <script src="{{ url_for('static', filename='js/index.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/home.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/gadgets.js') }}"></script>
+</body>
+</html>

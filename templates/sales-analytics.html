@@ -49,15 +49,45 @@
                 <h3>Send Report Players</h3>
             </div>
         </div>
-    </a>    -->     
-    <a href="/download_report" class="item download">
-        <div>
+    </a>    -->
+    {% if page == "vnnox" %}     
+    <form action="/download_report_vnnox" method="POST" class="item download">
+        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+        
+        <!-- Agregar cada playerId como un campo oculto -->
+        {% for player_id in player_ids %}
+        <input type="hidden" name="player_ids[]" value="{{ player_id }}">
+        {% endfor %}
+        
+        <button type="submit" style="all: unset; cursor: pointer;">
             <div>
-                <span class="material-icons-sharp">mail</span>
-                <h3>Download Report Players</h3>
+                <div>
+                    <span class="material-icons-sharp">mail</span>
+                    <h3>Download Report Players</h3>
+                </div>
             </div>
-        </div>
-    </a>
+        </button>
+    </form>
+    {% elif page == "zkong" %}
+    <form action="/download_report_zkong" method="POST" class="item download">
+        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+        
+        <!-- Agregar cada playerId como un campo oculto -->
+        {% for player_id in player_ids %}
+        <input type="hidden" name="player_ids[]" value="{{ player_id }}">
+        {% endfor %}
+        
+        <button type="submit" style="all: unset; cursor: pointer;">
+            <div>
+                <div>
+                    <span class="material-icons-sharp">mail</span>
+                    <h3>Download Report Players</h3>
+                </div>
+            </div>
+        </button>
+    </form>
+    {% endif %}
+    
     <!-- <a href="/button_test" class="item download">
         <div>
             <div>

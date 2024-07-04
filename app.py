@@ -15,6 +15,7 @@ from models.ModelUser import ModelUser
 from models.ModelS3 import ModelS3
 from models.ModelReport import ModelReport
 from models.ModelVnnox import ModelVnnox
+from models.ModelZkong import ModelZkong
 
 from werkzeug.utils import secure_filename
 from dotenv import load_dotenv
@@ -52,6 +53,7 @@ model_token = ModelToken()
 model_actions = ModelActions()
 model_s3 = ModelS3()
 model_vnnox = ModelVnnox()
+model_zkong = ModelZkong()
 
 # Imprimir la configuración de la base de datos directamente desde DevelopmentConfig
 config_instance = DevelopmentConfig()
@@ -64,7 +66,7 @@ login_manager_app = LoginManager(app)
 
 ALLOWED_EXTENSIONS = {'png', 'jpg', 'jpeg', 'mp4', 'gif'}
 
-#token = '135bad7a3921ea5cc403692b523b8e3e'
+token = 'b647764c069ec0972d5b79eec3934244'
 
 def allowed_file(filename):
     return '.' in filename and filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
@@ -89,7 +91,7 @@ def obtener_token():
         print("token: ", token_info)
         return token_info['token']
 
-token = obtener_token()
+#token = obtener_token()
     
 @app.route('/reset_player/<string:player_id>', methods=['GET'])
 @login_required
@@ -178,66 +180,6 @@ def submit_form_media():
             except Exception as e:
                 print(f"Error al subir el archivo a AWS: {e}")
     return redirect(url_for('home', reset='change'))
-
-
-@app.route('/download_report')
-@login_required
-def download_report():
-    try:
-        playerIdsCoca = [
-            "02f731f425cd4295a914595ee5309af8",
-            "23916f448a3e488f9aaaabd6c32a19e8",
-            "a00d95f6b2964b5aafc4516a02676e23",
-            "fe17a17ee4d451ecc31d5391eeea30de",
-            "6eda146077f54c4ea6a8dad94408aaf9",
-            "c85072abef3b4676b8c1895795f31a0b",
-            "cca07f360ddb4f73bbe82f094dc62bc2",
-            "dee2e4d70db248c19579dae1f998f754",
-            "b3219585e524412f920d4cab9abc0bde",
-            "a42b82d6f9154ee38e0587a34f365590",
-            "c64b9c27bc804d2aa71fc8d762d560e3",
-            "76f46e96362244eeb7698796b6ade240",
-            "4db0f13e2eba4e89b01f9634a1920b1f",
-            "dfd889e1c61c4346a9372399d62edd37",
-            "23178b68d17b41f4ae91f762f7b2b447",
-            "ce8e75bde7124fbc946306186970f368",
-            "256ea17ec4da4836896948dd3f15a323",
-            "bf9eba224b4f49ddba5768ffd41bef3a",
-            "184719cfb545e337c6e5fc8793a96b75",
-            "70429d2f73dc4e58b9988036b92c2a98",
-            "da9e35672bd1c9fdf583fb5876361932",
-            "d40dc00ab57be6f54f8f3288bf961dfd"
-        ]
-        get_players = ModelReport.getPlayerList(token, playerIdsCoca)
-        print(get_players)
-       
-        # Ruta de la imagen
-        ruta_script = os.path.dirname(os.path.abspath(__file__))
-        ruta_imagen = os.path.join(ruta_script, 'static','img', 'black.jpg')
-
-        # Leer la imagen en formato base64
-        with open(ruta_imagen, 'rb') as img_file:
-            img_base64 = base64.b64encode(img_file.read()).decode('utf-8')
-        
-
-        # Generar el informe en formato PDF
-        #pdf_content = ModelReport.generateReport(img_base64, get_players, token)
-        pdf_content = ModelReport.generar_pdf(token, get_players)
-
-        if pdf_content:
-            # Crear la respuesta con el PDF como descarga
-            response = make_response(pdf_content)
-            response.headers['Content-Type'] = 'application/pdf'
-            response.headers['Content-Disposition'] = 'attachment; filename=report-players.pdf'
-            return response
-        else:
-            return render_template('error.html', error='Error al generar el PDF'), 500
-
-    except Exception as e:
-        print("Error al generar el PDF:", e)  # Maneja el error apropiadamente
-        return render_template('error.html', error=str(e)), 500
-
-
     
 
 @app.route('/media/')
@@ -426,14 +368,17 @@ def vnnox():
         return redirect(url_for('login'))
     
     # Obtener los datos reales de la API usando model_vnnox.consumir_api
-    data = model_vnnox.consumir_api(token, idCustomer)
+    data = model_vnnox.request_data_api(token, idCustomer)
     print("Data: ", data)  # Asegúrate de que los datos se impriman correctamente para verificar la estructura
     
-    # Verifica la estructura de los datos impresos y adapta el acceso a los jugadores
-    # Supongamos que data es una lista de listas de diccionarios, como en tu ejemplo
+    # Inicializar variables
+    player_ids = []
+    players_info = []
     
-    # Si data es exactamente como el ejemplo proporcionado:
-    players_info = data[0] if data else []  # Ajusta según cómo se estructuran realmente tus datos
+    # Procesar los datos si existen
+    if data:
+        players_info = data[0]
+        player_ids = [player['playerId'] for player in players_info]
     
     # Contar jugadores en línea y fuera de línea
     num_online = sum(player['onlineStatus'] == 1 for player in players_info)
@@ -445,14 +390,124 @@ def vnnox():
     print(num_online)
     print(num_players)
     
-    return render_template('vnnox.html', players_info=players_info, num_players=num_players, num_online=num_online, num_offline=num_offline)
+    return render_template('vnnox.html', players_info=players_info, player_ids=player_ids, num_players=num_players, num_online=num_online, num_offline=num_offline, page="vnnox")
+
+@app.route('/download_report_vnnox', methods=['GET', 'POST'])
+@login_required
+def download_report_vnnox():
+    try:  
+        player_ids = request.form.getlist('player_ids[]')
+        total_player_ids = len(player_ids)
+        print("TOTAL BefoRE: ", total_player_ids)
+        # Obtiene los datos de los jugadores usando ModelReport.getPlayerList
+        get_players = ModelReport.getPlayerList(token, player_ids)
+        total = len(get_players)
+        print("TOTAL AFTERR: ", total)
+
+        # Ruta de la imagen
+        ruta_script = os.path.dirname(os.path.abspath(__file__))
+        ruta_imagen = os.path.join(ruta_script, 'static','img', 'black.jpg')
+
+        # Leer la imagen en formato base64
+        with open(ruta_imagen, 'rb') as img_file:
+            img_base64 = base64.b64encode(img_file.read()).decode('utf-8')
+        
+
+        # Generar el informe en formato PDF
+        #pdf_content = ModelReport.generateReport(img_base64, get_players, token)
+        pdf_content = ModelReport.generar_pdf(token, get_players)
+        if pdf_content:
+            # Crear la respuesta con el PDF como descarga
+            response = make_response(pdf_content)
+            response.headers['Content-Type'] = 'application/pdf'
+            response.headers['Content-Disposition'] = 'attachment; filename=report-players.pdf'
+            return response
+        else:
+            return render_template('error.html', error='Error al generar el PDF'), 500
+
+    except Exception as e:
+        print("Error al generar el PDF:", e)  # Maneja el error apropiadamente
+        return render_template('error.html', error=str(e)), 500
     
 
-   
-    #num_players = len(get_players)
-    #num_online = sum(player['onlineStatus'] == 1 for player in get_players)
-    #num_offline = sum(player['onlineStatus'] == 0 for player in get_players)
-    #return render_template('vnnox.html', players_info=get_players, num_players=num_players, num_online=num_online, num_offline=num_offline, get_players_db = get_players_db)
+@app.route('/download_report_zkong')
+@login_required
+def download_report_zkong():
+    try:
+        playerIdsCoca = [
+            "02f731f425cd4295a914595ee5309af8",
+            "23916f448a3e488f9aaaabd6c32a19e8",
+            "a00d95f6b2964b5aafc4516a02676e23",
+            "fe17a17ee4d451ecc31d5391eeea30de",
+            "6eda146077f54c4ea6a8dad94408aaf9",
+            "c85072abef3b4676b8c1895795f31a0b",
+            "cca07f360ddb4f73bbe82f094dc62bc2",
+            "dee2e4d70db248c19579dae1f998f754",
+            "b3219585e524412f920d4cab9abc0bde",
+            "a42b82d6f9154ee38e0587a34f365590",
+            "c64b9c27bc804d2aa71fc8d762d560e3",
+            "76f46e96362244eeb7698796b6ade240",
+            "4db0f13e2eba4e89b01f9634a1920b1f",
+            "dfd889e1c61c4346a9372399d62edd37",
+            "23178b68d17b41f4ae91f762f7b2b447",
+            "ce8e75bde7124fbc946306186970f368",
+            "256ea17ec4da4836896948dd3f15a323",
+            "bf9eba224b4f49ddba5768ffd41bef3a",
+            "184719cfb545e337c6e5fc8793a96b75",
+            "70429d2f73dc4e58b9988036b92c2a98",
+            "da9e35672bd1c9fdf583fb5876361932",
+            "d40dc00ab57be6f54f8f3288bf961dfd"
+        ]
+        get_players = ModelReport.getPlayerList(token, playerIdsCoca)
+        print(get_players)
+       
+        # Ruta de la imagen
+        ruta_script = os.path.dirname(os.path.abspath(__file__))
+        ruta_imagen = os.path.join(ruta_script, 'static','img', 'black.jpg')
+
+        # Leer la imagen en formato base64
+        with open(ruta_imagen, 'rb') as img_file:
+            img_base64 = base64.b64encode(img_file.read()).decode('utf-8')
+        
+
+        # Generar el informe en formato PDF
+        #pdf_content = ModelReport.generateReport(img_base64, get_players, token)
+        pdf_content = ModelReport.generar_pdf(token, get_players)
+
+        if pdf_content:
+            # Crear la respuesta con el PDF como descarga
+            response = make_response(pdf_content)
+            response.headers['Content-Type'] = 'application/pdf'
+            response.headers['Content-Disposition'] = 'attachment; filename=report-players.pdf'
+            return response
+        else:
+            return render_template('error.html', error='Error al generar el PDF'), 500
+
+    except Exception as e:
+        print("Error al generar el PDF:", e)  # Maneja el error apropiadamente
+        return render_template('error.html', error=str(e)), 500
+    
+    
+@app.route("/zkong", methods=["GET", "POST"])
+def zkong():
+    idCustomer = session.get('idCustomer')
+    if idCustomer is None:
+        flash("User not logged in or session expired.")
+        return redirect(url_for('login'))
+    
+    token_zkong = model_zkong.login()
+    data = model_zkong.request_data_api(token_zkong, idCustomer)
+    
+    players_info = data[0] if data else []  # Ajusta según cómo se estructuran realmente tus datos
+    
+    num_online = sum(player.get('statusOne') == 1 for player in players_info)
+    num_offline = sum(player.get('statusOne') == 'NO' for player in players_info)
+    num_players = len(players_info)
+    
+    return render_template('zkong.html', players_info=players_info, num_players=num_players, num_online=num_online, num_offline=num_offline, page="zkong")
+
+
+
 
 
 if __name__ == '__main__':
