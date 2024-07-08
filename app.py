@@ -369,7 +369,6 @@ def vnnox():
     
     # Obtener los datos reales de la API usando model_vnnox.consumir_api
     data = model_vnnox.request_data_api(token, idCustomer)
-    print("Data: ", data)  # Asegúrate de que los datos se impriman correctamente para verificar la estructura
     
     # Inicializar variables
     player_ids = []
@@ -380,8 +379,9 @@ def vnnox():
         players_info = data[0]
         player_ids = [player['playerId'] for player in players_info]
 
-    hello = model_vnnox.get_screen_player(token, player_ids)
-    print(hello)
+    get_screen = model_vnnox.get_screen_player(token, player_ids)
+    print("Result Get Screen: ", get_screen)
+   
     # Contar jugadores en línea y fuera de línea
     num_online = sum(player['onlineStatus'] == 1 for player in players_info)
     num_offline = sum(player['onlineStatus'] == 0 for player in players_info)

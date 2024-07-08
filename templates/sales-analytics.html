@@ -51,13 +51,16 @@
         </div>
     </a>    -->
     {% if page == "vnnox" %}     
-    <form action="/download_report_vnnox" method="POST" class="item download">
+    <form action="/download_report_vnnox" method="POST" class="item download" id="downloadForm">
         <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
         
         <!-- Agregar cada playerId como un campo oculto -->
         {% for player_id in player_ids %}
         <input type="hidden" name="player_ids[]" value="{{ player_id }}">
         {% endfor %}
+    
+        <!-- Campo oculto para controlar la respuesta de descarga -->
+        <input type="hidden" id="downloadCompleted" name="downloadCompleted" value="false">
         
         <button type="submit" style="all: unset; cursor: pointer;">
             <div>
@@ -107,3 +110,49 @@
     </a> -->
 
 </div>
+
+<script>
+    document.getElementById('downloadForm').addEventListener('submit', function(event) {
+        // Mostrar el loader al enviar el formulario
+        document.getElementById('loaderContainer').style.display = 'flex';
+        
+        // Evitar el envío del formulario normalmente
+        event.preventDefault();
+
+        // Realizar la solicitud al servidor para descargar el archivo
+        var form = this;
+        var xhr = new XMLHttpRequest();
+        xhr.open(form.method, form.action, true);
+        xhr.responseType = 'blob'; // Especificar que esperamos una respuesta en formato blob (archivo)
+
+        // Manejar la respuesta del servidor
+        xhr.onload = function() {
+            if (xhr.status === 200) {
+                // Crear un objeto URL para el archivo descargado
+                var blob = new Blob([xhr.response], { type: 'application/pdf' });
+                var url = window.URL.createObjectURL(blob);
+
+                // Crear un enlace invisible para descargar el archivo
+                var a = document.createElement('a');
+                a.style.display = 'none';
+                a.href = url;
+                a.download = 'report.pdf'; // Nombre del archivo que se descargará
+                document.body.appendChild(a);
+                a.click();
+
+                // Liberar el objeto URL creado
+                window.URL.revokeObjectURL(url);
+
+                // Ocultar el loader después de descargar el archivo
+                document.getElementById('loaderContainer').style.display = 'none';
+            } else {
+                console.error('Hubo un problema al descargar el archivo.');
+                // Aquí puedes manejar el error si es necesario
+            }
+        };
+
+        // Enviar el formulario con los datos
+        xhr.send(new FormData(form));
+    });
+</script>
+
