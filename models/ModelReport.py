@@ -11,8 +11,8 @@ class ModelReport:
     def requirementsPDF(self):
         now = datetime.datetime.now()
         date = now.strftime("%d/%m/%Y")
-        ruta_wkhtmltopdf = r'C:/Program Files/wkhtmltopdf/bin/wkhtmltopdf.exe'
-        #ruta_wkhtmltopdf = r'/usr/local/bin/wkhtmltopdf'
+        #ruta_wkhtmltopdf = r'C:/Program Files/wkhtmltopdf/bin/wkhtmltopdf.exe'
+        ruta_wkhtmltopdf = r'/usr/local/bin/wkhtmltopdf'
         config = pdfkit.configuration(wkhtmltopdf=ruta_wkhtmltopdf)
 
         return date, config
@@ -385,9 +385,9 @@ class ModelReport:
             }
 
             pdf = pdfkit.from_string(contenido_pdf, False, configuration=config, options=pdfkit_options)
-            path_to_save = "static/reports/ReportPopAtelier.pdf"
+            """path_to_save = "static/reports/ReportPopAtelier.pdf"
             with open(path_to_save, "wb") as file:
-                file.write(pdf)
+                file.write(pdf)"""
 
             return pdf
         except Exception as e:
