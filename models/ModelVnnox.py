@@ -138,3 +138,41 @@ class ModelVnnox():
         except requests.exceptions.RequestException as e:
             print(f'Error al realizar la solicitud: {e}')
             return None
+        
+    @classmethod
+    def get_screen_player(cls, token, player_ids):
+        api_host = 'openapi-us.vnnox.com'
+        new_api_endpoint = '/v1/player/control/screenshot'
+        received = 'https://retailmibeex.net/apiVnnox/recibe.php'
+
+        username = ModelConfig.username_auth()
+        new_url = f"https://{api_host}{new_api_endpoint}"
+        headers = {
+            'username': username,
+            'token': token,
+            'Content-Type': 'application/json'
+        }
+
+        # Función para dividir la lista de IDs en lotes
+        def chunk_list(data, chunk_size):
+            for i in range(0, len(data), chunk_size):
+                yield data[i:i + chunk_size]
+
+        chunks = list(chunk_list(player_ids, 100))
+        responses = []
+
+        for chunk in chunks:
+            request_parameters = {
+                "playerIds": chunk,
+                "noticeUrl": received
+            }
+
+            response = requests.post(new_url, headers=headers, json=request_parameters)
+            responses.append(response)
+
+            if response.status_code != 200:
+                print(f"Error: {response.status_code} - {response.text}")
+            else:
+                print(f"Success: {response.status_code}")
+
+        return responses

@@ -66,7 +66,7 @@ login_manager_app = LoginManager(app)
 
 ALLOWED_EXTENSIONS = {'png', 'jpg', 'jpeg', 'mp4', 'gif'}
 
-#token = 'b647764c069ec0972d5b79eec3934244'
+token = '7051bbfe8975803496c428c6be7a2063'
 
 def allowed_file(filename):
     return '.' in filename and filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
@@ -91,7 +91,7 @@ def obtener_token():
         print("token: ", token_info)
         return token_info['token']
 
-token = obtener_token()
+#token = obtener_token()
     
 @app.route('/reset_player/<string:player_id>', methods=['GET'])
 @login_required
@@ -326,7 +326,7 @@ def login():
                         login_user(logged_user)
                         # Limpia el código almacenado en la sesión después de su uso
                         session.pop('verification_code', None)
-                        return redirect(url_for('home', user=logged_user))
+                        return redirect(url_for('home'))
                     else:
                         flash("Invalid Password...")
                 else:
@@ -379,16 +379,18 @@ def vnnox():
     if data:
         players_info = data[0]
         player_ids = [player['playerId'] for player in players_info]
-    
+
+    hello = model_vnnox.get_screen_player(token, player_ids)
+    print(hello)
     # Contar jugadores en línea y fuera de línea
     num_online = sum(player['onlineStatus'] == 1 for player in players_info)
     num_offline = sum(player['onlineStatus'] == 0 for player in players_info)
     
     # Número total de jugadores
     num_players = len(players_info)
-    print(num_offline)
-    print(num_online)
-    print(num_players)
+    #print(num_offline)
+    #print(num_online)
+    #print(num_players)
     
     return render_template('vnnox.html', players_info=players_info, player_ids=player_ids, num_players=num_players, num_online=num_online, num_offline=num_offline, page="vnnox")
 
