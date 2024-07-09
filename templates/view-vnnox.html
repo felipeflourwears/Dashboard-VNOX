@@ -14,6 +14,7 @@
     <link rel="stylesheet" href="{{ url_for('static', filename='css/form.css') }}">
     <link rel="stylesheet" href="{{ url_for('static', filename='css/loader.css') }}">
     <link rel="stylesheet" href="{{ url_for('static', filename='css/edit-player.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/gadgets.css') }}">
     <meta name="csrf-token" content="{{ csrf_token() }}">
     
 </head>
@@ -53,6 +54,19 @@
 
                             <label for="msisdn">Store:</label><br>
                             <input type="text" id="store" name="store" value="{{ store }}" readonly><br>
+
+                            <h2>Status SIM</h2>
+                            <div style="position: relative; display: inline-block;">
+                                <input type="text" id="inSession" name="inSession" value="{{ inSession }}" readonly>
+                                {% if inSession == 'True' %}
+                                    <span class="status-circle-status circle-green-status"></span>
+                                {% else %}
+                                    <span class="status-circle-status circle-red-status"></span>
+                                {% endif %}
+                            </div> <br>
+
+                            <label for="sessionStartTime">Session Start Time:</label><br>
+                            <input type="text" id="sessionStartTime" name="sessionStartTime" value="{% if sessionStartTime is none %}No date{% else %}{{ sessionStartTime }}{% endif %}" readonly><br>
                         </div>
                         
                         <div class="third-edit">

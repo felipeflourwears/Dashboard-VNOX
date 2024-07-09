@@ -16,6 +16,7 @@ from models.ModelS3 import ModelS3
 from models.ModelReport import ModelReport
 from models.ModelVnnox import ModelVnnox
 from models.ModelZkong import ModelZkong
+from models.ModelClaroConnect import ModelClaroConnect
 
 from werkzeug.utils import secure_filename
 from dotenv import load_dotenv
@@ -54,6 +55,7 @@ model_actions = ModelActions()
 model_s3 = ModelS3()
 model_vnnox = ModelVnnox()
 model_zkong = ModelZkong()
+model_claro_connect = ModelClaroConnect()
 
 # Imprimir la configuración de la base de datos directamente desde DevelopmentConfig
 config_instance = DevelopmentConfig()
@@ -382,12 +384,24 @@ def view_vnnox():
         msisdn = request.form.get('msisdn')
         store = request.form.get('store')
 
+        token_cc = model_claro_connect.authenticate_cc()
+        inSession, sessionStartTime, data = model_claro_connect.claroConnectApi(imsi, token_cc)
+        print(data)
+
         # Por ejemplo, generar una cadena aleatoria para evitar el almacenamiento en caché
         random_string = ''.join(random.choices(string.ascii_letters + string.digits, k=8))
 
 
         # Renderizar la plantilla con los valores y la cadena aleatoria
-        return render_template('view-vnnox.html', player_id=player_id, imsi=imsi, iccid=iccid, msisdn=msisdn, store=store, random_string=random_string)
+        return render_template('view-vnnox.html', 
+                               player_id=player_id, 
+                               imsi=imsi, 
+                               iccid=iccid, 
+                               msisdn=msisdn, 
+                               store=store, 
+                               random_string=random_string,
+                               inSession = inSession, 
+                               sessionStartTime = sessionStartTime)
     else:
         # Manejar otro comportamiento si no es POST (opcional)
         return 'Método no permitido', 405  # Código de error 405 para método no permitido
@@ -462,17 +476,23 @@ def view_zkong():
     store = request.form.get('store')
     lastReportTimeOne = request.form.get("lastReportTimeOne")
     lastReportTimeTwo = request.form.get("lastReportTimeTwo")
+    
+    token_cc = model_claro_connect.authenticate_cc()
+    inSession, sessionStartTime, data = model_claro_connect.claroConnectApi(imsi, token_cc)
+    print(data)
 
-    return render_template('view-zkong.html', player_duidOne = player_duidOne, 
-                           player_statusOne = player_statusOne, 
-                           player_duidTwo = player_duidTwo, 
-                           player_statusTwo = player_statusTwo, 
-                           imsi = imsi, 
-                           iccid = iccid, 
-                           msisdn = msisdn, 
-                           store = store,
-                           lastReportTimeOne = lastReportTimeOne,
-                           lastReportTimeTwo = lastReportTimeTwo
+    return render_template('view-zkong.html', player_duidOne=player_duidOne, 
+                           player_statusOne=player_statusOne, 
+                           player_duidTwo=player_duidTwo, 
+                           player_statusTwo=player_statusTwo, 
+                           imsi=imsi, 
+                           iccid=iccid, 
+                           msisdn=msisdn, 
+                           store=store,
+                           lastReportTimeOne=lastReportTimeOne,
+                           lastReportTimeTwo=lastReportTimeTwo,
+                           inSession = inSession,
+                           sessionStartTime = sessionStartTime
                            )
 
 @app.route('/download_report_zkong', methods=['GET', 'POST'])

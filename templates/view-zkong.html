@@ -77,6 +77,20 @@
                             <label for="store">Store:</label><br>
                             <input type="text" id="store" name="store" value="{{ store }}" readonly><br>
 
+                            <h2>Status SIM</h2>
+                            <div style="position: relative; display: inline-block;">
+                                <input type="text" id="inSession" name="inSession" value="{{ inSession }}" readonly>
+                                {% if inSession == 'True' %}
+                                    <span class="status-circle-status circle-green-status"></span>
+                                {% else %}
+                                    <span class="status-circle-status circle-red-status"></span>
+                                {% endif %}
+                            </div> <br>
+
+                            <label for="sessionStartTime">Session Start Time:</label><br>
+                            <input type="text" id="sessionStartTime" name="sessionStartTime" value="{% if sessionStartTime is none %}No date{% else %}{{ sessionStartTime }}{% endif %}" readonly><br>
+                            
+
 
                         </div>
                         
