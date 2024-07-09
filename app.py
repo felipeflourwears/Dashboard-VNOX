@@ -66,7 +66,7 @@ login_manager_app = LoginManager(app)
 
 ALLOWED_EXTENSIONS = {'png', 'jpg', 'jpeg', 'mp4', 'gif'}
 
-token = '7051bbfe8975803496c428c6be7a2063'
+token = 'd6fb58c88cab1f1087824fee025037fe'
 
 def allowed_file(filename):
     return '.' in filename and filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
@@ -123,30 +123,6 @@ def send_report():
     except Exception as e:
         print(f"Error sending report: {str(e)}")
         return jsonify(success=False, message=str(e))
-
-@app.route('/view-vnnox/')
-@login_required
-def view_vnnox():
-    #token = obtener_token()
-    # Obtener los parámetros de la URL
-    get_logs = ModelActions.get_logs(token)
-    player_id = request.args.get('player_id')
-    iccid = request.args.get('iccid')
-    imsi = request.args.get('imsi')
-    msisdn = request.args.get('msisdn')
-    store = request.args.get('store')
-    print("Estore: ", store)
-    
-    # Generar una cadena aleatoria para evitar el almacenamiento en caché
-    random_string = ''.join(random.choices(string.ascii_letters + string.digits, k=8))
-
-    
-    #token = '0ce1973ddb9a293cf177e3626135078a'
-    ModelActions.get_screnn_player(token, player_id)
-
-    
-    # Renderizar la plantilla con los valores y la cadena aleatoria
-    return render_template('view-vnnox.html', player_id = player_id, imsi=imsi, iccid = iccid, msisdn = msisdn, store = store , random_string = random_string, get_logs = get_logs)
 
 @app.route('/submit_form_media', methods=['POST'])
 @login_required
@@ -395,6 +371,27 @@ def vnnox():
     
     return render_template('vnnox.html', players_info=players_info, player_ids=player_ids, num_players=num_players, num_online=num_online, num_offline=num_offline, page="vnnox")
 
+@app.route('/view-vnnox/', methods=['POST'])
+@login_required
+def view_vnnox():
+    if request.method == 'POST':
+        # Obtener los datos del formulario
+        player_id = request.form.get('player_id')
+        iccid = request.form.get('iccid')
+        imsi = request.form.get('imsi')
+        msisdn = request.form.get('msisdn')
+        store = request.form.get('store')
+
+        # Por ejemplo, generar una cadena aleatoria para evitar el almacenamiento en caché
+        random_string = ''.join(random.choices(string.ascii_letters + string.digits, k=8))
+
+
+        # Renderizar la plantilla con los valores y la cadena aleatoria
+        return render_template('view-vnnox.html', player_id=player_id, imsi=imsi, iccid=iccid, msisdn=msisdn, store=store, random_string=random_string)
+    else:
+        # Manejar otro comportamiento si no es POST (opcional)
+        return 'Método no permitido', 405  # Código de error 405 para método no permitido
+
 @app.route('/download_report_vnnox', methods=['GET', 'POST'])
 @login_required
 def download_report_vnnox():
@@ -450,6 +447,33 @@ def zkong():
     num_players = len(players_info)
     
     return render_template('zkong.html', players_info=players_info, datos_pdf = data_pdf, num_players=num_players, num_online=num_online, num_offline=num_offline, page="zkong")
+
+@app.route('/view-zkong/', methods=['POST'])
+@login_required
+def view_zkong():
+    csrf_token = request.form.get('csrf_token')
+    player_duidOne = request.form.get('player_duidOne')
+    player_statusOne = request.form.get('player_statusOne')
+    player_duidTwo = request.form.get('player_duidTwo')
+    player_statusTwo = request.form.get('player_statusTwo')
+    iccid = request.form.get('iccid')
+    imsi = request.form.get('imsi')
+    msisdn = request.form.get('msisdn')
+    store = request.form.get('store')
+    lastReportTimeOne = request.form.get("lastReportTimeOne")
+    lastReportTimeTwo = request.form.get("lastReportTimeTwo")
+
+    return render_template('view-zkong.html', player_duidOne = player_duidOne, 
+                           player_statusOne = player_statusOne, 
+                           player_duidTwo = player_duidTwo, 
+                           player_statusTwo = player_statusTwo, 
+                           imsi = imsi, 
+                           iccid = iccid, 
+                           msisdn = msisdn, 
+                           store = store,
+                           lastReportTimeOne = lastReportTimeOne,
+                           lastReportTimeTwo = lastReportTimeTwo
+                           )
 
 @app.route('/download_report_zkong', methods=['GET', 'POST'])
 @login_required

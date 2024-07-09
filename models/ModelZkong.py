@@ -75,7 +75,6 @@ class ModelZkong():
     def request_data_api(self, token, idCustomer):
         url = 'https://retailmibeex.net/apiVnnox/zkongService.php?token='
         url += token
-        print(token, url)
         headers = {
             'Content-Type': 'application/json'
         }

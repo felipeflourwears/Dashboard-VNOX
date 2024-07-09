@@ -14,7 +14,7 @@
     <link rel="stylesheet" href="{{ url_for('static', filename='css/form.css') }}">
     <link rel="stylesheet" href="{{ url_for('static', filename='css/loader.css') }}">
     <link rel="stylesheet" href="{{ url_for('static', filename='css/edit-player.css') }}">
-    <meta name="csrf-token" content="{{ csrf_token() }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/gadgets.css') }}">
     
 </head>
 <body>
@@ -33,14 +33,37 @@
              <!--=== BEGIN ORDERS ====-->
             <div class="recent-orders">
                 <h2>Player</h2>
-                <form action="/submit_form_media" method="post" class="custom-form" enctype="multipart/form-data">
+                <form action="#" method="post" class="custom-form" enctype="multipart/form-data">
                     <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
                     <div class="first-edit">
                         <div class="second-edit">
-                            <input type="hidden" id="numRand" name="numRand" value="{{ random_string }}" readonly><br>
                             
-                            <label for="playerId">Player ID:</label><br>
-                            <input type="text" id="playerId" name="playerId" value="{{ player_id }}" readonly><br>
+                            <label for="player_duidOne">Player duidOne:</label><br>
+
+                           <div style="position: relative; display: inline-block;">
+                                <input type="text" id="player_duidOne" name="player_duidOne" value="{{ player_duidOne }}" readonly>
+                                {% if player_statusOne == '1' %}
+                                    <span class="status-circle-status circle-green-status"></span>
+                                {% else %}
+                                    <span class="status-circle-status circle-red-status"></span>
+                                {% endif %}
+                            </div><br>
+
+                            <label for="lastReportTimeOne">Last Report Time One:</label><br>
+                            <input type="text" id="lastReportTimeOne" name="lastReportTimeOne" value="{{ lastReportTimeOne }}" readonly><br><br>
+                            
+                            <label for="player_duidTwo">Player duidTwo:</label><br>
+                            <div style="position: relative; display: inline-block;">
+                                <input type="text" id="player_duidTwo" name="player_duidTwo" value="{{ player_duidTwo }}" readonly>
+                                {% if player_statusTwo == '1' %}
+                                    <span class="status-circle-status circle-green-status"></span>
+                                {% else %}
+                                    <span class="status-circle-status circle-red-status"></span>
+                                {% endif %}
+                            </div> <br>
+
+                            <label for="lastReportTimeTwo">Last Report Time Two:</label><br>
+                            <input type="text" id="lastReportTimeTwo" name="lastReportTimeTwo" value="{{ lastReportTimeTwo }}" readonly><br><br>
                             
                             <label for="iccid">ICCID:</label><br>
                             <input type="text" id="iccid" name="iccid" value="{{ iccid }}" readonly><br>
@@ -51,8 +74,10 @@
                             <label for="msisdn">MSISDN:</label><br>
                             <input type="text" id="msisdn" name="msisdn" value="{{ msisdn }}" readonly><br>
 
-                            <label for="msisdn">Store:</label><br>
+                            <label for="store">Store:</label><br>
                             <input type="text" id="store" name="store" value="{{ store }}" readonly><br>
+
+
                         </div>
                         
                         <div class="third-edit">
@@ -63,20 +88,6 @@
                             </div>
                         </div>
                     </div>
-                    
-                    
-
-                    <h2>Actual Content</h2>
-                    <img id="imagenJugador" width="600" height="500">
-                    <br>
-                    
-                    <!-- <h1>Change Content</h1>
-                    <div class="file-input">
-                        <label for="imageUpload" class="file-label">Choose Media:</label>
-                        <input type="file" id="imageUpload" name="imageUpload" class="inputfile">
-                    </div><br>
-                    
-                    <input type="submit" value="Update" class="submit-button"> -->
                 </form>                                    
             </div>
         </main>
@@ -91,50 +102,6 @@
         </div>   
     </div>
     <script src="{{ url_for('static', filename='js/index.js') }}"></script>
-    <script>
-        function verificarImagen() {
-            // Obtener el valor del campo de entrada con ID "playerId"
-            var playerId = document.getElementById("playerId").value;
-            var numRand = document.getElementById("numRand").value;
-        
-            // Si no hay valor en el campo de entrada, establecer uno predeterminado
-            if (!playerId) {
-                // Puedes generar un ID único aquí o establecer uno predeterminado
-                playerId = '7e82caf5bbe43db71af49a95d79bbd6c';
-            }
-    
-            // Agregar la marca de tiempo como parámetro de consulta
-            var timestamp = new Date().getTime();
-            var img = new Image();
-            img.src = "https://retailmibeex.net/apiVnnox/screenPlayers/" + playerId + ".jpg?random=" + numRand + "&timestamp=" + timestamp;
-        
-            img.onload = function() {
-                // La imagen original está disponible
-                document.getElementById("imagenJugador").src = img.src;
-            };
-        
-            img.onerror = function() {
-                // La imagen original no está disponible, cambiar a otra imagen
-                document.getElementById("imagenJugador").src = "https://retailmibeex.net/images/notfound.png";
-            };
-        }
-        
-        // Llamada a la función después de que la página se haya cargado
-        window.onload = function() {
-            verificarImagen();
-        }
-    </script>
-    <script>
-        document.addEventListener('DOMContentLoaded', function () {
-            var loaderContainer = document.getElementById('loaderContainer');
-            var form = document.querySelector('.custom-form');
-    
-            form.addEventListener('submit', function () {
-                // Muestra el loader al enviar el formulario
-                loaderContainer.style.display = 'flex';
-            });
-        });
-    </script>
 
 </body>
 </html>

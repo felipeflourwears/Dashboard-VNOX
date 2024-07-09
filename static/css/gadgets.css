@@ -1,9 +1,13 @@
-.btn-edit{
-    background-color: #4CAF50; 
-    color: white; 
-    padding: 6px 6px; /* Ajusta el tamaño del padding según sea necesario */
-    text-decoration: none; 
-    border-radius: 4px;
+.btn-edit {
+  background-color: #4CAF50; 
+  color: white; 
+  padding: 6px 12px; /* Ajustado para igualar el tamaño del botón al rojo */
+  text-decoration: none; 
+  border-radius: 4px;
+  border: none;
+  cursor: pointer;
+  display: inline-block;
+  font-size: 16px;
 }
 
 .btn-delete{
@@ -12,6 +16,7 @@
     padding: 6px 6px; /* Ajusta el tamaño del padding según sea necesario */
     text-decoration: none; 
     border-radius: 4px;
+    font-size: 16px;
 }
 
 .btn-view{
@@ -20,6 +25,7 @@
   padding: 6px 6px; /* Ajusta el tamaño del padding según sea necesario */
   text-decoration: none; 
   border-radius: 4px;
+  font-size: 8px;
 }
 
 .btn-serve{
@@ -57,6 +63,40 @@
     width: 90%;
     padding: 5px;
   }
+
+.circle-green {
+    display: inline-block;
+    width: 20px;
+    height: 20px;
+    border-radius: 50%;
+    background-color: green;
+}
+
+.circle-red {
+    display: inline-block;
+    width: 20px;
+    height: 20px;
+    border-radius: 50%;
+    background-color: red;
+}
+
+.status-circle-status {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-80%);
+  right: 5px; /* Ajusta la posición derecha según sea necesario */
+  width: 10px; /* Ancho del círculo */
+  height: 10px; /* Alto del círculo */
+  border-radius: 50%; /* Para hacerlo un círculo */
+}
+
+.circle-green-status {
+  background-color: #4CAF50; /* Color verde para el círculo */
+}
+
+.circle-red-status {
+  background-color: #f44336; /* Color rojo para el círculo */
+}
   
 
  

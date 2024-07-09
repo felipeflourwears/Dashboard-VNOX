@@ -297,7 +297,14 @@ class ModelReport:
                             color: #FFFFFF;
                         }}
                         td:last-child {{
-                            width: 300px; /* Puedes ajustar el valor según tus necesidades */
+                            width: 100px; /* Ajusta el tamaño según tus necesidades */
+                        }}
+                        .status-cell {{
+                            width: 60px; /* Ajusta el tamaño de la celda de estado */
+                            text-align: center; /* Centra el contenido de la celda */
+                        }}
+                        .tienda-cell {{
+                            width: 200px; /* Ajusta el tamaño de la celda de tienda */
                         }}
                     </style>
                 </head>

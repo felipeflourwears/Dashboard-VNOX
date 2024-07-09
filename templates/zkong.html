@@ -54,7 +54,7 @@
                             <th>Status Two</th>
                             <th>Last Report</th>
                             <th>Client</th>
-                            <th>Tienda</th>
+                            <th>Store</th>
                             <!-- <th>ICCID</th> -->
                             <!-- <th>IMSI</th> -->
                             <!-- <th>MSISDN</th> -->
@@ -100,7 +100,22 @@
                                 <td>{{ player['imsi'] }}</td>
                                 <td>{{ player['msisdn'] }}</td> -->
                                 <td>
-                                    <a class="btn-view" href="http://esl-eu.zkong.com/#/login" style="color: white;">More Actions</a>
+                                    <form action="{{ url_for('view_zkong') }}" method="POST" style="display: inline;">
+                                        
+                                        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                                        <input type="hidden" name="player_duidOne" value="{{ player['duidOne'] }}">
+                                        <input type="hidden" name="player_statusOne" value="{{ player['statusOne'] }}">
+                                        <input type="hidden" name="player_duidTwo" value="{{ player['duidTwo'] }}">
+                                        <input type="hidden" name="player_statusTwo" value="{{ player['statusTwo'] }}">
+                                        <input type="hidden" name="iccid" value="{{ player['iccid'] }}">
+                                        <input type="hidden" name="imsi" value="{{ player['imsi'] }}">
+                                        <input type="hidden" name="msisdn" value="{{ player['msisdn'] }}">
+                                        <input type="hidden" name="store" value="{{ player['tienda'] }}">
+                                        <input type="hidden" name="lastReportTimeOne" value="{{ player['lastReportTimeOne'] }}">
+                                        <input type="hidden" name="lastReportTimeTwo" value="{{ player['lastReportTimeTwo'] }}">
+                                        <button type="submit" class="btn-edit">View</button>
+                                    </form>
+                                    <a class="btn-view" href="http://esl-eu.zkong.com/#/login" style="color: white;">More Actions</a>                                    
                                 </td>
                             </tr>
                             {% endfor %}

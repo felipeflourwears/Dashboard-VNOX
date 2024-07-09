@@ -76,7 +76,15 @@
                             <td>{{ player['imsi'] }}</td>
                             <td>{{ player['msisdn'] }}</td>
                             <td>
-                                <a class="btn-edit" href="{{ url_for('view_vnnox', player_id=player['playerId'], iccid=player['iccid'], imsi=player['imsi'], msisdn=player['msisdn'], store=player['tienda'])}}" style="color: white;">Edit</a>
+                                <form action="{{ url_for('view_vnnox') }}" method="POST" style="display: inline;">
+                                    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                                    <input type="hidden" name="player_id" value="{{ player['playerId'] }}">
+                                    <input type="hidden" name="iccid" value="{{ player['iccid'] }}">
+                                    <input type="hidden" name="imsi" value="{{ player['imsi'] }}">
+                                    <input type="hidden" name="msisdn" value="{{ player['msisdn'] }}">
+                                    <input type="hidden" name="store" value="{{ player['tienda'] }}">
+                                    <button type="submit" class="btn-edit">View</button>
+                                </form>
                                 <a class="btn-delete" href="{{ url_for('reset_player', player_id=player['playerId']) }}" style="color: white;" onclick="confirmDelete(event)">Reset</a>
                             </td>
                         </tr>
