@@ -76,8 +76,8 @@
                             <td>{{ player['imsi'] }}</td>
                             <td>{{ player['msisdn'] }}</td>
                             <td>
-                                <a class="btn-edit" href="#" style="color: white;">Edit</a>
-                                <a class="btn-delete" href="#" style="color: white;" onclick="confirmDelete(event)">Reset</a>
+                                <a class="btn-edit" href="{{ url_for('view_vnnox', player_id=player['playerId'], iccid=player['iccid'], imsi=player['imsi'], msisdn=player['msisdn'], store=player['tienda'])}}" style="color: white;">Edit</a>
+                                <a class="btn-delete" href="{{ url_for('reset_player', player_id=player['playerId']) }}" style="color: white;" onclick="confirmDelete(event)">Reset</a>
                             </td>
                         </tr>
                         {% endfor %}

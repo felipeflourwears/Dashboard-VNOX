@@ -176,3 +176,56 @@ class ModelVnnox():
                 print(f"Success: {response.status_code}")
 
         return responses
+    
+    @staticmethod
+    def chunks(lst, n):
+        """Divide una lista en sublistas de tamaño n."""
+        for i in range(0, len(lst), n):
+            yield lst[i:i + n]
+    
+    @classmethod
+    def getPlayerList(cls, token, playerIds):
+        result_array = []
+        api_host = "openapi-us.vnnox.com"
+        username = "popatelier"
+        endpoint = "/v1/player/get/syncCurrentInfo"
+        
+        new_url = f"https://{api_host}{endpoint}"
+        headers = {
+            "username": username,
+            "token": token
+        }
+        i = 0
+        for player_ids_chunk in cls.chunks(playerIds, 100):
+            try:
+                i += 1
+                print("Vueltas: ", i)
+                response = requests.post(new_url, headers=headers, json={"playerIds": player_ids_chunk})
+                response.raise_for_status()  # Raise an HTTPError for bad responses (4xx and 5xx)
+
+                data = response.json()
+                if "status" in data and data["status"] == 0 and "data" in data:
+                    rows = data["data"]
+                    result_array.extend([
+                        {
+                            "playerId": row["playerId"],
+                            "name": row["name"],
+                            "sn": row["sn"],
+                            "lastOnlineTime": row["lastOnlineTime"],
+                            "onlineStatus": row["onlineStatus"]
+                        }
+                        for row in rows
+                    ])
+                else:
+                    print("La estructura de la respuesta no es la esperada.")
+
+            except requests.exceptions.RequestException as e:
+                print(f"Error en la solicitud para el lote {player_ids_chunk}: {e}")
+
+            except Exception as e:
+                print(f"Error desconocido para el lote {player_ids_chunk}: {e}")
+            
+            # Agregar un retardo de 1 segundo entre solicitudes
+            time.sleep(1)
+
+        return result_array

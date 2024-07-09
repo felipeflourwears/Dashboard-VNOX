@@ -2,6 +2,7 @@
 import requests
 import rsa
 import base64
+import pdfkit
 
 class ModelZkong():
     @classmethod

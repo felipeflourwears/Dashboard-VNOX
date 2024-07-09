@@ -1,6 +1,6 @@
 ## Access to server
 ```bash
-ssh -i key.pem ubuntu@44.209.129.186
+ssh -i key.pem ubuntu@44.209.162.29
 ```
 
 ### Configure to SSH connections 
