@@ -371,6 +371,163 @@ class ModelReport:
             print("Error:", e)
             return None
         
+    @classmethod    
+    def generar_pdf_hexnode(cls, datos_api):
+        date, config = cls().requirementsPDF()
+        onlinePlayer = 0
+        offlinePlayer = 0
+        
+        try:
+            for fila in datos_api:
+                if fila["compliant"] == 0:
+                    offlinePlayer += 1
+                elif fila["compliant"] == 1:
+                    onlinePlayer += 1
+            contenido_pdf = f"""
+                <html>
+                <head>
+                    <style>
+                        body {{
+                            font-family: Arial, sans-serif;
+                            display: flex;
+                            align-items: center;
+                            justify-content: center;
+                            height: 100vh;
+                            margin: 0;
+                            background-color: #FFFFFF; /* Fondo blanco */
+                        }}
+                        .container {{
+                            width: 100%;
+                            text-align: center; /* Centrar horizontalmente */
+                        }}
+                        .logo {{
+                            margin-bottom: 20px; /* Espaciado entre el logotipo y las tarjetas */
+                        }}
+                        .card {{
+                            border: none;
+                            border-radius: 10px;
+                            padding: 20px;
+                            text-align: center;
+                            width: 200px;
+                            display: inline-block;
+                            margin-right: 20px; /* Agregado para separar las tarjetas */
+                            background-color: #EF5350;
+                            color: #FFFFFF; /* Texto en blanco */
+                            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* Sombra */
+                        }}
+                        .card:nth-child(2) {{
+                            background-color: #2196F3;
+                        }}
+                        .card:nth-child(3) {{
+                            background-color: #4CAF50;
+                        }}
+                        .table-container {{
+                            display: flex;
+                            justify-content: center;
+                            width: 100%;
+                            padding: 0 20px; /* Ajusta el padding para tener espacio a los lados */
+                        }}
+                        table {{
+                            width: 100%;
+                            margin-top: 20px;
+                            background-color: #FFFFFF;
+                            border: 1px solid #000000;
+                            border-collapse: collapse;
+                        }}
+                        th, td {{
+                            border: 1px solid #000000; /* Bordes de celda en negro */
+                            text-align: left;
+                            padding: 8px;
+                        }}
+                        th {{
+                            background-color: #F2F2F2;
+                            border-bottom: 2px solid #000000; /* Bordes adicionales para las celdas de encabezado */
+                        }}
+                        .circle {{
+                            width: 20px; /* Ajusta el tamaño del círculo */
+                            height: 20px; /* Ajusta el tamaño del círculo */
+                            border-radius: 50%;
+                            display: inline-block;
+                            vertical-align: middle;
+                        }}
+                        .circle-green {{
+                            background-color: #4CAF50;
+                        }}
+                        .circle-red {{
+                            background-color: #EF5350;
+                        }}
+                        th {{
+                            background-color: #2196F3;
+                            text-align: center;
+                            color: #FFFFFF;
+                        }}
+                        td:last-child {{
+                            width: 100px; /* Ajusta el tamaño según tus necesidades */
+                        }}
+                    </style>
+                </head>
+                <body>
+                    <div class="container">
+                        <div class="logo">
+                            <img src="https://www.retailmibeex.net/apiVnnox/black.jpg" alt="Logo">
+                        </div>
+                        <div class="cards">
+                            <div class="card">
+                                <h2>Total Players</h2>
+                                <p>{onlinePlayer + offlinePlayer}</p>
+                            </div>
+                            <div class="card">
+                                <h2>Online</h2>
+                                <p>{onlinePlayer}</p>
+                            </div>
+                            <div class="card">
+                                <h2>Offline</h2>
+                                <p>{offlinePlayer}</p>
+                            </div>
+                        </div>
+                        <div class="table-container">
+                            <table>
+                                <thead>
+                                    <tr>
+                                        <th>Store</th>
+                                        <th>Type</th>
+                                        <th>Status</th>
+                                        <th>LastOnline YYYY/MM/DD</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                """
+            for fila in datos_api:
+                online_status_circle = "circle-green" if fila["compliant"] == 1 else "circle-red"
+                contenido_pdf += f"""
+                    <tr>
+                        <td>{fila["tienda"]}</td>
+                        <td>{fila["cliente"]}</td>
+                        <td><div class="circle {online_status_circle}"></div></td>
+                        <td>{fila["last_reported"]}</td>
+                    </tr>
+                """
+            contenido_pdf += """
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </body>
+                </html>
+            """
+            
+            pdfkit_options = {
+                "page-size": "A4",
+                "encoding": "UTF-8",
+                # Otras opciones de configuración si las necesitas
+            }
+            
+            pdf = pdfkit.from_string(contenido_pdf, False, configuration=config, options=pdfkit_options)
+            return pdf
+        except Exception as e:
+            print("Error:", e)
+            return None
+        
     @classmethod
     def send_report(cls,token):
        # Recupera los datos del formulario

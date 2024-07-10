@@ -37,7 +37,7 @@
            <!--  <div class="date">
                 Welcome again
             </div> -->
-            
+
             {% include 'insights.html' %}
 
              <!--==================== END INSIGHTS ====================-->
@@ -47,45 +47,39 @@
                 <table>
                     <thead>
                         <tr>
-                            <th>playerId</th>
-                            <th>onlineStatus</th>
-                            <th>lastOnlineTime</th>
-                            <th>Cliente</th>
                             <th>Store</th>
-                            <th>ICCID</th>
+                            <th>Status</th>
+                            <th>Last reported</th>
+                            <th>Type</th>
+                            <!-- <th>ICCID</th>
                             <th>IMSI</th>
-                            <th>MSISDN</th>
+                            <th>MSISDN</th> -->
                             <th>Options</th>
                         </tr>
                     </thead>
                     <tbody id="order-table-body">
                         {% for player in players_info %}
                         <tr>
-                            <td>{{ player['playerId'] }}</td>
+                            <td>{{ player['tienda'] }}</td>
                             <td>
-                                {% if player['onlineStatus'] == 1 %}
+                                {% if player['compliant'] == True %}
                                     <span class="circle-green"></span>
                                 {% else %}
                                     <span class="circle-red"></span>
                                 {% endif %}
                             </td>
-                            <td>{{ player['lastOnlineTime'] }}</td>
+                            <td>{{ player['last_reported'] }} </td>
                             <td>{{ player['cliente'] }}</td>
-                            <td>{{ player['tienda'] }}</td>
-                            <td>{{ player['iccid'] }}</td>
-                            <td>{{ player['imsi'] }}</td>
-                            <td>{{ player['msisdn'] }}</td>
                             <td>
-                                <form action="{{ url_for('view_vnnox') }}" method="POST" style="display: inline;">
+                                <form action="{{ url_for('view_hexnode') }}" method="POST" style="display: inline;">
                                     <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
-                                    <input type="hidden" name="player_id" value="{{ player['playerId'] }}">
                                     <input type="hidden" name="iccid" value="{{ player['iccid'] }}">
                                     <input type="hidden" name="imsi" value="{{ player['imsi'] }}">
                                     <input type="hidden" name="msisdn" value="{{ player['msisdn'] }}">
                                     <input type="hidden" name="store" value="{{ player['tienda'] }}">
                                     <button type="submit" class="btn btn-edit">View</button>
                                 </form>
-                                <a class="btn btn-delete" href="{{ url_for('reset_player', player_id=player['playerId']) }}" style="color: white;" onclick="confirmDelete(event)">Reset</a>
+                                <a class="btn btn-view" href="#" style="color: white;">Explore</a> 
                             </td>
                         </tr>
                         {% endfor %}
@@ -114,31 +108,6 @@
     <script src="{{ url_for('static', filename='js/index.js') }}"></script>
     <script src="{{ url_for('static', filename='js/home.js') }}"></script>
     <script src="{{ url_for('static', filename='js/gadgets.js') }}"></script>
-
-    {% if reset_status == 'reset' %}
-    <script>
-        console.log("Hello lf")
-        popupSuccess('Reset correctly');
-        console.log("Hello lf")
-    </script>
-    {% endif %}
-
-    {% if reset_status == 'change' %}
-    <script>
-        console.log("Hello lf")
-        popupSuccess('Change Content correctly');
-        console.log("Hello lf")
-    </script>
-    {% endif %}
-
-    {% if send_report_status == 'sendreport' %}
-    <script>
-        console.log("Hello Mail")
-        popupSuccess('Send Report correctly');
-        console.log("Hello Mail")
-    </script>
-    {% endif %}
-
     
     
 </body>

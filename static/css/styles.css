@@ -424,8 +424,13 @@ main .recent-orders table:hover{
 main table tbody td{
     height: 2.8rem;
     border-bottom: 1px solid var(--color-light);
-    color: var(--color-dark-variant)
+    color: var(--color-dark-variant);
+    /* transition: box-shadow 0.3s ease; */
 }
+
+/* main table tbody td:hover {
+    box-shadow: inset 0px -3px 0px var(--color-primary);
+} */
 
 main table tbody tr:last-child{
     border: none;

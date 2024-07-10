@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PopAtelier</title>
+    
+    <!--Material CDN-->
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons+Sharp" rel="stylesheet">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@24,400,0,0" />
+    <!--Styles-->
+    <link rel="icon" href="{{ url_for('static', filename='img/logo.png') }}" type="image/png">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/styles.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/form.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/loader.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/edit-player.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/gadgets.css') }}">
+    <meta name="csrf-token" content="{{ csrf_token() }}">
+    
+</head>
+<body>
+    <div class="loader-container" id="loaderContainer">
+        <div class="loader"></div>
+    </div>
+
+    <div class="container">
+        <!--====================BEGIN ASIDE ====================-->
+        {% include 'sidebar.html' %}
+         <!--====================END ASIDE ====================-->
+        <main>
+            <h1>View Player</h1>
+
+             <!--==================== END INSIGHTS ====================-->
+             <!--=== BEGIN ORDERS ====-->
+            <div class="recent-orders">
+                <h2>Player</h2>
+                <form action="/submit_form_media" method="post" class="custom-form" enctype="multipart/form-data">
+                    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                    <div class="first-edit">
+                        <div class="second-edit">
+                            <input type="hidden" id="numRand" name="numRand" value="{{ random_string }}" readonly><br>
+                            
+                            <label for="iccid">ICCID:</label><br>
+                            <input type="text" id="iccid" name="iccid" value="{{ iccid }}" readonly><br>
+
+                            <label for="imsi">IMSI:</label><br>
+                            <input type="text" id="imsi" name="imsi" value="{{ imsi }}" readonly><br>
+
+                            <label for="msisdn">MSISDN:</label><br>
+                            <input type="text" id="msisdn" name="msisdn" value="{{ msisdn }}" readonly><br>
+
+                            <label for="msisdn">Store:</label><br>
+                            <input type="text" id="store" name="store" value="{{ store }}" readonly><br>
+
+                            <h2>Status SIM</h2>
+                            <div style="position: relative; display: inline-block;">
+                                <input type="text" id="inSession" name="inSession" value="{{ inSession }}" readonly>
+                                {% if inSession == 'True' %}
+                                    <span class="status-circle-status circle-green-status"></span>
+                                {% else %}
+                                    <span class="status-circle-status circle-red-status"></span>
+                                {% endif %}
+                            </div> <br>
+
+                            <label for="sessionStartTime">Session Start Time:</label><br>
+                            <input type="text" id="sessionStartTime" name="sessionStartTime" value="{% if sessionStartTime is none %}No date{% else %}{{ sessionStartTime }}{% endif %}" readonly><br>
+                        </div>
+                        
+                        <div class="third-edit">
+                            <h2>Store Location</h2>
+                            <div class="store-location">
+                                    <img src="https://retailmibeex.net/images/notfound.png" style="width: 100%; max-width: 200px; margin-right: 10px; height: auto;">
+                                    <img src="https://retailmibeex.net/images/notfound.png" style="width: 100%; max-width: 200px; height: auto;">
+                            </div>
+                        </div>
+                    </div>
+                </form>                                    
+            </div>
+        </main>
+         <!--==================== END MAIN ====================-->
+        <div class="right">
+            {% include 'right-header.html' %}
+            <!--====== END TOP ======-->
+             
+            {% include 'recent-updates.html' %}
+
+            <!--==================== END RECENT UPDATES ====================-->  
+        </div>   
+    </div>
+    <script src="{{ url_for('static', filename='js/index.js') }}"></script>
+    <script>
+        function verificarImagen() {
+            // Obtener el valor del campo de entrada con ID "playerId"
+            var playerId = document.getElementById("playerId").value;
+            var numRand = document.getElementById("numRand").value;
+        
+            // Si no hay valor en el campo de entrada, establecer uno predeterminado
+            if (!playerId) {
+                // Puedes generar un ID único aquí o establecer uno predeterminado
+                playerId = '7e82caf5bbe43db71af49a95d79bbd6c';
+            }
+    
+            // Agregar la marca de tiempo como parámetro de consulta
+            var timestamp = new Date().getTime();
+            var img = new Image();
+            img.src = "https://retailmibeex.net/apiVnnox/screenPlayers/" + playerId + ".jpg?random=" + numRand + "&timestamp=" + timestamp;
+        
+            img.onload = function() {
+                // La imagen original está disponible
+                document.getElementById("imagenJugador").src = img.src;
+            };
+        
+            img.onerror = function() {
+                // La imagen original no está disponible, cambiar a otra imagen
+                document.getElementById("imagenJugador").src = "https://retailmibeex.net/images/notfound.png";
+            };
+        }
+        
+        // Llamada a la función después de que la página se haya cargado
+        window.onload = function() {
+            verificarImagen();
+        }
+    </script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            var loaderContainer = document.getElementById('loaderContainer');
+            var form = document.querySelector('.custom-form');
+    
+            form.addEventListener('submit', function () {
+                // Muestra el loader al enviar el formulario
+                loaderContainer.style.display = 'flex';
+            });
+        });
+    </script>
+
+</body>
+</html>

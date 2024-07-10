@@ -4,6 +4,7 @@ import string
 import random
 import base64
 import json
+import ast
 
 
 from flask import Flask, g, render_template, request, redirect, url_for, flash, jsonify, make_response, session, flash
@@ -17,6 +18,7 @@ from models.ModelReport import ModelReport
 from models.ModelVnnox import ModelVnnox
 from models.ModelZkong import ModelZkong
 from models.ModelClaroConnect import ModelClaroConnect
+from models.ModelHexnode import ModelHexnode
 
 from werkzeug.utils import secure_filename
 from dotenv import load_dotenv
@@ -56,6 +58,7 @@ model_s3 = ModelS3()
 model_vnnox = ModelVnnox()
 model_zkong = ModelZkong()
 model_claro_connect = ModelClaroConnect()
+model_hexnode = ModelHexnode()
 
 # Imprimir la configuración de la base de datos directamente desde DevelopmentConfig
 config_instance = DevelopmentConfig()
@@ -68,7 +71,8 @@ login_manager_app = LoginManager(app)
 
 ALLOWED_EXTENSIONS = {'png', 'jpg', 'jpeg', 'mp4', 'gif'}
 
-token = 'd6fb58c88cab1f1087824fee025037fe'
+
+token = '39d18d654096a1f3f8b29f0d43d27800'
 
 def allowed_file(filename):
     return '.' in filename and filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
@@ -249,13 +253,6 @@ def home():
         return redirect(url_for('login'))
     user = ModelUser.get_by_id(db, current_user.id)
     return render_template('home.html', user=user)
-
-
-@app.route('/reports')
-@login_required
-def reports():
-    get_logs = ModelActions.get_logs(token)
-    return render_template('reports.html', get_logs=get_logs)
 
 @app.route('/login', methods=['GET', 'POST'])
 def login():
@@ -504,7 +501,70 @@ def download_report_zkong():
       
         pdf_content = ModelReport.generar_pdf_zkong(player_ids)
         if pdf_content:
-            print("PDF CONTENT")
+            # Crear la respuesta con el PDF como descarga
+            response = make_response(pdf_content)
+            response.headers['Content-Type'] = 'application/pdf'
+            response.headers['Content-Disposition'] = 'attachment; filename=report-players.pdf'
+            return response
+        else:
+            return render_template('error.html', error='Error al generar el PDF'), 500
+
+    except Exception as e:
+        print("Error al generar el PDF:", e)  # Maneja el error apropiadamente
+        return render_template('error.html', error=str(e)), 500
+    
+@app.route("/hexnode", methods=["GET", "POST"])
+def hexnode():
+    idCustomer = session.get('idCustomer')
+    if idCustomer is None:
+        flash("User not logged in or session expired.")
+        return redirect(url_for('login'))
+
+    data, num_players, num_online, num_offline = model_hexnode.get_devices_summary(idCustomer)
+    
+    return render_template('hexnode.html', players_info = data, num_players=num_players, num_online=num_online, num_offline=num_offline, page="hexnode")
+
+@app.route('/view-hexnode/', methods=['POST'])
+@login_required
+def view_hexnode():
+    if request.method == 'POST':
+        # Obtener los datos del formulario
+        iccid = request.form.get('iccid')
+        imsi = request.form.get('imsi')
+        msisdn = request.form.get('msisdn')
+        store = request.form.get('store')
+
+        token_cc = model_claro_connect.authenticate_cc()
+        inSession, sessionStartTime, data = model_claro_connect.claroConnectApi(imsi, token_cc)
+
+        # Por ejemplo, generar una cadena aleatoria para evitar el almacenamiento en caché
+        random_string = ''.join(random.choices(string.ascii_letters + string.digits, k=8))
+
+
+        # Renderizar la plantilla con los valores y la cadena aleatoria
+        return render_template('view-hexnode.html',
+                               imsi=imsi, 
+                               iccid=iccid, 
+                               msisdn=msisdn, 
+                               store=store, 
+                               random_string=random_string,
+                               inSession = inSession, 
+                               sessionStartTime = sessionStartTime)
+    
+@app.route('/download_report_hexnode', methods=['GET', 'POST'])
+@login_required
+def download_report_hexnode():
+    try:
+        player_ids_str = request.form.get('players_info[]')
+
+        # Usar ast.literal_eval para evaluar el string como una estructura de datos de Python
+        player_ids = ast.literal_eval(player_ids_str)
+
+
+        # Generar el informe en formato PDF
+        #pdf_content = ModelReport.generateReport(img_base64, get_players, token)
+        pdf_content = ModelReport.generar_pdf_hexnode(player_ids)
+        if pdf_content:
             # Crear la respuesta con el PDF como descarga
             response = make_response(pdf_content)
             response.headers['Content-Type'] = 'application/pdf'
@@ -517,9 +577,7 @@ def download_report_zkong():
         print("Error al generar el PDF:", e)  # Maneja el error apropiadamente
         return render_template('error.html', error=str(e)), 500
 
-
 if __name__ == '__main__':
-
     app.config.from_object(config['development'])
     # Imprimir las credenciales de la base de datos
     #print(f"Database Config LF: {app.config['MYSQL_HOST']}, {app.config['MYSQL_USER']}, {app.config['MYSQL_PASSWORD']}, {app.config['MYSQL_DB']}")

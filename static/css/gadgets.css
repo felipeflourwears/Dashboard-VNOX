@@ -1,31 +1,28 @@
-.btn-edit {
-  background-color: #4CAF50; 
-  color: white; 
-  padding: 6px 12px; /* Ajustado para igualar el tamaño del botón al rojo */
-  text-decoration: none; 
+.btn {
+  display: inline-flex;
+  justify-content: center;
+  align-items: center;
+  padding: 8px 16px; /* Ajusta el padding según sea necesario */
+  font-size: 16px; /* Tamaño de fuente coherente */
   border-radius: 4px;
   border: none;
   cursor: pointer;
-  display: inline-block;
-  font-size: 16px;
+  color: white;
+  text-decoration: none;
+  width: 100px; /* Ancho fijo para todos los botones */
+  box-sizing: border-box; /* Incluye el padding en el ancho total */
 }
 
-.btn-delete{
-    background-color: #f44336; 
-    color: white; 
-    padding: 6px 6px; /* Ajusta el tamaño del padding según sea necesario */
-    text-decoration: none; 
-    border-radius: 4px;
-    font-size: 16px;
+.btn-edit {
+  background-color: #4CAF50;
 }
 
-.btn-view{
-  background-color: var(--color-primary); 
-  color: white; 
-  padding: 6px 6px; /* Ajusta el tamaño del padding según sea necesario */
-  text-decoration: none; 
-  border-radius: 4px;
-  font-size: 8px;
+.btn-delete {
+  background-color: #f44336;
+}
+
+.btn-view {
+  background-color: var(--color-primary);
 }
 
 .btn-serve{

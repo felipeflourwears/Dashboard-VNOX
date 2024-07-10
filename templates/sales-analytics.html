@@ -90,6 +90,25 @@
             </div>
         </button>
     </form>
+    {% elif page == "hexnode" %}
+    <form action="/download_report_hexnode" method="POST" class="item download" id="downloadForm">
+        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+        
+        <input type="hidden" name="players_info[]" value="{{ players_info }}">
+        
+
+        <!-- Campo oculto para controlar la respuesta de descarga -->
+        <input type="hidden" id="downloadCompleted" name="downloadCompleted" value="false">
+        
+        <button type="submit" style="all: unset; cursor: pointer;">
+            <div>
+                <div>
+                    <span class="material-icons-sharp">mail</span>
+                    <h3>Download Report Players</h3>
+                </div>
+            </div>
+        </button>
+    </form>
     {% endif %}
     
     <!-- <a href="/button_test" class="item download">
