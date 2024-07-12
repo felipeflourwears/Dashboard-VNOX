@@ -72,7 +72,7 @@ login_manager_app = LoginManager(app)
 ALLOWED_EXTENSIONS = {'png', 'jpg', 'jpeg', 'mp4', 'gif'}
 
 
-token = '39d18d654096a1f3f8b29f0d43d27800'
+token = 'a847a2f2417942a659430e8c04bb3d6a'
 
 def allowed_file(filename):
     return '.' in filename and filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
@@ -412,6 +412,9 @@ def download_report_vnnox():
         print("TOTAL BefoRE: ", total_player_ids)
         # Obtiene los datos de los jugadores usando ModelReport.getPlayerList
         get_players = ModelVnnox.getPlayerList(token, player_ids)
+        print("---------------------------------------------")
+        print(get_players)
+        print("---------------------------------------------")
         total = len(get_players)
         print("TOTAL AFTERR: ", total)
 

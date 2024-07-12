@@ -154,7 +154,7 @@ class ModelReport:
                                     <th>Status</th>
                                     <th>Name</th>
                                     <th>Serial Number</th>
-                                    <th>LastOnline YYYY/MM/DD</th>
+                                    <th>Last Online YYYY/MM/DD</th>
                                     <th>Screenshot</th>
                                 </tr>
                             </thead>
@@ -217,8 +217,7 @@ class ModelReport:
             return None
     
         try:
-            for fila in datos_api[0]:  # Iterar sobre la lista dentro del primer elemento de datos_api
-                print("DATOS API 0: ", datos_api[0])
+            for fila in datos_api[0]:
                 if fila["statusOne"] == 1 and fila["statusTwo"] == 1:
                     onlinePlayer += 1
                 else:
@@ -328,11 +327,11 @@ class ModelReport:
                         <table>
                             <thead>
                                 <tr>
-                                    <th>Tienda</th>
-                                    <th>DuidOne</th>
+                                    <th>Store</th>
+                                    <th>Screen One</th>
                                     <th>LastOnline</th>
                                     <th>Status</th>
-                                    <th>DuidTwo</th>
+                                    <th>Screen Two</th>
                                     <th>LastOnline</th>
                                     <th>Status</th>
                                 </tr>

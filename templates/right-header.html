@@ -9,7 +9,7 @@
     <div class="profile">
         <div class="info">
             <p>Hey, <b>{{current_user.fullname}}</b></p>
-            <small class="text-muted">
+            <!-- <small class="text-muted">
                 {% if current_user.idRol == 1 %}
                     SuperAdministrator
                 {% elif current_user.idRol == 2 %}
@@ -19,7 +19,7 @@
                 {% else %}
                     Unknown
                 {% endif %}
-            </small>
+            </small> -->
         </div>
         <div class="profile-photo">
             <img src="{{ url_for('static', filename='img/profile.png') }}">
