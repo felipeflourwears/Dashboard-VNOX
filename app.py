@@ -388,14 +388,15 @@ def view_vnnox():
         msisdn = request.form.get('msisdn')
         store = request.form.get('store')
 
-        token_cc = model_claro_connect.authenticate_cc()
-        print("Token: ", token)
-        inSession, sessionStartTime, data = model_claro_connect.claroConnectApi(imsi, token_cc)
-        print(data)
+        #token_cc = model_claro_connect.authenticate_cc()
+        #print("Token: ", token)
+        #inSession, sessionStartTime, data = model_claro_connect.claroConnectApi(imsi, token_cc)
+        #print(data)
 
         # Por ejemplo, generar una cadena aleatoria para evitar el almacenamiento en caché
         random_string = ''.join(random.choices(string.ascii_letters + string.digits, k=8))
-
+        inSession = False
+        sessionStartTime = "No date"
 
         # Renderizar la plantilla con los valores y la cadena aleatoria
         return render_template('view-vnnox.html', 
@@ -473,9 +474,11 @@ def view_zkong():
     lastReportTimeOne = request.form.get("lastReportTimeOne")
     lastReportTimeTwo = request.form.get("lastReportTimeTwo")
     
-    token_cc = model_claro_connect.authenticate_cc()
+    """ token_cc = model_claro_connect.authenticate_cc()
     inSession, sessionStartTime, data = model_claro_connect.claroConnectApi(imsi, token_cc)
-    print(data)
+    print(data) """
+    inSession = False
+    sessionStartTime = "No date"
 
     return render_template('view-zkong.html', player_duidOne=player_duidOne, 
                            player_statusOne=player_statusOne, 
@@ -533,8 +536,11 @@ def view_hexnode():
         msisdn = request.form.get('msisdn')
         store = request.form.get('store')
 
-        token_cc = model_claro_connect.authenticate_cc()
-        inSession, sessionStartTime, data = model_claro_connect.claroConnectApi(imsi, token_cc)
+        #token_cc = model_claro_connect.authenticate_cc()
+        #inSession, sessionStartTime, data = model_claro_connect.claroConnectApi(imsi, token_cc)
+
+        inSession = False
+        sessionStartTime = "No date"
 
         # Por ejemplo, generar una cadena aleatoria para evitar el almacenamiento en caché
         random_string = ''.join(random.choices(string.ascii_letters + string.digits, k=8))
