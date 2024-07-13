@@ -57,7 +57,7 @@
     </div>
     {% endif %}
     {% if user.pisignage == 1 %}
-    <div class="report-button" onclick="location.href='https://pisignage.com/login';">
+    <div class="report-button" onclick="window.open('https://pisignage.com/login', '_blank');">
         <span class="material-symbols-outlined">
             lab_profile
         </span>
@@ -69,6 +69,5 @@
         <small class="text-muted">Last 24 Hours</small>
     </div>
     {% endif %}
-
     <!--====================END REPORT BUTTONS ====================-->
 </div>

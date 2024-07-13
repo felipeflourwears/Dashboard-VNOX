@@ -74,7 +74,7 @@ login_manager_app = LoginManager(app)
 ALLOWED_EXTENSIONS = {'png', 'jpg', 'jpeg', 'mp4', 'gif'}
 
 
-token = '9fc44c2f8ef5baed64a073a2084645a7'
+token = 'ca8c10e5da43d3baf1bd7ff8a36f77b5'
 
 def allowed_file(filename):
     return '.' in filename and filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
