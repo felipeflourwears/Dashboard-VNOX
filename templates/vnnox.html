@@ -47,21 +47,22 @@
                 <table>
                     <thead>
                         <tr>
-                            <th>playerId</th>
-                            <th>onlineStatus</th>
-                            <th>lastOnlineTime</th>
-                            <th>Cliente</th>
                             <th>Store</th>
-                            <th>ICCID</th>
+                            <!-- <th>Player ID</th> -->
+                            <th>Status</th>
+                            <th>Last Beat</th>
+                            <th>Client</th>
+                            <!-- <th>ICCID</th>
                             <th>IMSI</th>
-                            <th>MSISDN</th>
+                            <th>MSISDN</th> -->
                             <th>Options</th>
                         </tr>
                     </thead>
                     <tbody id="order-table-body">
                         {% for player in players_info %}
                         <tr>
-                            <td>{{ player['playerId'] }}</td>
+                            <td>{{ player['tienda'] }}</td>
+                            <!-- <td>{{ player['playerId'] }}</td> -->
                             <td>
                                 {% if player['onlineStatus'] == 1 %}
                                     <span class="circle-green"></span>
@@ -71,10 +72,9 @@
                             </td>
                             <td>{{ player['lastOnlineTime'] }}</td>
                             <td>{{ player['cliente'] }}</td>
-                            <td>{{ player['tienda'] }}</td>
-                            <td>{{ player['iccid'] }}</td>
+                            <!-- <td>{{ player['iccid'] }}</td>
                             <td>{{ player['imsi'] }}</td>
-                            <td>{{ player['msisdn'] }}</td>
+                            <td>{{ player['msisdn'] }}</td> -->
                             <td>
                                 <form action="{{ url_for('view_vnnox') }}" method="POST" style="display: inline;">
                                     <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
@@ -92,11 +92,11 @@
                     </tbody>
                 </table>
             </div>
-            <div class="pagination">
+           <!--  <div class="pagination">
                 <a href="#" class="btn btn-danger">Previous</a>
                 <a href="#" class="btn btn-primary">1</a>
                 <a href="#" class="btn btn-danger">Next</a>
-            </div> 
+            </div>  -->
         </main>
          <!--==================== END MAIN ====================-->
         <div class="right">

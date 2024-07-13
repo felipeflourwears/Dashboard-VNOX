@@ -53,11 +53,6 @@
     {% if page == "vnnox" %}     
     <form action="/download_report_vnnox" method="POST" class="item download" id="downloadForm">
         <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
-        
-        <!-- Agregar cada playerId como un campo oculto -->
-        {% for player_id in player_ids %}
-        <input type="hidden" name="player_ids[]" value="{{ player_id }}">
-        {% endfor %}
     
         <!-- Campo oculto para controlar la respuesta de descarga -->
         <input type="hidden" id="downloadCompleted" name="downloadCompleted" value="false">

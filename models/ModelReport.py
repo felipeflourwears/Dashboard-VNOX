@@ -27,7 +27,7 @@ class ModelReport:
         date, config = cls().requirementsPDF()
 
         try:
-            for fila in datos_api:
+            for fila in datos_api[0]:
                 if fila["onlineStatus"] == 0:
                     offlinePlayer = offlinePlayer + 1
                 elif fila["onlineStatus"] == 1:
@@ -151,9 +151,9 @@ class ModelReport:
                             <thead>
                                 <tr>
                                     <th>No.</th>
+                                    <th>Store</th>
                                     <th>Status</th>
                                     <th>Name</th>
-                                    <th>Serial Number</th>
                                     <th>Last Online YYYY/MM/DD</th>
                                     <th>Screenshot</th>
                                 </tr>
@@ -161,16 +161,16 @@ class ModelReport:
                             <tbody>
             """
             i = 0
-            for fila in datos_api:
+            for fila in datos_api[0]:
                 i+=1
                 online_status_circle = "circle-green" if fila["onlineStatus"] == 1 else "circle-red"
 
                 contenido_pdf += f"""
                     <tr>
                         <td>{i}</td>
+                        <td>{fila["tienda"]}</td>
                         <td><div class="circle {online_status_circle}"></div></td>
-                        <td>{fila["name"]}</td>
-                        <td>{fila["sn"]}</td>
+                        <td>{fila["cliente"]}</td>
                         <td>{fila["lastOnlineTime"]}</td>
                         <td><img src="https://retailmibeex.net/apiVnnox/screenPlayers/{fila["playerId"]}.jpg" alt="Screenshot"></td>
                     </tr>
@@ -329,10 +329,10 @@ class ModelReport:
                                 <tr>
                                     <th>Store</th>
                                     <th>Screen One</th>
-                                    <th>LastOnline</th>
+                                    <th>Last Beat</th>
                                     <th>Status</th>
                                     <th>Screen Two</th>
-                                    <th>LastOnline</th>
+                                    <th>Last Beat</th>
                                     <th>Status</th>
                                 </tr>
                             </thead>

@@ -9,11 +9,11 @@ class ModelUser():
     def login(self, db, user):
         try:
             cursor = db.connection.cursor()
-            sql = """SELECT u.id, u.username, u.email, u.password, u.idRol, u.fullname, c.vnnox, c.zkong, c.hexnode, c.magicInfo, c.idCustomer FROM user u JOIN customers c ON u.idCustomer = c.idCustomer WHERE email = '{}'""".format(user.email)
+            sql = """SELECT u.id, u.username, u.email, u.password, u.idRol, u.fullname, c.vnnox, c.zkong, c.hexnode, c.magicInfo, c.pisignage, c.idCustomer FROM user u JOIN customers c ON u.idCustomer = c.idCustomer WHERE email = '{}'""".format(user.email)
             cursor.execute(sql)
             row = cursor.fetchone()
             if row is not None:
-                user = User(row[0], row[1], row[2], User.check_password(row[3], user.password), row[4], row[6], row[7], row[8], row[9], row[10], row[5])
+                user = User(row[0], row[1], row[2], User.check_password(row[3], user.password), row[4], row[6], row[7], row[8], row[9], row[10], row[11], row[5])
                 return user
             else:
                 return None
@@ -24,11 +24,11 @@ class ModelUser():
     def get_by_id(self, db, id):
         try:
             cursor = db.connection.cursor()
-            sql = "SELECT u.id, u.username, u.email, u.password, u.idRol, u.fullname, c.vnnox, c.zkong, c.hexnode, c.magicInfo, c.idCustomer FROM user u JOIN customers c ON u.idCustomer = c.idCustomer WHERE id = '{}'".format(id)
+            sql = "SELECT u.id, u.username, u.email, u.password, u.idRol, u.fullname, c.vnnox, c.zkong, c.hexnode, c.magicInfo, c.pisignage, c.idCustomer FROM user u JOIN customers c ON u.idCustomer = c.idCustomer WHERE id = '{}'".format(id)
             cursor.execute(sql)
             row = cursor.fetchone()
             if row is not None:
-                return User(row[0], row[1], row[2], None, row[3], row[6], row[7], row[8], row[9], row[10], row[5])
+                return User(row[0], row[1], row[2], None, row[3], row[6], row[7], row[8], row[9], row[10], row[11], row[5])
             return None
         except Exception as ex:
             raise Exception(ex)

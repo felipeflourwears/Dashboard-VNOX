@@ -5,6 +5,8 @@ import random
 import base64
 import json
 import ast
+import re
+
 
 
 from flask import Flask, g, render_template, request, redirect, url_for, flash, jsonify, make_response, session, flash
@@ -72,7 +74,7 @@ login_manager_app = LoginManager(app)
 ALLOWED_EXTENSIONS = {'png', 'jpg', 'jpeg', 'mp4', 'gif'}
 
 
-token = '225f4c56a925e5bc69bc3193dd1efabf'
+token = '9fc44c2f8ef5baed64a073a2084645a7'
 
 def allowed_file(filename):
     return '.' in filename and filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
@@ -272,7 +274,7 @@ def login():
         print("CODE: ", code)
     
 
-        user = User(0, None, email, password, 0, None, None, None, None, None, "")
+        user = User(0, None, email, password, 0, None, None, None, None, None, None, "")
         
         verify_email = ModelUser.email_exists(db, email)
         print("VERIFY: ",verify_email)
@@ -292,6 +294,7 @@ def login():
                 print("ZKONG: ", logged_user.zkong)
                 print("MAGICINFO: ", logged_user.magicInfo)
                 print("HEXNODE: ", logged_user.hexnode)
+                print("PiSignage: ", logged_user.pisignage)
                 print("idCustomer: ", logged_user.idCustomer)
                 session['idCustomer'] = logged_user.idCustomer
 
@@ -345,7 +348,11 @@ def vnnox():
     
     # Obtener los datos reales de la API usando model_vnnox.consumir_api
     data = model_vnnox.request_data_api(token, idCustomer)
-    
+    print("--------------------------------------")
+    print("Data API JOSSS")
+    print(data)
+    print(type(data))
+    print("--------------------------------------")
     # Inicializar variables
     player_ids = []
     players_info = []
@@ -403,33 +410,19 @@ def view_vnnox():
         # Manejar otro comportamiento si no es POST (opcional)
         return 'Método no permitido', 405  # Código de error 405 para método no permitido
 
-@app.route('/download_report_vnnox', methods=['GET', 'POST'])
-@login_required
+@app.route('/download_report_vnnox', methods=['POST'])
+@login_required  # Asegúrate de tener esta función decoradora implementada
 def download_report_vnnox():
-    try:  
-        player_ids = request.form.getlist('player_ids[]')
-        total_player_ids = len(player_ids)
-        print("TOTAL BefoRE: ", total_player_ids)
-        # Obtiene los datos de los jugadores usando ModelReport.getPlayerList
-        get_players = ModelVnnox.getPlayerList(token, player_ids)
-        print("---------------------------------------------")
-        print(get_players)
-        print("---------------------------------------------")
-        total = len(get_players)
-        print("TOTAL AFTERR: ", total)
-
-        # Ruta de la imagen
-        ruta_script = os.path.dirname(os.path.abspath(__file__))
-        ruta_imagen = os.path.join(ruta_script, 'static','img', 'black.jpg')
-
-        # Leer la imagen en formato base64
-        with open(ruta_imagen, 'rb') as img_file:
-            img_base64 = base64.b64encode(img_file.read()).decode('utf-8')
-        
-
+    try:
+        idCustomer = session.get('idCustomer')
+        if idCustomer is None:
+            flash("User not logged in or session expired.")
+            return redirect(url_for('login'))
+        # Obtener los datos reales de la API usando model_vnnox.consumir_api
+        data = model_vnnox.request_data_api(token, idCustomer)
         # Generar el informe en formato PDF
         #pdf_content = ModelReport.generateReport(img_base64, get_players, token)
-        pdf_content = ModelReport.generar_pdf_vnnox(token, get_players)
+        pdf_content = ModelReport.generar_pdf_vnnox(token, data)
         if pdf_content:
             # Crear la respuesta con el PDF como descarga
             response = make_response(pdf_content)
@@ -438,10 +431,12 @@ def download_report_vnnox():
             return response
         else:
             return render_template('error.html', error='Error al generar el PDF'), 500
-
     except Exception as e:
         print("Error al generar el PDF:", e)  # Maneja el error apropiadamente
         return render_template('error.html', error=str(e)), 500
+    
+
+        
     
 @app.route("/zkong", methods=["GET", "POST"])
 def zkong():
