@@ -389,6 +389,7 @@ def view_vnnox():
         store = request.form.get('store')
 
         token_cc = model_claro_connect.authenticate_cc()
+        print("Token: ", token)
         inSession, sessionStartTime, data = model_claro_connect.claroConnectApi(imsi, token_cc)
         print(data)
 

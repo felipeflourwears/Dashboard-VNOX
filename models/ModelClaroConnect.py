@@ -52,13 +52,15 @@ class ModelClaroConnect:
         params = {
             "imsi": imsi
         }
-        response = requests.get(url, headers=headers, params=params, verify=False)
+        response = requests.get(url, headers=headers, params=params, verify=True)
         if response.status_code == 200:
             data = response.json()
             self.inSession = data.get('inSession')
             self.sessionStartTime = data.get('sessionStartTime')
+            print("Good")
 
             return self.inSession, self.sessionStartTime, data
         else:
+            print("Issue")
             response.raise_for_status()
     
