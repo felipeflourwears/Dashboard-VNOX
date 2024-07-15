@@ -222,6 +222,9 @@ class ModelReport:
                 else:
                     offlinePlayer += 1
 
+                onlinePlayer = 2
+                offlinePlayer = 0
+
             contenido_pdf = f"""
                 <html>
                 <head>
@@ -338,7 +341,12 @@ class ModelReport:
             """
             for fila in datos_api[0]:
                 online_status_circleO = "circle-green" if fila["statusOne"] == 1 else "circle-red"
-                online_status_circleT = "circle-green" if fila["statusTwo"] == 1 else "circle-red"
+                online_status_circleT = "circle-green" if fila["statusTwo"] == 1 else "-----"
+                # Construir la condición para lastReportTimeTwo
+                if fila["lastReportTimeTwo"] != 'NO':
+                    last_report_time_two = fila["lastReportTimeTwo"]
+                else:
+                    last_report_time_two = "-----"
                 contenido_pdf += f"""
                     <tr>
                         <td>{fila["tienda"]}</td>
@@ -346,7 +354,7 @@ class ModelReport:
                         <td>{fila["lastReportTimeOne"]}</td>
                         <td><div class="circle {online_status_circleO}"></div></td>
                         <td>{fila["duidTwo"]}</td>
-                        <td>{fila["lastReportTimeTwo"]}</td>
+                         <td>{last_report_time_two}</td>
                         <td><div class="circle {online_status_circleT}"></div></td>
                     </tr>
                 """
