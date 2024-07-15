@@ -48,7 +48,7 @@
                     <thead>
                         <tr>
                             <th>Store</th>
-                            <!-- <th>Player ID</th> -->
+                            <th>Player ID</th>
                             <th>Status</th>
                             <th>Last Beat</th>
                             <th>Client</th>
@@ -62,7 +62,7 @@
                         {% for player in players_info %}
                         <tr>
                             <td>{{ player['tienda'] }}</td>
-                            <!-- <td>{{ player['playerId'] }}</td> -->
+                            <td>{{ player['playerId'] }}</td>
                             <td>
                                 {% if player['onlineStatus'] == 1 %}
                                     <span class="circle-green"></span>

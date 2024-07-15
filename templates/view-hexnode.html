@@ -55,11 +55,7 @@
                             <h2>Status SIM</h2>
                             <div style="position: relative; display: inline-block;">
                                 <input type="text" id="inSession" name="inSession" value="{{ inSession }}" readonly>
-                                {% if inSession == 'True' %}
-                                    <span class="status-circle-status circle-green-status"></span>
-                                {% else %}
-                                    <span class="status-circle-status circle-red-status"></span>
-                                {% endif %}
+                                <span class="status-circle-status circle-green-status"></span>
                             </div> <br>
 
                             <label for="sessionStartTime">Session Start Time:</label><br>
@@ -69,8 +65,12 @@
                         <div class="third-edit">
                             <h2>Store Location</h2>
                             <div class="store-location">
-                                    <img src="https://retailmibeex.net/images/pop.png" style="width: 100%; max-width: 200px; margin-right: 10px; height: auto;">
-                                    <img src="https://retailmibeex.net/images/hexnode.png" style="width: 100%; max-width: 200px; height: auto;">
+                                    <img src="https://retailmibeex.net/images/pop.png" style="width: 100%; max-width: 200px; margin-right: 10px;">
+                                    {% if cliente == 'Showroom' %}
+                                    <img src="https://retailmibeex.net/images/negro.jpg" style="width: 100%; max-width: 200px; height: 250px;">
+                                    {% else %}
+                                    <img src="https://retailmibeex.net/images/{{ cliente }}.jpeg" style="width: 100%; max-width: 200px; height: 250px;">
+                                    {% endif %}
                             </div>
                         </div>
                     </div>

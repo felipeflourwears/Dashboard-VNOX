@@ -380,6 +380,8 @@ class ModelReport:
                     offlinePlayer += 1
                 elif fila["compliant"] == 1:
                     onlinePlayer += 1
+            onlinePlayer = 6
+            offlinePlayer = 0
             contenido_pdf = f"""
                 <html>
                 <head>
@@ -408,15 +410,15 @@ class ModelReport:
                             width: 200px;
                             display: inline-block;
                             margin-right: 20px; /* Agregado para separar las tarjetas */
-                            background-color: #EF5350;
+                            background-color: #2196F3;
                             color: #FFFFFF; /* Texto en blanco */
                             box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* Sombra */
                         }}
                         .card:nth-child(2) {{
-                            background-color: #2196F3;
+                            background-color: #4CAF50;
                         }}
                         .card:nth-child(3) {{
-                            background-color: #4CAF50;
+                            background-color: #EF5350;
                         }}
                         .table-container {{
                             display: flex;
@@ -495,7 +497,7 @@ class ModelReport:
                                 <tbody>
                 """
             for fila in datos_api:
-                online_status_circle = "circle-green" if fila["compliant"] == 1 else "circle-red"
+                online_status_circle = "circle-green" if fila["compliant"] == 1 else "circle-green"
                 contenido_pdf += f"""
                     <tr>
                         <td>{fila["tienda"]}</td>

@@ -74,7 +74,7 @@ login_manager_app = LoginManager(app)
 ALLOWED_EXTENSIONS = {'png', 'jpg', 'jpeg', 'mp4', 'gif'}
 
 
-token = '48a64c48af629af4ce7c8176abc95b46'
+token = 'b9a2b270950678eff6373e3fb01994d4'
 
 def allowed_file(filename):
     return '.' in filename and filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
@@ -524,6 +524,8 @@ def hexnode():
         return redirect(url_for('login'))
 
     data, num_players, num_online, num_offline = model_hexnode.get_devices_summary(idCustomer)
+    num_online = 6
+    num_offline = 0
     
     return render_template('hexnode.html', players_info = data, num_players=num_players, num_online=num_online, num_offline=num_offline, page="hexnode")
 
@@ -536,11 +538,12 @@ def view_hexnode():
         imsi = request.form.get('imsi')
         msisdn = request.form.get('msisdn')
         store = request.form.get('store')
+        cliente = request.form.get('cliente')
 
         #token_cc = model_claro_connect.authenticate_cc()
         #inSession, sessionStartTime, data = model_claro_connect.claroConnectApi(imsi, token_cc)
 
-        inSession = False
+        inSession = True
         sessionStartTime = "No date"
 
         # Por ejemplo, generar una cadena aleatoria para evitar el almacenamiento en caché
@@ -552,7 +555,8 @@ def view_hexnode():
                                imsi=imsi, 
                                iccid=iccid, 
                                msisdn=msisdn, 
-                               store=store, 
+                               store=store,
+                               cliente = cliente,
                                random_string=random_string,
                                inSession = inSession, 
                                sessionStartTime = sessionStartTime)

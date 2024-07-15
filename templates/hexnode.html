@@ -62,11 +62,7 @@
                         <tr>
                             <td>{{ player['tienda'] }}</td>
                             <td>
-                                {% if player['compliant'] == True %}
-                                    <span class="circle-green"></span>
-                                {% else %}
-                                    <span class="circle-red"></span>
-                                {% endif %}
+                                <span class="circle-green"></span>
                             </td>
                             <td>{{ player['last_reported'] }} </td>
                             <td>{{ player['cliente'] }}</td>
@@ -77,6 +73,7 @@
                                     <input type="hidden" name="imsi" value="{{ player['imsi'] }}">
                                     <input type="hidden" name="msisdn" value="{{ player['msisdn'] }}">
                                     <input type="hidden" name="store" value="{{ player['tienda'] }}">
+                                    <input type="hidden" name="cliente" value="{{ player['cliente'] }}">
                                     <button type="submit" class="btn btn-edit">Info</button>
                                 </form>
                                 <a class="btn btn-view" href="https://popatelier.hexnodemdm.com/" style="color: white;" target="_blank">Explore</a> 
