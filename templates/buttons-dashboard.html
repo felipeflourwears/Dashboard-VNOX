@@ -1,6 +1,47 @@
 <div class="insights">
     <!--====================INIT REPORT BUTTONS ====================-->
-    
+    {% if user.vnnox == 1 %}
+        <div class="report-button" onclick="location.href='/vnnox';">
+            <span class="material-symbols-outlined">
+                lab_profile
+            </span>
+            <div class="middle">
+                <div class="left">
+                    <h3>VNNOX</h3>
+                </div>
+            </div>
+            <small class="text-muted">Last 24 Hours</small>
+        </div>
+    {% endif %}
+
+    {% if user.pisignage == 1 %}
+    <div class="report-button" onclick="window.open('https://pisignage.com/login', '_blank');">
+        <span class="material-symbols-outlined">
+            lab_profile
+        </span>
+        <div class="middle">
+            <div class="left">
+                <h3>PiSignage</h3>
+            </div>
+        </div>
+        <small class="text-muted">Last 24 Hours</small>
+    </div>
+    {% endif %}
+
+    {% if user.hexnode == 1 %}
+    <div class="report-button" onclick="location.href='/hexnode';">
+        <span class="material-symbols-outlined">
+            lab_profile
+        </span>
+        <div class="middle">
+            <div class="left">
+                <h3>Hexnode</h3>
+            </div>
+        </div>
+        <small class="text-muted">Last 24 Hours</small>
+    </div>
+    {% endif %}
+
     {% if user.zkong == 1 %}
     <div class="report-button" onclick="location.href='/zkong';">
         <span class="material-symbols-outlined">
@@ -29,45 +70,19 @@
     </div>
     {% endif %}
 
-    {% if user.vnnox == 1 %}
-        <div class="report-button" onclick="location.href='/vnnox';">
-            <span class="material-symbols-outlined">
-                lab_profile
-            </span>
-            <div class="middle">
-                <div class="left">
-                    <h3>VNNOX</h3>
-                </div>
+    {% if user.kosStudio == 1 %}
+    <div class="report-button" onclick="window.open('https://www.kosdev.com/kos/studio', '_blank');">
+        <span class="material-symbols-outlined">
+            lab_profile
+        </span>
+        <div class="middle">
+            <div class="left">
+                <h3>kOS Studio</h3>
             </div>
-            <small class="text-muted">Last 24 Hours</small>
         </div>
+        <small class="text-muted">Last 24 Hours</small>
+    </div>
     {% endif %}
 
-    {% if user.hexnode == 1 %}
-    <div class="report-button" onclick="location.href='/hexnode';">
-        <span class="material-symbols-outlined">
-            lab_profile
-        </span>
-        <div class="middle">
-            <div class="left">
-                <h3>Hexnode</h3>
-            </div>
-        </div>
-        <small class="text-muted">Last 24 Hours</small>
-    </div>
-    {% endif %}
-    {% if user.pisignage == 1 %}
-    <div class="report-button" onclick="window.open('https://pisignage.com/login', '_blank');">
-        <span class="material-symbols-outlined">
-            lab_profile
-        </span>
-        <div class="middle">
-            <div class="left">
-                <h3>PiSignage</h3>
-            </div>
-        </div>
-        <small class="text-muted">Last 24 Hours</small>
-    </div>
-    {% endif %}
     <!--====================END REPORT BUTTONS ====================-->
 </div>

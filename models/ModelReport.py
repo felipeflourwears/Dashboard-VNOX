@@ -74,12 +74,11 @@ class ModelReport:
                             background-color: #4CAF50; 
                         }}
                         table {{
-                            width: calc(100% - 40px); /* Ajusta el ancho de la tabla restando el margen derecho de la suma total */
-                            margin-top: 20px;
+                            width: 100%; /* Ajusta el ancho de la tabla restando el margen derecho de la suma total */
+                            margin: 20px auto;
                             background-color: #FFFFFF;
                             border: 1px solid #000000;
                             border-collapse: collapse;
-                            margin-right: 20px;
                         }}
 
                         th, td {{
@@ -261,12 +260,11 @@ class ModelReport:
                             background-color: #4CAF50;
                         }}
                         table {{
-                            width: calc(100% - 40px); /* Ajusta el ancho de la tabla restando el margen derecho de la suma total */
-                            margin-top: 20px;
+                            width: 100%; /* Ajusta el ancho de la tabla restando el margen derecho de la suma total */
+                            margin: 20px auto;
                             background-color: #FFFFFF;
                             border: 1px solid #000000;
                             border-collapse: collapse;
-                            margin-right: 20px;
                         }}
                         th, td {{
                             border: 1px solid #000000; /* Bordes de celda en negro */

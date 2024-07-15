@@ -74,7 +74,7 @@ login_manager_app = LoginManager(app)
 ALLOWED_EXTENSIONS = {'png', 'jpg', 'jpeg', 'mp4', 'gif'}
 
 
-token = 'ca8c10e5da43d3baf1bd7ff8a36f77b5'
+token = '48a64c48af629af4ce7c8176abc95b46'
 
 def allowed_file(filename):
     return '.' in filename and filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
@@ -274,7 +274,7 @@ def login():
         print("CODE: ", code)
     
 
-        user = User(0, None, email, password, 0, None, None, None, None, None, None, "")
+        user = User(0, None, email, password, 0, None, None, None, None, None, None, None, "")
         
         verify_email = ModelUser.email_exists(db, email)
         print("VERIFY: ",verify_email)
@@ -295,6 +295,7 @@ def login():
                 print("MAGICINFO: ", logged_user.magicInfo)
                 print("HEXNODE: ", logged_user.hexnode)
                 print("PiSignage: ", logged_user.pisignage)
+                print("kosStudio: ", logged_user.kosStudio)
                 print("idCustomer: ", logged_user.idCustomer)
                 session['idCustomer'] = logged_user.idCustomer
 
